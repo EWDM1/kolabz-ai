@@ -97,12 +97,17 @@ export default {
 					'0%': { backgroundPosition: '-500px 0' },
 					'100%': { backgroundPosition: '500px 0' },
 				},
+				"moving-banner": {
+					from: { backgroundPosition: "0% 0" },
+					to: { backgroundPosition: "100% 0" },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 6s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
+				"moving-banner": "moving-banner 20s linear infinite",
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', 'sans-serif'],
