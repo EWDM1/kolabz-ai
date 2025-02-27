@@ -156,12 +156,12 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         isCollapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex flex-col items-center border-b border-border py-4 px-3">
+      <div className="flex h-16 items-center border-b border-border px-3">
         <Link 
           to="/admin" 
           className={cn(
-            "flex items-center justify-center",
-            !isCollapsed && "mb-3"
+            "flex items-center gap-2",
+            isCollapsed && "justify-center"
           )}
           onClick={onClose}
         >
@@ -178,12 +178,11 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               className="h-8" 
             />
           )}
-          {!isCollapsed && <span className="font-semibold ml-2">Admin</span>}
+          {!isCollapsed && <span className="font-semibold">Admin</span>}
         </Link>
-        
         <button 
           className={cn(
-            "p-1.5 mt-2 rounded-md text-muted-foreground hover:bg-muted transition-colors",
+            "ml-auto p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors",
             "focus:outline-none focus:ring-2 focus:ring-primary/20"
           )}
           onClick={toggleCollapse}
