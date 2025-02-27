@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,6 @@ const Pricing = () => {
         { text: "5 prompt optimizations", included: true },
         { text: "Save up to 5 prompts", included: true },
         { text: "Access to basic templates", included: true },
-        { text: "Basic optimization tools", included: false },
         { text: "Team collaboration", included: false },
       ],
       ctaText: "Start Free Trial",
