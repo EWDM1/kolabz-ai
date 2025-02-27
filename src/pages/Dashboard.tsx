@@ -105,11 +105,7 @@ const Dashboard = () => {
   };
 
   const handleManageSubscription = () => {
-    toast({
-      title: "Manage Subscription",
-      description: "Opening subscription management page",
-    });
-    // In a real app, this would navigate to a subscription management page
+    navigate("/manage-subscription");
   };
 
   const filteredPrompts = savedPrompts.filter(
@@ -233,7 +229,12 @@ const Dashboard = () => {
                   <div className="text-xs text-muted-foreground mb-3">
                     Next billing on Aug 12, 2023
                   </div>
-                  <Button variant="outline" size="sm" className="w-full text-xs" onClick={handleManageSubscription}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-xs" 
+                    onClick={handleManageSubscription}
+                  >
                     Manage Subscription
                   </Button>
                 </div>
