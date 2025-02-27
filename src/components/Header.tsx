@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,7 +22,7 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all-300 ${
         isScrolled
-          ? "py-3 bg-white/80 backdrop-blur-md shadow-sm"
+          ? "py-3 bg-background/80 backdrop-blur-md shadow-sm"
           : "py-5 bg-transparent"
       }`}
     >
@@ -55,6 +56,7 @@ const Header = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center space-x-4">
+          <ThemeToggle />
           <Button variant="ghost" size="sm" asChild>
             <Link to="/login">Log In</Link>
           </Button>
@@ -67,18 +69,21 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-gray-800 p-2"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="md:hidden flex items-center space-x-2">
+          <ThemeToggle />
+          <button
+            className="text-foreground p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden fixed inset-0 z-40 bg-white transform transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-0 z-40 bg-background transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -99,28 +104,28 @@ const Header = () => {
           <nav className="flex flex-col space-y-6 text-lg mb-auto">
             <Link
               to="/#features"
-              className="py-2 border-b border-gray-100"
+              className="py-2 border-b border-border"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
               to="/#pricing"
-              className="py-2 border-b border-gray-100"
+              className="py-2 border-b border-border"
               onClick={() => setIsMenuOpen(false)}
             >
               Pricing
             </Link>
             <Link
               to="/#about"
-              className="py-2 border-b border-gray-100"
+              className="py-2 border-b border-border"
               onClick={() => setIsMenuOpen(false)}
             >
               About Us
             </Link>
             <Link
               to="/dashboard"
-              className="py-2 border-b border-gray-100"
+              className="py-2 border-b border-border"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
