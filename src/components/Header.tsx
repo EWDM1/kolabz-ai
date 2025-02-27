@@ -79,9 +79,6 @@ const Header = () => {
           >
             About Us
           </button>
-          <Link to="/dashboard" className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200">
-            Dashboard
-          </Link>
         </nav>
 
         {/* Desktop CTA */}
@@ -162,13 +159,6 @@ const Header = () => {
             >
               About Us
             </button>
-            <Link
-              to="/dashboard"
-              className="py-2 border-b border-border"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
           </nav>
 
           <div className="mt-auto pt-6 grid gap-4">

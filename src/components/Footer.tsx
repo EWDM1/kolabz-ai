@@ -21,7 +21,6 @@ const Footer = () => {
         { name: "Features", onClick: () => scrollToSection('features'), href: null },
         { name: "Pricing", onClick: () => scrollToSection('pricing'), href: null },
         { name: "Help Center", href: "#" },
-        { name: "Roadmap", href: "#" },
       ],
     },
     {
