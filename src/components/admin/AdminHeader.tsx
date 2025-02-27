@@ -21,7 +21,7 @@ const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
           <span className="sr-only">Toggle menu</span>
         </Button>
         
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-2">
           {theme === 'dark' ? (
             <img 
               src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 

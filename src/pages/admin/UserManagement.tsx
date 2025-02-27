@@ -3,138 +3,136 @@ import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import UserTable from "@/components/admin/UserTable";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserTable, AdminUser } from "@/components/admin/UserTable";
-import { UserRoundPlus } from "lucide-react";
+import { 
+  UserRoundPlus,
+  Filter,
+  Download, 
+  Upload, 
+  Trash2
+} from "lucide-react";
 import { Link } from "react-router-dom";
-import EditUserForm from "@/components/admin/EditUserForm";
-import { UserRole, useAuth } from "@/components/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/components/AuthContext";
+
+const mockUsers = [
+  {
+    id: "1",
+    name: "John Smith",
+    email: "john@example.com",
+    role: "Admin",
+    status: "Active",
+    lastActive: "Today, 2:30 PM"
+  },
+  {
+    id: "2",
+    name: "Sarah Johnson",
+    email: "sarah@example.com",
+    role: "Manager",
+    status: "Active",
+    lastActive: "Yesterday, 4:20 PM"
+  },
+  {
+    id: "3",
+    name: "Michael Brown",
+    email: "michael@example.com",
+    role: "User",
+    status: "Inactive",
+    lastActive: "Last week"
+  },
+  {
+    id: "4",
+    name: "Lisa Davis",
+    email: "lisa@example.com",
+    role: "User",
+    status: "Active",
+    lastActive: "Today, 11:15 AM"
+  },
+  {
+    id: "5",
+    name: "James Wilson",
+    email: "james@example.com",
+    role: "Manager",
+    status: "Active",
+    lastActive: "Yesterday, 9:45 AM"
+  },
+  {
+    id: "6",
+    name: "Emily Taylor",
+    email: "emily@example.com",
+    role: "User",
+    status: "Pending",
+    lastActive: "Never"
+  }
+];
 
 const UserManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const { toast } = useToast();
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { user } = useAuth();
 
-  // Get users from localStorage
+  // Check the sidebar collapsed state from localStorage
   useEffect(() => {
-    const storedUsers = localStorage.getItem('kolabz-users');
-    if (storedUsers) {
-      try {
-        const parsedUsers = JSON.parse(storedUsers);
-        // Map to AdminUser format with additional fields
-        const adminUsers: AdminUser[] = parsedUsers.map((user: any) => ({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role as UserRole,
-          status: "active",
-          lastLogin: "2023-07-15"
-        }));
-        setUsers(adminUsers);
-      } catch (error) {
-        console.error("Error parsing users:", error);
-      }
+    const savedState = localStorage.getItem("adminSidebarCollapsed");
+    if (savedState !== null) {
+      setSidebarCollapsed(savedState === "true");
     }
   }, []);
 
-  const handleEditUser = (user: AdminUser) => {
-    setSelectedUser(user);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSaveUser = (updatedUser: AdminUser) => {
-    // Update users array
-    setUsers(prev => 
-      prev.map(user => 
-        user.id === updatedUser.id ? updatedUser : user
-      )
-    );
-    
-    // Update localStorage (in a real app, this would be an API call)
-    const storedUsers = localStorage.getItem('kolabz-users');
-    if (storedUsers) {
-      try {
-        const parsedUsers = JSON.parse(storedUsers);
-        const updatedUsers = parsedUsers.map((user: any) => 
-          user.id === updatedUser.id 
-            ? { ...user, name: updatedUser.name, email: updatedUser.email, role: updatedUser.role }
-            : user
-        );
-        localStorage.setItem('kolabz-users', JSON.stringify(updatedUsers));
-      } catch (error) {
-        console.error("Error updating user:", error);
+  // Listen for storage events to sync sidebar state across components
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedState = localStorage.getItem("adminSidebarCollapsed");
+      if (savedState !== null) {
+        setSidebarCollapsed(savedState === "true");
       }
-    }
-    
-    setIsEditModalOpen(false);
-    setSelectedUser(null);
-  };
+    };
 
-  const handleDeleteUser = (userId: string) => {
-    // Don't allow deleting the initial admin
-    if (userId === "1") {
-      toast({
-        variant: "destructive",
-        title: "Cannot delete",
-        description: "The primary administrator account cannot be deleted"
-      });
-      return;
-    }
+    window.addEventListener("storage", handleStorageChange);
     
-    // Remove from users array
-    setUsers(prev => prev.filter(user => user.id !== userId));
-    
-    // Remove from localStorage (in a real app, this would be an API call)
-    const storedUsers = localStorage.getItem('kolabz-users');
-    if (storedUsers) {
-      try {
-        const parsedUsers = JSON.parse(storedUsers);
-        const updatedUsers = parsedUsers.filter((user: any) => user.id !== userId);
-        localStorage.setItem('kolabz-users', JSON.stringify(updatedUsers));
-        
-        toast({
-          title: "User deleted",
-          description: "The user has been removed from the system"
-        });
-      } catch (error) {
-        console.error("Error deleting user:", error);
-        
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to delete user"
-        });
+    // Check for changes every second (for same-window updates)
+    const interval = setInterval(() => {
+      const savedState = localStorage.getItem("adminSidebarCollapsed");
+      if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
+        setSidebarCollapsed(savedState === "true");
       }
-    }
-  };
+    }, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [sidebarCollapsed]);
 
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className="flex-1 flex flex-col">
+      <div className={cn(
+        "flex-1 transition-all duration-300 ease-in-out w-full",
+        sidebarCollapsed ? "md:ml-16" : "md:ml-64",
+        "px-4 md:px-6 lg:px-8"
+      )}>
         <Banner
-          id="users-banner"
-          message="👥 Manage all your users, roles and permissions in one place."
+          id="welcome-banner"
+          message={`👋 Welcome back, ${user?.name}! Here you can manage all platform users.`}
+          variant="rainbow"
           height="2.5rem"
         />
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="space-y-6">
+        <main className="flex-1 overflow-y-auto py-6">
+          <div className="space-y-6 max-w-full">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold">User Management</h1>
                 <p className="text-muted-foreground">
-                  Manage users and their access permissions
+                  Manage your platform users
                 </p>
               </div>
-              
               <Link to="/admin/users/new">
                 <Button>
                   <UserRoundPlus className="mr-2 h-4 w-4" />
@@ -143,36 +141,35 @@ const UserManagement = () => {
               </Link>
             </div>
             
-            <Card>
-              <CardHeader>
-                <CardTitle>Users</CardTitle>
-                <CardDescription>
-                  All registered users across your platform
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <UserTable 
-                  users={users} 
-                  onEdit={handleEditUser} 
-                  onDelete={handleDeleteUser} 
-                />
-              </CardContent>
-            </Card>
-            
-            {isEditModalOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div className="w-full max-w-lg">
-                  <EditUserForm 
-                    user={selectedUser} 
-                    onSave={handleSaveUser} 
-                    onCancel={() => {
-                      setIsEditModalOpen(false);
-                      setSelectedUser(null);
-                    }} 
-                  />
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="sm">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Filter
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />
+                  Export
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Upload className="mr-2 h-4 w-4" />
+                  Import
+                </Button>
               </div>
-            )}
+              
+              {selectedUsers.length > 0 && (
+                <Button variant="destructive" size="sm">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete Selected ({selectedUsers.length})
+                </Button>
+              )}
+            </div>
+            
+            <UserTable 
+              users={mockUsers} 
+              selectedUsers={selectedUsers} 
+              setSelectedUsers={setSelectedUsers} 
+            />
           </div>
         </main>
       </div>
