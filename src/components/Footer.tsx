@@ -35,7 +35,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-white border-t border-gray-100">
+    <footer className="bg-background border-t border-border">
       <div className="container px-4 mx-auto py-12 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-2">
@@ -44,7 +44,7 @@ const Footer = () => {
                 Kolabz
               </span>
             </Link>
-            <p className="text-gray-600 mb-6 max-w-md">
+            <p className="text-muted-foreground mb-6 max-w-md">
               Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.
             </p>
             <div className="flex space-x-4">
@@ -52,7 +52,7 @@ const Footer = () => {
                 <a
                   key={social}
                   href="#"
-                  className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
                   aria-label={social}
                 >
                   <span className="sr-only">{social}</span>
@@ -75,7 +75,7 @@ const Footer = () => {
 
           {footerLinks.map((column) => (
             <div key={column.title}>
-              <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-gray-900 mb-4">
+              <h3 className="font-display font-semibold text-sm uppercase tracking-wider text-foreground mb-4">
                 {column.title}
               </h3>
               <ul className="space-y-3">
@@ -83,7 +83,7 @@ const Footer = () => {
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-600 hover:text-primary transition-colors"
+                      className="text-muted-foreground hover:text-primary transition-colors"
                     >
                       {link.name}
                     </Link>
@@ -94,12 +94,12 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
+          <p className="text-muted-foreground text-sm">
             © {currentYear} Kolabz. All rights reserved.
           </p>
           <div className="mt-4 md:mt-0 flex items-center">
-            <span className="text-xs text-gray-500">Made with care for creators everywhere</span>
+            <span className="text-xs text-muted-foreground">Made with care for creators everywhere</span>
           </div>
         </div>
       </div>

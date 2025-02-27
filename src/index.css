@@ -172,10 +172,22 @@
     -8px -8px 16px rgba(255, 255, 255, 0.7);
 }
 
+.dark .neo-shadow {
+  box-shadow: 
+    8px 8px 16px rgba(0, 0, 0, 0.5),
+    -8px -8px 16px rgba(40, 40, 40, 0.3);
+}
+
 .neo-shadow-inset {
   box-shadow: 
     inset 8px 8px 16px rgba(200, 200, 200, 0.2),
     inset -8px -8px 16px rgba(255, 255, 255, 0.7);
+}
+
+.dark .neo-shadow-inset {
+  box-shadow: 
+    inset 8px 8px 16px rgba(0, 0, 0, 0.5),
+    inset -8px -8px 16px rgba(40, 40, 40, 0.3);
 }
 
 /* Custom scrollbar */
@@ -186,6 +198,11 @@
 
 ::-webkit-scrollbar-track {
   background: rgba(240, 240, 240, 0.8);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgba(40, 40, 40, 0.8);
   border-radius: 4px;
 }
 

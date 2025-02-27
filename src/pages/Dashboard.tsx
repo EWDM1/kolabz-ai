@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import PromptGenerator from "@/components/PromptGenerator";
 import { useToast } from "@/hooks/use-toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,9 +88,9 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background/95">
       {/* Dashboard header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="text-xl font-display font-bold">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
@@ -99,7 +100,7 @@ const Dashboard = () => {
 
           <div className="flex items-center space-x-4">
             <div className="relative w-64 hidden md:block">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
                 placeholder="Search prompts..."
@@ -109,11 +110,13 @@ const Dashboard = () => {
               />
             </div>
 
+            <ThemeToggle />
+
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium hidden md:inline-block">
                 John Doe
               </span>
-              <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                 <User className="h-4 w-4" />
               </div>
             </div>
@@ -125,7 +128,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-12 gap-8">
           {/* Sidebar */}
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-100 sticky top-24">
+            <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
               <div className="p-4">
                 <nav className="space-y-1">
                   <a
@@ -137,21 +140,21 @@ const Dashboard = () => {
                   </a>
                   <a
                     href="#"
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50"
+                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted"
                   >
                     <ListChecks className="h-5 w-5" />
                     <span>My Prompts</span>
                   </a>
                   <a
                     href="#"
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50"
+                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
                     <span>Settings</span>
                   </a>
                   <button
                     onClick={handleLogout}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-600 hover:bg-gray-50 w-full text-left"
+                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
                   >
                     <LogOut className="h-5 w-5" />
                     <span>Logout</span>
@@ -159,18 +162,18 @@ const Dashboard = () => {
                 </nav>
               </div>
 
-              <div className="p-4 border-t border-gray-100">
-                <h4 className="text-xs uppercase tracking-wider text-gray-500 mb-2">
+              <div className="p-4 border-t border-border">
+                <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
                   Subscription
                 </h4>
-                <div className="bg-gray-50 rounded-md p-3">
+                <div className="bg-muted rounded-md p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">Pro Plan</span>
                     <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
                       Active
                     </span>
                   </div>
-                  <div className="text-xs text-gray-500 mb-3">
+                  <div className="text-xs text-muted-foreground mb-3">
                     Next billing on Aug 12, 2023
                   </div>
                   <Button variant="outline" size="sm" className="w-full text-xs">
@@ -194,7 +197,7 @@ const Dashboard = () => {
 
                 <div className="md:hidden">
                   <div className="relative">
-                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="search"
                       placeholder="Search..."
@@ -207,7 +210,7 @@ const Dashboard = () => {
               </div>
 
               <TabsContent value="create" className="space-y-6">
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+                <div className="bg-card rounded-lg shadow-sm border border-border p-6">
                   <h2 className="text-2xl font-display font-bold mb-6">Create New Prompt</h2>
                   <PromptGenerator />
                 </div>
@@ -235,12 +238,12 @@ const Dashboard = () => {
                         {filteredPrompts.map((prompt) => (
                           <div
                             key={prompt.id}
-                            className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-all-200"
+                            className="border border-border rounded-lg p-4 hover:shadow-sm transition-all-200 bg-card"
                           >
                             <div className="flex justify-between items-start mb-2">
                               <div>
                                 <h3 className="font-medium text-lg">{prompt.title}</h3>
-                                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                                   <span>Model: {prompt.model}</span>
                                   <span>•</span>
                                   <span>Created: {prompt.date}</span>
@@ -256,21 +259,21 @@ const Dashboard = () => {
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                  className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
                                   onClick={() => handleDeletePrompt(prompt.id)}
                                 >
                                   <Trash className="h-4 w-4" />
                                 </Button>
                               </div>
                             </div>
-                            <p className="text-gray-600 text-sm line-clamp-2 mb-3">
+                            <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
                               {prompt.content}
                             </p>
                             <div className="flex flex-wrap gap-2">
                               {prompt.tags.map((tag) => (
                                 <span
                                   key={tag}
-                                  className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full"
+                                  className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full"
                                 >
                                   #{tag}
                                 </span>
@@ -281,11 +284,11 @@ const Dashboard = () => {
                       </div>
                     ) : (
                       <div className="text-center py-12">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Search className="h-8 w-8 text-gray-400" />
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Search className="h-8 w-8 text-muted-foreground" />
                         </div>
                         <h3 className="text-lg font-medium mb-2">No prompts found</h3>
-                        <p className="text-gray-500 mb-4">
+                        <p className="text-muted-foreground mb-4">
                           {searchQuery
                             ? `No results matching "${searchQuery}"`
                             : "You haven't saved any prompts yet"}

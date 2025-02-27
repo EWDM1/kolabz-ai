@@ -30,7 +30,7 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-white to-gray-50">
+    <section id="features" className="py-20 md:py-32 bg-gradient-to-b from-background to-background/95">
       <div className="container px-4 mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-sm text-primary font-medium mb-4">
@@ -40,7 +40,7 @@ const Features = () => {
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
             Designed for prompt engineering excellence
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-muted-foreground text-lg">
             Kolabz combines intuitive design with powerful functionality to
             help you generate prompts that get exceptional results from any AI model.
           </p>
@@ -50,13 +50,13 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all-200 border border-gray-100 group"
+              className="bg-card rounded-xl p-6 shadow-sm hover:shadow-md transition-all-200 border border-border group"
             >
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
                 {feature.icon}
               </div>
               <h3 className="text-xl font-display font-semibold mb-3">{feature.title}</h3>
-              <p className="text-gray-600">{feature.description}</p>
+              <p className="text-muted-foreground">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -67,13 +67,13 @@ const Features = () => {
             <div className="absolute left-1/3 bottom-0 w-1/5 h-1/5 rounded-full bg-primary/10 filter blur-xl"></div>
           </div>
 
-          <div className="relative z-10 bg-white rounded-2xl overflow-hidden shadow-xl border border-gray-100 neo-shadow">
+          <div className="relative z-10 bg-card rounded-2xl overflow-hidden shadow-xl border border-border">
             <div className="grid md:grid-cols-2">
               <div className="p-8 md:p-12 flex flex-col justify-center">
                 <h3 className="text-2xl md:text-3xl font-display font-bold mb-6">
                   The science of effective prompting
                 </h3>
-                <p className="text-gray-600 mb-8">
+                <p className="text-muted-foreground mb-8">
                   Our platform is built on extensive research into what makes AI responses
                   most useful. We've distilled these insights into an intuitive system that
                   anyone can use.
@@ -95,14 +95,14 @@ const Features = () => {
                   ))}
                 </ul>
               </div>
-              <div className="bg-gray-50 flex items-center justify-center p-8 md:p-12">
-                <div className="bg-white rounded-xl shadow-sm p-6 max-w-sm w-full">
+              <div className="bg-muted flex items-center justify-center p-8 md:p-12">
+                <div className="bg-card rounded-xl shadow-sm p-6 max-w-sm w-full">
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Target AI Model
                       </label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                      <select className="w-full px-3 py-2 border border-border rounded-md text-sm bg-background">
                         <option>GPT-4</option>
                         <option>Claude 2</option>
                         <option>Gemini</option>
@@ -110,10 +110,10 @@ const Features = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Prompt Purpose
                       </label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                      <select className="w-full px-3 py-2 border border-border rounded-md text-sm bg-background">
                         <option>Content Creation</option>
                         <option>Problem Solving</option>
                         <option>Creative Writing</option>
@@ -121,7 +121,7 @@ const Features = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Tone
                       </label>
                       <div className="grid grid-cols-3 gap-2">
@@ -131,7 +131,7 @@ const Features = () => {
                             className={`text-center px-2 py-1.5 rounded text-xs cursor-pointer ${
                               tone === "Professional"
                                 ? "bg-primary/10 text-primary font-medium"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80"
                             }`}
                           >
                             {tone}
@@ -140,13 +140,13 @@ const Features = () => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-foreground mb-1">
                         Detail Level
                       </label>
-                      <div className="bg-gray-100 rounded-full h-2">
+                      <div className="bg-muted rounded-full h-2">
                         <div className="bg-primary h-full rounded-full w-3/4"></div>
                       </div>
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <div className="flex justify-between text-xs text-muted-foreground mt-1">
                         <span>Basic</span>
                         <span>Detailed</span>
                         <span>Expert</span>

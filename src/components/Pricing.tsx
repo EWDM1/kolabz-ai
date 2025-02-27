@@ -64,7 +64,7 @@ const Pricing = () => {
   ];
 
   return (
-    <section id="pricing" className="py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white">
+    <section id="pricing" className="py-20 md:py-32 bg-gradient-to-b from-background/95 to-background">
       <div className="container px-4 mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-sm text-primary font-medium mb-4">
@@ -74,25 +74,25 @@ const Pricing = () => {
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
             Simple, transparent pricing
           </h2>
-          <p className="text-gray-600 text-lg mb-10">
+          <p className="text-muted-foreground text-lg mb-10">
             Choose the plan that's right for you. All plans include a 7-day free trial.
             No credit card required to start.
           </p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center space-x-4 mb-8">
-            <span className={`text-sm ${!isAnnual ? "text-gray-900 font-medium" : "text-gray-500"}`}>Monthly</span>
+            <span className={`text-sm ${!isAnnual ? "text-foreground font-medium" : "text-muted-foreground"}`}>Monthly</span>
             <button
               onClick={() => setIsAnnual(!isAnnual)}
-              className="relative inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 bg-gray-200"
+              className="relative inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 bg-muted"
             >
               <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow ring-0 transition duration-200 ease-in-out ${
                   isAnnual ? "translate-x-6" : "translate-x-0"
                 }`}
               />
             </button>
-            <span className={`text-sm ${isAnnual ? "text-gray-900 font-medium" : "text-gray-500"}`}>
+            <span className={`text-sm ${isAnnual ? "text-foreground font-medium" : "text-muted-foreground"}`}>
               Annual <span className="text-primary font-medium">Save 16%</span>
             </span>
           </div>
@@ -105,15 +105,15 @@ const Pricing = () => {
               className={`rounded-xl overflow-hidden border transition-all-200 ${
                 plan.highlighted
                   ? "border-primary shadow-xl relative transform md:-translate-y-4"
-                  : "border-gray-200 shadow-sm hover:shadow-md"
+                  : "border-border shadow-sm hover:shadow-md"
               }`}
             >
               {plan.highlighted && (
-                <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold py-1 px-3 rounded-bl">
+                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold py-1 px-3 rounded-bl">
                   Most Popular
                 </div>
               )}
-              <div className="p-6 md:p-8">
+              <div className="p-6 md:p-8 bg-card">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-display font-bold">{plan.name}</h3>
                   {plan.savings && isAnnual && (
@@ -127,9 +127,9 @@ const Pricing = () => {
                     <span className="text-3xl md:text-4xl font-display font-bold">
                       {isAnnual ? plan.price.annual : plan.price.monthly}
                     </span>
-                    <span className="text-gray-500 ml-2">{isAnnual ? "/year" : "/month"}</span>
+                    <span className="text-muted-foreground ml-2">{isAnnual ? "/year" : "/month"}</span>
                   </div>
-                  <p className="text-gray-600 mt-2 text-sm">{plan.description}</p>
+                  <p className="text-muted-foreground mt-2 text-sm">{plan.description}</p>
                 </div>
                 <Button
                   className={`w-full mb-8 ${
@@ -147,10 +147,10 @@ const Pricing = () => {
                         {feature.included ? (
                           <Check className="h-4 w-4 text-primary" />
                         ) : (
-                          <X className="h-4 w-4 text-gray-300" />
+                          <X className="h-4 w-4 text-muted-foreground/30" />
                         )}
                       </div>
-                      <span className={feature.included ? "" : "text-gray-400"}>
+                      <span className={feature.included ? "" : "text-muted-foreground/50"}>
                         {feature.text}
                       </span>
                     </li>
@@ -162,7 +162,7 @@ const Pricing = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-gray-500 text-sm max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
             All plans include a 7-day free trial. No credit card required to start.
             Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.
           </p>
