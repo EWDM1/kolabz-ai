@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { UserTable } from "@/components/admin/UserTable";
+import { UserTable, AdminUser } from "@/components/admin/UserTable";
 import { Button } from "@/components/ui/button";
 import { 
   UserRoundPlus,
@@ -15,7 +15,6 @@ import {
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
-import { AdminUser } from "@/components/admin/UserTable";
 
 const mockUsers: AdminUser[] = [
   {
@@ -107,6 +106,16 @@ const UserManagement = () => {
     };
   }, [sidebarCollapsed]);
 
+  const handleEditUser = (user: AdminUser) => {
+    console.log("Edit user:", user);
+    // Implement edit user functionality here
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    console.log("Delete user:", userId);
+    // Implement delete user functionality here
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -170,6 +179,8 @@ const UserManagement = () => {
               users={mockUsers} 
               selectedUsers={selectedUsers} 
               setSelectedUsers={setSelectedUsers} 
+              onEdit={handleEditUser}
+              onDelete={handleDeleteUser}
             />
           </div>
         </main>

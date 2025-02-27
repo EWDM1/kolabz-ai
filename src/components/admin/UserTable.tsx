@@ -6,17 +6,26 @@ import { Search, Edit, Trash, CheckCircle, XCircle } from "lucide-react";
 import { User, UserRole } from "@/components/AuthContext";
 
 export interface AdminUser extends User {
-  status?: "active" | "inactive";
+  status: "active" | "inactive";
   lastLogin?: string;
+  lastActive?: string; // Add this property to match what's used in mockUsers
 }
 
 interface UserTableProps {
   users: AdminUser[];
-  onEdit: (user: AdminUser) => void;
-  onDelete: (userId: string) => void;
+  selectedUsers: string[]; // Add this to match the props being passed
+  setSelectedUsers: (users: string[]) => void; // Add this to match the props being passed
+  onEdit?: (user: AdminUser) => void;
+  onDelete?: (userId: string) => void;
 }
 
-export function UserTable({ users, onEdit, onDelete }: UserTableProps) {
+export function UserTable({ 
+  users, 
+  selectedUsers,
+  setSelectedUsers,
+  onEdit,
+  onDelete 
+}: UserTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   
   const filteredUsers = users.filter(user => 
@@ -24,6 +33,14 @@ export function UserTable({ users, onEdit, onDelete }: UserTableProps) {
     user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleRowSelection = (userId: string) => {
+    if (selectedUsers.includes(userId)) {
+      setSelectedUsers(selectedUsers.filter(id => id !== userId));
+    } else {
+      setSelectedUsers([...selectedUsers, userId]);
+    }
+  };
 
   const getRoleBadgeClass = (role: UserRole) => {
     switch (role) {
@@ -58,11 +75,25 @@ export function UserTable({ users, onEdit, onDelete }: UserTableProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-muted border-b">
+                <th className="py-3 px-4 text-left font-medium">
+                  <input 
+                    type="checkbox" 
+                    className="rounded border-gray-300"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedUsers(users.map(user => user.id));
+                      } else {
+                        setSelectedUsers([]);
+                      }
+                    }}
+                    checked={selectedUsers.length === users.length && users.length > 0}
+                  />
+                </th>
                 <th className="py-3 px-4 text-left font-medium">User</th>
                 <th className="py-3 px-4 text-left font-medium">Email</th>
                 <th className="py-3 px-4 text-left font-medium">Role</th>
                 <th className="py-3 px-4 text-left font-medium">Status</th>
-                <th className="py-3 px-4 text-left font-medium">Last Login</th>
+                <th className="py-3 px-4 text-left font-medium">Last Active</th>
                 <th className="py-3 px-4 text-right font-medium">Actions</th>
               </tr>
             </thead>
@@ -70,6 +101,14 @@ export function UserTable({ users, onEdit, onDelete }: UserTableProps) {
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <tr key={user.id} className="border-b hover:bg-muted/50">
+                    <td className="py-3 px-4">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-gray-300"
+                        checked={selectedUsers.includes(user.id)}
+                        onChange={() => handleRowSelection(user.id)}
+                      />
+                    </td>
                     <td className="py-3 px-4">{user.name}</td>
                     <td className="py-3 px-4">{user.email}</td>
                     <td className="py-3 px-4">
@@ -90,34 +129,38 @@ export function UserTable({ users, onEdit, onDelete }: UserTableProps) {
                         </span>
                       )}
                     </td>
-                    <td className="py-3 px-4">{user.lastLogin || "Never"}</td>
+                    <td className="py-3 px-4">{user.lastActive || user.lastLogin || "Never"}</td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30"
-                          onClick={() => onEdit(user)}
-                        >
-                          <Edit className="h-4 w-4" />
-                          <span className="sr-only">Edit</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
-                          onClick={() => onDelete(user.id)}
-                        >
-                          <Trash className="h-4 w-4" />
-                          <span className="sr-only">Delete</span>
-                        </Button>
+                        {onEdit && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30"
+                            onClick={() => onEdit(user)}
+                          >
+                            <Edit className="h-4 w-4" />
+                            <span className="sr-only">Edit</span>
+                          </Button>
+                        )}
+                        {onDelete && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+                            onClick={() => onDelete(user.id)}
+                          >
+                            <Trash className="h-4 w-4" />
+                            <span className="sr-only">Delete</span>
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
                     No users found matching your search criteria.
                   </td>
                 </tr>
