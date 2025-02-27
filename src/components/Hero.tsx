@@ -7,6 +7,14 @@ import { useTheme } from "@/components/ThemeProvider";
 const Hero = () => {
   const { theme } = useTheme();
   
+  // Function to handle smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -43,8 +51,12 @@ const Hero = () => {
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/#pricing">See Pricing</Link>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                onClick={() => scrollToSection('pricing')}
+              >
+                See Pricing
               </Button>
             </div>
             
