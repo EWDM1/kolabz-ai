@@ -75,8 +75,10 @@ const AdminDashboard = () => {
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className={cn(
-        "flex-1 flex flex-col transition-all duration-300",
-        sidebarCollapsed ? "md:ml-16" : "md:ml-64"
+        "flex-1 transition-all duration-300 ease-in-out w-full",
+        sidebarCollapsed ? "md:ml-16" : "md:ml-64",
+        // Apply responsive paddings based on sidebar state
+        "px-4 md:px-6 lg:px-8"
       )}>
         <Banner
           id="welcome-banner"
@@ -87,8 +89,8 @@ const AdminDashboard = () => {
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="space-y-6">
+        <main className="flex-1 overflow-y-auto py-6">
+          <div className="space-y-6 max-w-full">
             <div>
               <h1 className="text-3xl font-bold">Dashboard</h1>
               <p className="text-muted-foreground">
