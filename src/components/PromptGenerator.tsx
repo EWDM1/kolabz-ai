@@ -4,230 +4,127 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { Copy, Save, RefreshCw, Sparkles } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 
 const PromptGenerator = () => {
-  const [goal, setGoal] = useState("");
-  const [topic, setTopic] = useState("");
-  const [model, setModel] = useState("gpt-4");
-  const [tone, setTone] = useState("professional");
-  const [detailLevel, setDetailLevel] = useState("medium");
-  const [loading, setLoading] = useState(false);
-  const [generatedPrompt, setGeneratedPrompt] = useState("");
-  const { toast } = useToast();
+  const { theme } = useTheme();
+  const [generatingPrompt, setGeneratingPrompt] = useState(false);
+  const [promptGenerated, setPromptGenerated] = useState(false);
+  const [initialPrompt, setInitialPrompt] = useState("");
+  const [targetModel, setTargetModel] = useState("gpt4");
+  const [promptPurpose, setPromptPurpose] = useState("content-creation");
+  const [optimizedPrompt, setOptimizedPrompt] = useState("");
 
-  const handleGenerate = async () => {
-    if (!goal) {
-      toast({
-        title: "Missing information",
-        description: "Please describe your prompt goal",
-        variant: "destructive",
-      });
-      return;
-    }
+  const handleGeneratePrompt = () => {
+    if (!initialPrompt) return;
 
-    setLoading(true);
+    setGeneratingPrompt(true);
     
-    // Simulate API call to generate prompt
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Mock prompt generation
-    const prefixes = {
-      professional: "Create a comprehensive and detailed",
-      casual: "In a friendly and approachable way, develop a",
-      academic: "Develop a scholarly analysis and thorough",
-    };
-
-    const details = {
-      low: "with the key points clearly outlined.",
-      medium: "with adequate detail and relevant examples.",
-      high: "with extensive depth, nuanced analysis, and comprehensive examples.",
-    };
-
-    const modelAdaptations = {
-      "gpt-4": "Organize the response with clear headings and logical flow.",
-      "claude": "Include both analytical insights and creative perspectives.",
-      "gemini": "Emphasize visual and structural clarity in the output.",
-      "deepseek": "Provide concise, accurate information with factual grounding and technical precision.",
-    };
-
-    const generatedText = `${prefixes[tone as keyof typeof prefixes]} ${goal} about ${topic || "the specified subject"} ${details[detailLevel as keyof typeof details]} ${modelAdaptations[model as keyof typeof modelAdaptations]}`;
-
-    setGeneratedPrompt(generatedText);
-    setLoading(false);
+    // In a real app, this would make an API call to generate the prompt
+    setTimeout(() => {
+      setOptimizedPrompt(
+        `Create a comprehensive ${promptPurpose === "content-creation" ? "content piece" : "analysis"} about ${initialPrompt} with the following structure:\n\n1. Introduction that explains the core concepts\n2. Detailed explanation with examples\n3. Practical applications or implications\n4. Conclusion with key takeaways\n\nInclude relevant data points and ensure information is accurate and up-to-date.`
+      );
+      setGeneratingPrompt(false);
+      setPromptGenerated(true);
+    }, 1500);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(generatedPrompt);
-    toast({
-      title: "Copied to clipboard",
-      description: "The prompt has been copied to your clipboard",
-    });
-  };
-
-  const handleSave = () => {
-    // This would save to user's library in a real app
-    toast({
-      title: "Prompt saved",
-      description: "The prompt has been saved to your library",
-    });
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(optimizedPrompt);
+    // In a real app, this would show a toast notification
   };
 
   return (
-    <div className="grid md:grid-cols-2 gap-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Craft Your Prompt</CardTitle>
-          <CardDescription>
-            Provide a few details to generate an optimized prompt
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="model">Target AI Model</Label>
-            <Select value={model} onValueChange={setModel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select model" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="gpt-4">GPT-4</SelectItem>
-                <SelectItem value="claude">Claude</SelectItem>
-                <SelectItem value="gemini">Gemini</SelectItem>
-                <SelectItem value="deepseek">DeepSeek</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="goal">Prompt Goal</Label>
-            <Textarea
-              id="goal"
-              placeholder="What do you want the AI to do? (e.g., 'Create a marketing plan', 'Explain quantum computing')"
-              value={goal}
-              onChange={(e) => setGoal(e.target.value)}
-              className="resize-none"
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="topic">Topic (optional)</Label>
-            <Input
-              id="topic"
-              placeholder="Specific topic or domain"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="tone">Tone</Label>
-            <Select value={tone} onValueChange={setTone}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select tone" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="professional">Professional</SelectItem>
-                <SelectItem value="casual">Casual</SelectItem>
-                <SelectItem value="academic">Academic</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="detailLevel">Detail Level</Label>
-            <Select value={detailLevel} onValueChange={setDetailLevel}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select detail level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Basic</SelectItem>
-                <SelectItem value="medium">Intermediate</SelectItem>
-                <SelectItem value="high">Expert</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-        <CardFooter>
-          <Button 
-            onClick={handleGenerate} 
-            className="w-full relative overflow-hidden group"
-            disabled={loading}
+    <div className="space-y-6">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <Label htmlFor="targetModel">Target AI Model</Label>
+          <select
+            id="targetModel"
+            value={targetModel}
+            onChange={(e) => setTargetModel(e.target.value)}
+            className={`w-full mt-1.5 px-3 py-2 text-sm rounded-md border ${
+              theme === 'dark'
+                ? 'bg-gray-800 border-gray-700'
+                : 'bg-background border-input'
+            }`}
           >
-            <span className="relative z-10 flex items-center justify-center">
-              {loading ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Optimizing...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Generate Optimized Prompt
-                </>
-              )}
-            </span>
-            <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary group-hover:translate-y-0 translate-y-12 transition-transform duration-300"></span>
-          </Button>
-        </CardFooter>
-      </Card>
+            <option value="gpt4">GPT-4</option>
+            <option value="gpt35">GPT-3.5</option>
+            <option value="claude">Claude</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </div>
 
-      <Card className={`transition-all duration-300 ${generatedPrompt ? "opacity-100" : "opacity-50"}`}>
-        <CardHeader>
-          <CardTitle>Generated Prompt</CardTitle>
-          <CardDescription>
-            Your optimized prompt for {model}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-gray-50 rounded-lg p-4 min-h-[200px] border border-gray-200">
-            {generatedPrompt ? (
-              <p className="whitespace-pre-wrap">{generatedPrompt}</p>
-            ) : (
-              <div className="text-gray-400 flex flex-col items-center justify-center h-full">
-                <Sparkles className="h-6 w-6 mb-2" />
-                <p>Generate a prompt to see the result</p>
-              </div>
-            )}
+        <div>
+          <Label htmlFor="promptPurpose">Prompt Purpose</Label>
+          <select
+            id="promptPurpose"
+            value={promptPurpose}
+            onChange={(e) => setPromptPurpose(e.target.value)}
+            className={`w-full mt-1.5 px-3 py-2 text-sm rounded-md border ${
+              theme === 'dark'
+                ? 'bg-gray-800 border-gray-700'
+                : 'bg-background border-input'
+            }`}
+          >
+            <option value="content-creation">Content Creation</option>
+            <option value="data-analysis">Data Analysis</option>
+            <option value="creative-writing">Creative Writing</option>
+            <option value="technical">Technical Documentation</option>
+            <option value="marketing">Marketing</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="initialPrompt">Your Initial Prompt</Label>
+        <Textarea
+          id="initialPrompt"
+          placeholder="Enter your initial prompt idea here..."
+          value={initialPrompt}
+          onChange={(e) => setInitialPrompt(e.target.value)}
+          className={`w-full h-32 mt-1.5 ${
+            theme === 'dark'
+              ? 'bg-gray-800 border-gray-700'
+              : 'bg-background border-input'
+          }`}
+        />
+      </div>
+
+      <div className="flex justify-end">
+        <Button 
+          onClick={handleGeneratePrompt} 
+          disabled={!initialPrompt || generatingPrompt}
+        >
+          {generatingPrompt ? "Generating..." : "Generate Optimized Prompt"}
+        </Button>
+      </div>
+
+      {promptGenerated && (
+        <div className={`mt-8 border rounded-lg ${
+          theme === 'dark'
+            ? 'border-gray-700 bg-gray-800/50'
+            : 'border-gray-200 bg-gray-50'
+        } p-4`}>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="font-semibold">Optimized Prompt</h3>
+            <Button variant="outline" size="sm" onClick={handleCopyPrompt}>
+              Copy
+            </Button>
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSave}
-            disabled={!generatedPrompt}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            Save
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            disabled={!generatedPrompt}
-          >
-            <Copy className="h-4 w-4 mr-2" />
-            Copy
-          </Button>
-        </CardFooter>
-      </Card>
+          <div className={`p-3 rounded-md ${
+            theme === 'dark'
+              ? 'bg-gray-900 border border-gray-700'
+              : 'bg-white border border-gray-200'
+          }`}>
+            <pre className="whitespace-pre-wrap text-sm font-mono">
+              {optimizedPrompt}
+            </pre>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

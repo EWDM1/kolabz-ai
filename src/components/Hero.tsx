@@ -2,8 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 
 const Hero = () => {
+  const { theme } = useTheme();
+  
   return (
     <section className="relative pt-32 pb-20 md:pt-40 md:pb-24 overflow-hidden">
       {/* Background decoration */}
@@ -27,7 +30,7 @@ const Hero = () => {
               </span>
             </h1>
             
-            <p className="text-lg text-gray-600 animate-slide-up delay-300">
+            <p className="text-lg text-muted-foreground animate-slide-up delay-300">
               Kolabz empowers you to generate optimized prompts for any AI model.
               Create, refine, and save prompts that get better results, every time.
             </p>
@@ -45,7 +48,7 @@ const Hero = () => {
               </Button>
             </div>
             
-            <div className="flex items-center text-sm text-gray-500 pt-2">
+            <div className="flex items-center text-sm text-muted-foreground pt-2">
               <svg className="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
@@ -56,8 +59,8 @@ const Hero = () => {
           {/* Hero image */}
           <div className="relative flex justify-center items-center animate-slide-in-right">
             <div className="relative z-10 w-full max-w-md">
-              <div className="relative shadow-xl rounded-2xl overflow-hidden neo-shadow bg-white p-4">
-                <div className="absolute top-0 left-0 right-0 h-12 bg-gray-50 flex items-center px-4 rounded-t-2xl">
+              <div className={`relative shadow-xl rounded-2xl overflow-hidden ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} p-4`}>
+                <div className={`absolute top-0 left-0 right-0 h-12 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'} flex items-center px-4 rounded-t-2xl`}>
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 rounded-full bg-red-400"></div>
                     <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -65,7 +68,7 @@ const Hero = () => {
                   </div>
                 </div>
                 
-                <div className="pt-10 pb-2 px-2 bg-white rounded-b-lg">
+                <div className={`pt-10 pb-2 px-2 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'} rounded-b-lg`}>
                   <div className="space-y-4">
                     <div className="h-8 flex items-center text-sm font-medium">
                       <img 
@@ -73,23 +76,33 @@ const Hero = () => {
                         alt="Kolabz Icon" 
                         className="h-5 mr-2" 
                       />
-                      Prompt Optimizer
+                      <span className="text-foreground">Prompt Optimizer</span>
                     </div>
                     
                     <div className="space-y-2">
-                      <div className="p-3 rounded-lg border border-gray-200 bg-gray-50">
+                      <div className={`p-3 rounded-lg border ${
+                        theme === 'dark' 
+                          ? 'border-gray-700 bg-gray-800' 
+                          : 'border-gray-200 bg-gray-50'
+                      }`}>
                         <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">Target Model</span>
+                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Target Model</span>
                           <span className="text-xs font-medium text-primary">GPT-4</span>
                         </div>
-                        <div className="mt-1 font-medium text-sm">Create a data visualization dashboard</div>
+                        <div className="mt-1 font-medium text-sm text-foreground">Create a data visualization dashboard</div>
                       </div>
                       
-                      <div className="p-3 rounded-lg border border-gray-200">
-                        <span className="text-xs text-gray-500">Optimized Prompt</span>
-                        <div className="mt-1 text-sm leading-relaxed">
+                      <div className={`p-3 rounded-lg border ${
+                        theme === 'dark' 
+                          ? 'border-gray-700' 
+                          : 'border-gray-200'
+                      }`}>
+                        <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Optimized Prompt</span>
+                        <div className="mt-1 text-sm leading-relaxed text-foreground">
                           Design a comprehensive data visualization dashboard with the following specifications:
-                          <ul className="mt-1 pl-4 space-y-1 list-disc text-xs">
+                          <ul className={`mt-1 pl-4 space-y-1 list-disc text-xs ${
+                            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                          }`}>
                             <li>Include 4-5 key metrics as KPIs at the top</li>
                             <li>Create time-series charts for trend analysis</li>
                             <li>Add filtering capabilities by date range and categories</li>
@@ -100,7 +113,11 @@ const Hero = () => {
                     </div>
                     
                     <div className="flex justify-end space-x-2">
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 hover:bg-gray-200 transition-colors">
+                      <button className={`px-3 py-1.5 text-xs font-medium rounded-md ${
+                        theme === 'dark'
+                          ? 'bg-gray-800 hover:bg-gray-700 text-gray-200'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      } transition-colors`}>
                         Copy
                       </button>
                       <button className="px-3 py-1.5 text-xs font-medium rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
