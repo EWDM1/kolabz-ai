@@ -15,54 +15,55 @@ import {
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
+import { AdminUser } from "@/components/admin/UserTable";
 
-const mockUsers = [
+const mockUsers: AdminUser[] = [
   {
     id: "1",
     name: "John Smith",
     email: "john@example.com",
-    role: "Admin",
-    status: "Active",
+    role: "admin",
+    status: "active",
     lastActive: "Today, 2:30 PM"
   },
   {
     id: "2",
     name: "Sarah Johnson",
     email: "sarah@example.com",
-    role: "Manager",
-    status: "Active",
+    role: "user",
+    status: "active",
     lastActive: "Yesterday, 4:20 PM"
   },
   {
     id: "3",
     name: "Michael Brown",
     email: "michael@example.com",
-    role: "User",
-    status: "Inactive",
+    role: "user",
+    status: "inactive",
     lastActive: "Last week"
   },
   {
     id: "4",
     name: "Lisa Davis",
     email: "lisa@example.com",
-    role: "User",
-    status: "Active",
+    role: "user",
+    status: "active",
     lastActive: "Today, 11:15 AM"
   },
   {
     id: "5",
     name: "James Wilson",
     email: "james@example.com",
-    role: "Manager",
-    status: "Active",
+    role: "user",
+    status: "active",
     lastActive: "Yesterday, 9:45 AM"
   },
   {
     id: "6",
     name: "Emily Taylor",
     email: "emily@example.com",
-    role: "User",
-    status: "Pending",
+    role: "user",
+    status: "inactive",
     lastActive: "Never"
   }
 ];
