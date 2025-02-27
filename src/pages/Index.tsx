@@ -37,20 +37,20 @@ const AboutUs = () => {
               We're on a mission to democratize effective AI communication by empowering users with the tools they need to get the most out of any AI model.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-min">
-            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border h-auto">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border flex flex-col">
               <h4 className="text-lg font-display font-semibold mb-2">Expertise</h4>
-              <p className="text-sm text-muted-foreground">Our team combines expertise in AI research, prompt engineering, and user experience design.</p>
+              <p className="text-sm text-muted-foreground">Our team combines expertise in AI research, prompt engineering, and UX design.</p>
             </div>
-            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border h-auto sm:mt-6">
+            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border flex flex-col">
               <h4 className="text-lg font-display font-semibold mb-2">Community</h4>
               <p className="text-sm text-muted-foreground">Join our growing community of AI enthusiasts and prompt engineering experts.</p>
             </div>
-            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border h-auto">
+            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border flex flex-col">
               <h4 className="text-lg font-display font-semibold mb-2">Innovation</h4>
-              <p className="text-sm text-muted-foreground">We're constantly researching and testing new prompt techniques to improve your results.</p>
+              <p className="text-sm text-muted-foreground">We're constantly researching and testing new prompt techniques.</p>
             </div>
-            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border h-auto sm:mt-6">
+            <div className="bg-card rounded-xl p-4 shadow-sm hover:shadow-md transition-all-200 border border-border flex flex-col">
               <h4 className="text-lg font-display font-semibold mb-2">Support</h4>
               <p className="text-sm text-muted-foreground">We provide responsive support to help you get the most from our platform.</p>
             </div>
