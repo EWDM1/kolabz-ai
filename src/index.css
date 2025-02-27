@@ -14,10 +14,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 174 79% 58%;
+    --primary: 196 100% 45%; /* #00A0E3 Kolabz blue */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 90 64% 46%; /* #5AC02A Kolabz green */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
@@ -31,18 +31,18 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 174 79% 58%;
+    --ring: 196 100% 45%; /* #00A0E3 Kolabz blue */
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 196 100% 45%; /* #00A0E3 Kolabz blue */
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 196 100% 45%; /* #00A0E3 Kolabz blue */
   }
 
   .dark {
@@ -55,10 +55,10 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 174 79% 58%;
+    --primary: 196 100% 45%; /* #00A0E3 Kolabz blue */
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 90 64% 46%; /* #5AC02A Kolabz green */
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
@@ -72,16 +72,16 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 174 79% 58%;
+    --ring: 196 100% 45%; /* #00A0E3 Kolabz blue */
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 196 100% 45%; /* #00A0E3 Kolabz blue */
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 196 100% 45%; /* #00A0E3 Kolabz blue */
   }
 }
 
@@ -113,9 +113,9 @@
 }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(78, 205, 196, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(78, 205, 196, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 160, 227, 0.4); } /* Kolabz blue */
+  70% { box-shadow: 0 0 0 10px rgba(0, 160, 227, 0); } /* Kolabz blue */
+  100% { box-shadow: 0 0 0 0 rgba(0, 160, 227, 0); } /* Kolabz blue */
 }
 
 .animate-fade-in {
@@ -207,12 +207,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(78, 205, 196, 0.6);
+  background: rgba(0, 160, 227, 0.6); /* Kolabz blue */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(78, 205, 196, 0.8);
+  background: rgba(0, 160, 227, 0.8); /* Kolabz blue */
 }
 
 /* Hero image fade */

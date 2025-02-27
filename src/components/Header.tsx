@@ -4,10 +4,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,11 +34,19 @@ const Header = () => {
           className="flex items-center space-x-2"
           aria-label="Kolabz Home"
         >
-          <img 
-            src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-            alt="Kolabz Logo" 
-            className="h-10" 
-          />
+          {theme === 'dark' ? (
+            <img 
+              src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+              alt="Kolabz Logo" 
+              className="h-10" 
+            />
+          ) : (
+            <img 
+              src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+              alt="Kolabz Logo" 
+              className="h-10" 
+            />
+          )}
         </Link>
 
         {/* Desktop Navigation */}
@@ -91,11 +101,19 @@ const Header = () => {
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-10">
             <Link to="/" className="inline-block" onClick={() => setIsMenuOpen(false)}>
-              <img 
-                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
+              {theme === 'dark' ? (
+                <img 
+                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              ) : (
+                <img 
+                  src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              )}
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}

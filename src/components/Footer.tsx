@@ -1,8 +1,10 @@
 
 import { Link } from "react-router-dom";
+import { useTheme } from "@/components/ThemeProvider";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { theme } = useTheme();
 
   const footerLinks = [
     {
@@ -40,11 +42,19 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
-              <img 
-                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                alt="Kolabz Logo" 
-                className="h-10" 
-              />
+              {theme === 'dark' ? (
+                <img 
+                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                  alt="Kolabz Logo" 
+                  className="h-10" 
+                />
+              ) : (
+                <img 
+                  src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                  alt="Kolabz Logo" 
+                  className="h-10" 
+                />
+              )}
             </Link>
             <p className="text-muted-foreground mb-6 max-w-md">
               Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.

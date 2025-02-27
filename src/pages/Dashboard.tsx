@@ -31,10 +31,12 @@ import {
 import PromptGenerator from "@/components/PromptGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const { theme } = useTheme();
 
   // Mock saved prompts data
   const savedPrompts = [
@@ -93,11 +95,19 @@ const Dashboard = () => {
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img 
-              src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-              alt="Kolabz Logo" 
-              className="h-8" 
-            />
+            {theme === 'dark' ? (
+              <img 
+                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            )}
           </Link>
 
           <div className="flex items-center space-x-4">
