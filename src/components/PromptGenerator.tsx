@@ -64,6 +64,7 @@ const PromptGenerator = () => {
       "gpt-4": "Organize the response with clear headings and logical flow.",
       "claude": "Include both analytical insights and creative perspectives.",
       "gemini": "Emphasize visual and structural clarity in the output.",
+      "deepseek": "Provide concise, accurate information with factual grounding and technical precision.",
     };
 
     const generatedText = `${prefixes[tone as keyof typeof prefixes]} ${goal} about ${topic || "the specified subject"} ${details[detailLevel as keyof typeof details]} ${modelAdaptations[model as keyof typeof modelAdaptations]}`;
@@ -108,6 +109,7 @@ const PromptGenerator = () => {
                 <SelectItem value="gpt-4">GPT-4</SelectItem>
                 <SelectItem value="claude">Claude</SelectItem>
                 <SelectItem value="gemini">Gemini</SelectItem>
+                <SelectItem value="deepseek">DeepSeek</SelectItem>
               </SelectContent>
             </Select>
           </div>
