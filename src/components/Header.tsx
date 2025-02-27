@@ -29,13 +29,14 @@ const Header = () => {
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Link 
           to="/" 
-          className="flex items-center space-x-2 text-xl font-display font-bold"
+          className="flex items-center space-x-2"
           aria-label="Kolabz Home"
         >
-          <span className="relative">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">Kolabz</span>
-            <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded opacity-70"></span>
-          </span>
+          <img 
+            src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+            alt="Kolabz Logo" 
+            className="h-10" 
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -89,8 +90,12 @@ const Header = () => {
       >
         <div className="flex flex-col h-full p-8">
           <div className="flex justify-between items-center mb-10">
-            <Link to="/" className="text-xl font-display font-bold" onClick={() => setIsMenuOpen(false)}>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">Kolabz</span>
+            <Link to="/" className="inline-block" onClick={() => setIsMenuOpen(false)}>
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}

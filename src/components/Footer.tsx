@@ -40,9 +40,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
-              <span className="text-2xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
-                Kolabz
-              </span>
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-10" 
+              />
             </Link>
             <p className="text-muted-foreground mb-6 max-w-md">
               Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.

@@ -67,7 +67,12 @@ const Hero = () => {
                 
                 <div className="pt-10 pb-2 px-2 bg-white rounded-b-lg">
                   <div className="space-y-4">
-                    <div className="h-8 flex items-center text-sm font-medium text-primary">
+                    <div className="h-8 flex items-center text-sm font-medium">
+                      <img 
+                        src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                        alt="Kolabz Icon" 
+                        className="h-5 mr-2" 
+                      />
                       Prompt Optimizer
                     </div>
                     

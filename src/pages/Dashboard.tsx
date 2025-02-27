@@ -92,10 +92,12 @@ const Dashboard = () => {
       {/* Dashboard header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="text-xl font-display font-bold">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
-              Kolabz
-            </span>
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+              alt="Kolabz Logo" 
+              className="h-8" 
+            />
           </Link>
 
           <div className="flex items-center space-x-4">
