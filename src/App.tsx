@@ -14,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import AddUser from "./pages/admin/AddUser";
+import EditUser from "./pages/admin/EditUser";
+import UserFilter from "./pages/admin/UserFilter";
 
 // Reset default app CSS
 import "./App.css";
@@ -38,6 +40,8 @@ const App = () => (
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<UserManagement />} />
               <Route path="/admin/users/new" element={<AddUser />} />
+              <Route path="/admin/users/edit/:id" element={<EditUser />} />
+              <Route path="/admin/users/filter" element={<UserFilter />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

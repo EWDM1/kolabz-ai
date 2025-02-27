@@ -12,9 +12,10 @@ import {
   Upload, 
   Trash2
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const mockUsers: AdminUser[] = [
   {
@@ -71,7 +72,9 @@ const UserManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [users, setUsers] = useState<AdminUser[]>(mockUsers);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
@@ -107,13 +110,78 @@ const UserManagement = () => {
   }, [sidebarCollapsed]);
 
   const handleEditUser = (user: AdminUser) => {
-    console.log("Edit user:", user);
-    // Implement edit user functionality here
+    navigate(`/admin/users/edit/${user.id}`, { state: { user } });
   };
 
   const handleDeleteUser = (userId: string) => {
-    console.log("Delete user:", userId);
-    // Implement delete user functionality here
+    // In a real application, this would call an API
+    setUsers(users.filter(user => user.id !== userId));
+    toast({
+      title: "User deleted",
+      description: "The user has been successfully removed.",
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedUsers.length === 0) return;
+    
+    // In a real application, this would call an API
+    setUsers(users.filter(user => !selectedUsers.includes(user.id)));
+    toast({
+      title: `${selectedUsers.length} users deleted`,
+      description: "The selected users have been successfully removed.",
+    });
+    setSelectedUsers([]);
+  };
+
+  const handleFilter = () => {
+    navigate("/admin/users/filter");
+  };
+
+  const handleExport = () => {
+    // In a real application, this would generate a CSV/Excel file
+    const usersJson = JSON.stringify(users, null, 2);
+    const blob = new Blob([usersJson], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "users-export.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Export complete",
+      description: "Users data has been exported successfully.",
+    });
+  };
+
+  const handleImport = () => {
+    // Create a file input and trigger it
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json,.csv";
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // In a real application, this would parse the file and import users
+        toast({
+          title: "Import initiated",
+          description: `File "${file.name}" is being processed.`,
+        });
+        
+        // Simulating successful import after a delay
+        setTimeout(() => {
+          toast({
+            title: "Import complete",
+            description: "Users have been imported successfully.",
+          });
+        }, 1500);
+      }
+    };
+    
+    input.click();
   };
 
   return (
@@ -153,22 +221,22 @@ const UserManagement = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
               <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleFilter}>
                   <Filter className="mr-2 h-4 w-4" />
                   Filter
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleExport}>
                   <Download className="mr-2 h-4 w-4" />
                   Export
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={handleImport}>
                   <Upload className="mr-2 h-4 w-4" />
                   Import
                 </Button>
               </div>
               
               {selectedUsers.length > 0 && (
-                <Button variant="destructive" size="sm">
+                <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete Selected ({selectedUsers.length})
                 </Button>
@@ -176,7 +244,7 @@ const UserManagement = () => {
             </div>
             
             <UserTable 
-              users={mockUsers} 
+              users={users} 
               selectedUsers={selectedUsers} 
               setSelectedUsers={setSelectedUsers} 
               onEdit={handleEditUser}
