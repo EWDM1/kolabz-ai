@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -10,7 +10,6 @@ import {
   CreditCard, 
   Activity,
   ArrowUpRight, 
-  ArrowDownRight,
   UserRoundPlus, 
   Eye
 } from "lucide-react";
@@ -18,10 +17,45 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/components/AuthContext";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Check the sidebar collapsed state from localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem("adminSidebarCollapsed");
+    if (savedState !== null) {
+      setSidebarCollapsed(savedState === "true");
+    }
+  }, []);
+
+  // Listen for storage events to sync sidebar state across components
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedState = localStorage.getItem("adminSidebarCollapsed");
+      if (savedState !== null) {
+        setSidebarCollapsed(savedState === "true");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    
+    // Check for changes every second (for same-window updates)
+    const interval = setInterval(() => {
+      const savedState = localStorage.getItem("adminSidebarCollapsed");
+      if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
+        setSidebarCollapsed(savedState === "true");
+      }
+    }, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [sidebarCollapsed]);
 
   // Mock data for demonstration
   const recentUsers = [
@@ -40,7 +74,10 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className="flex-1 flex flex-col">
+      <div className={cn(
+        "flex-1 flex flex-col transition-all duration-300",
+        sidebarCollapsed ? "md:ml-16" : "md:ml-64"
+      )}>
         <Banner
           id="welcome-banner"
           message={`👋 Welcome back, ${user?.name}! Here's what's happening with your platform today.`}
