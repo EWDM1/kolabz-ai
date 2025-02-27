@@ -6,12 +6,20 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
 
+  // Function to handle smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const footerLinks = [
     {
       title: "Product",
       links: [
-        { name: "Features", href: "/#features" },
-        { name: "Pricing", href: "/#pricing" },
+        { name: "Features", onClick: () => scrollToSection('features'), href: null },
+        { name: "Pricing", onClick: () => scrollToSection('pricing'), href: null },
         { name: "Help Center", href: "#" },
         { name: "Roadmap", href: "#" },
       ],
@@ -19,7 +27,7 @@ const Footer = () => {
     {
       title: "Company",
       links: [
-        { name: "About Us", href: "/#about" },
+        { name: "About Us", onClick: () => scrollToSection('about'), href: null },
         { name: "Careers", href: "#" },
         { name: "Blog", href: "#" },
         { name: "Contact", href: "#" },
@@ -93,12 +101,21 @@ const Footer = () => {
               <ul className="space-y-3">
                 {column.links.map((link) => (
                   <li key={link.name}>
-                    <Link
-                      to={link.href}
-                      className="text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {link.name}
-                    </Link>
+                    {link.href ? (
+                      <Link
+                        to={link.href}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={link.onClick}
+                        className="text-muted-foreground hover:text-primary transition-colors text-left"
+                      >
+                        {link.name}
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>

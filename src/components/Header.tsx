@@ -20,6 +20,16 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Function to handle smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    setIsMenuOpen(false); // Close mobile menu if open
+    
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all-300 ${
@@ -51,15 +61,24 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/#features" className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200">
+          <button 
+            onClick={() => scrollToSection('features')} 
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+          >
             Features
-          </Link>
-          <Link to="/#pricing" className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200">
+          </button>
+          <button 
+            onClick={() => scrollToSection('pricing')} 
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+          >
             Pricing
-          </Link>
-          <Link to="/#about" className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200">
+          </button>
+          <button 
+            onClick={() => scrollToSection('about')} 
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+          >
             About Us
-          </Link>
+          </button>
           <Link to="/dashboard" className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200">
             Dashboard
           </Link>
@@ -125,27 +144,24 @@ const Header = () => {
           </div>
 
           <nav className="flex flex-col space-y-6 text-lg mb-auto">
-            <Link
-              to="/#features"
-              className="py-2 border-b border-border"
-              onClick={() => setIsMenuOpen(false)}
+            <button
+              className="py-2 border-b border-border text-left"
+              onClick={() => scrollToSection('features')}
             >
               Features
-            </Link>
-            <Link
-              to="/#pricing"
-              className="py-2 border-b border-border"
-              onClick={() => setIsMenuOpen(false)}
+            </button>
+            <button
+              className="py-2 border-b border-border text-left"
+              onClick={() => scrollToSection('pricing')}
             >
               Pricing
-            </Link>
-            <Link
-              to="/#about"
-              className="py-2 border-b border-border"
-              onClick={() => setIsMenuOpen(false)}
+            </button>
+            <button
+              className="py-2 border-b border-border text-left"
+              onClick={() => scrollToSection('about')}
             >
               About Us
-            </Link>
+            </button>
             <Link
               to="/dashboard"
               className="py-2 border-b border-border"
