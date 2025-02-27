@@ -166,17 +166,33 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           onClick={onClose}
         >
           {theme === 'dark' ? (
-            <img 
-              src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-              alt="Kolabz Logo" 
-              className="h-8" 
-            />
+            isCollapsed ? (
+              <img 
+                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            )
           ) : (
-            <img 
-              src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-              alt="Kolabz Logo" 
-              className="h-8" 
-            />
+            isCollapsed ? (
+              <img 
+                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            )
           )}
           {!isCollapsed && <span className="font-semibold">Admin</span>}
         </Link>
