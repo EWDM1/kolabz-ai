@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import UserTable from "@/components/admin/UserTable";
+import { UserTable } from "@/components/admin/UserTable";
 import { Button } from "@/components/ui/button";
 import { 
   UserRoundPlus,
