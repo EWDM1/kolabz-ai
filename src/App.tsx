@@ -17,6 +17,7 @@ import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
 import UserFilter from "./pages/admin/UserFilter";
 import ManageSubscription from "./pages/ManageSubscription";
+import MyPrompts from "./pages/MyPrompts";
 
 // Reset default app CSS
 import "./App.css";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/my-prompts" element={<MyPrompts />} />
               <Route path="/manage-subscription" element={<ManageSubscription />} />
               
               {/* Admin Routes */}

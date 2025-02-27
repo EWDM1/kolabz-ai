@@ -85,14 +85,8 @@ const Dashboard = () => {
     // In a real app, this would remove the prompt from the database
   };
 
-  const handleNavigation = (tab: string) => {
-    setActiveTab(tab);
-    // In a real app with actual routing, you might navigate to different URLs
-    // For now, we'll just change the active tab in state
-    toast({
-      title: `Navigated to ${tab}`,
-      description: `You are now viewing the ${tab} section`,
-    });
+  const handleNavigation = (path: string) => {
+    navigate(path);
   };
 
   const handleSettings = () => {
@@ -173,34 +167,22 @@ const Dashboard = () => {
               <div className="p-4">
                 <nav className="space-y-1">
                   <button
-                    onClick={() => handleNavigation("dashboard")}
-                    className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
-                      activeTab === "dashboard" 
-                        ? "bg-primary/10 text-primary font-medium" 
-                        : "text-muted-foreground hover:bg-muted"
-                    }`}
+                    onClick={() => handleNavigation("/dashboard")}
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
                   >
                     <LayoutDashboard className="h-5 w-5" />
                     <span>Dashboard</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("prompts")}
-                    className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
-                      activeTab === "prompts" 
-                        ? "bg-primary/10 text-primary font-medium" 
-                        : "text-muted-foreground hover:bg-muted"
-                    }`}
+                    onClick={() => handleNavigation("/my-prompts")}
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <ListChecks className="h-5 w-5" />
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("settings")}
-                    className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
-                      activeTab === "settings" 
-                        ? "bg-primary/10 text-primary font-medium" 
-                        : "text-muted-foreground hover:bg-muted"
-                    }`}
+                    onClick={() => handleNavigation("/settings")}
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
                     <span>Settings</span>
@@ -327,10 +309,15 @@ const Dashboard = () => {
                             Browse and manage your saved prompts
                           </CardDescription>
                         </div>
-                        <Button size="sm">
-                          <PlusCircle className="h-4 w-4 mr-2" />
-                          New Prompt
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => navigate("/my-prompts")}>
+                            View All Prompts
+                          </Button>
+                          <Button size="sm">
+                            <PlusCircle className="h-4 w-4 mr-2" />
+                            New Prompt
+                          </Button>
+                        </div>
                       </div>
                     </CardHeader>
                     <CardContent>
