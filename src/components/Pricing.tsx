@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,13 +12,11 @@ const Pricing = () => {
       price: { monthly: "$0", annual: "$0" },
       description: "Test drive Kolabz with limited features",
       features: [
-        { text: "10 prompt optimizations", included: true },
-        { text: "Basic LLM support", included: true },
+        { text: "5 prompt optimizations", included: true },
         { text: "Save up to 5 prompts", included: true },
-        { text: "Community templates", included: true },
-        { text: "Advanced optimization features", included: false },
+        { text: "Access to basic templates", included: true },
+        { text: "Basic optimization tools", included: false },
         { text: "Team collaboration", included: false },
-        { text: "API access", included: false },
       ],
       ctaText: "Start Free Trial",
       ctaLink: "/signup",
@@ -31,11 +28,9 @@ const Pricing = () => {
       description: "Perfect for individual creators and professionals",
       features: [
         { text: "Unlimited prompt optimizations", included: true },
-        { text: "All LLM models supported", included: true },
         { text: "Unlimited prompt library", included: true },
-        { text: "Advanced customization", included: true },
+        { text: "Access to all templates", included: true },
         { text: "1-click export to any platform", included: true },
-        { text: "Basic analytics", included: true },
         { text: "Priority support", included: false },
       ],
       ctaText: "Subscribe Now",
@@ -51,9 +46,7 @@ const Pricing = () => {
         { text: "Everything in Pro", included: true },
         { text: "Team workspaces", included: true },
         { text: "Collaboration features", included: true },
-        { text: "Advanced analytics", included: true },
         { text: "Custom templates", included: true },
-        { text: "API access", included: true },
         { text: "Dedicated support", included: true },
       ],
       ctaText: "Subscribe Now",
