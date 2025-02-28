@@ -1,10 +1,10 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   LayoutDashboard,
   ListChecks,
-  Settings as SettingsIcon,
+  Settings,
   LogOut,
   User,
   PlusCircle,
@@ -12,10 +12,14 @@ import {
   Edit,
   Trash,
   Eye,
+  ArrowLeft,
   Filter,
   SlidersHorizontal,
   Download,
-  Check
+  X,
+  Tag,
+  Clock,
+  Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,140 +29,155 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
-import { LanguageSelector } from "@/components/LanguageSelector";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-// Mock data for prompts
-const mockPrompts = [
-  {
-    id: 1,
-    title: "Marketing Campaign Strategy",
-    model: "GPT-4",
-    date: "2023-07-15",
-    content: "Create a comprehensive marketing campaign strategy for a new product launch targeting millennials in the tech industry. Include social media approach, content marketing plan, and budget allocation recommendations.",
-    tags: ["marketing", "strategy", "campaign"],
-    isFavorite: true
-  },
-  {
-    id: 2,
-    title: "Research Literature Review",
-    model: "Claude",
-    date: "2023-07-12",
-    content: "Conduct a thorough literature review on the effects of climate change on marine ecosystems in the Pacific Ocean over the last decade. Include key findings, methodology comparisons, and identify research gaps.",
-    tags: ["research", "academic", "climate"],
-    isFavorite: false
-  },
-  {
-    id: 3,
-    title: "Website UX Improvement",
-    model: "GPT-4",
-    date: "2023-07-10",
-    content: "Analyze the following website design and provide specific recommendations for improving user experience, focusing on navigation, accessibility, and mobile responsiveness. Include wireframe suggestions.",
-    tags: ["design", "ux", "website"],
-    isFavorite: true
-  },
-  {
-    id: 4,
-    title: "Product Description Generator",
-    model: "GPT-3.5",
-    date: "2023-07-05",
-    content: "Create compelling product descriptions for our new line of eco-friendly kitchen gadgets. Each description should be 150-200 words, highlight key features, and incorporate sustainability messaging.",
-    tags: ["copywriting", "ecommerce", "products"],
-    isFavorite: false
-  },
-  {
-    id: 5,
-    title: "Email Sequence for Course Launch",
-    model: "GPT-4",
-    date: "2023-07-02",
-    content: "Design a 5-email sequence for launching our new online course on data analytics. Include subject lines, body copy, and strategic timing recommendations to maximize open rates and conversions.",
-    tags: ["email", "marketing", "course"],
-    isFavorite: true
-  },
-  {
-    id: 6,
-    title: "Code Refactoring Assistant",
-    model: "Claude",
-    date: "2023-06-28",
-    content: "Analyze the following JavaScript code and suggest refactoring improvements for better performance, readability, and maintainability. Explain your recommendations and provide the refactored code.",
-    tags: ["coding", "javascript", "refactoring"],
-    isFavorite: false
-  },
-];
+// Types
+interface Prompt {
+  id: number;
+  title: string;
+  content: string;
+  model: string;
+  date: string;
+  tags: string[];
+  favorite?: boolean;
+}
 
 const MyPrompts = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const { toast } = useToast();
   const { theme } = useTheme();
   const navigate = useNavigate();
-
-  // Get all unique tags from prompts
-  const allTags = Array.from(
-    new Set(mockPrompts.flatMap((prompt) => prompt.tags))
-  ).sort();
-
-  // Get all unique models from prompts
-  const allModels = Array.from(
-    new Set(mockPrompts.map((prompt) => prompt.model))
-  ).sort();
-
-  // Filter prompts based on search, model, tags, and favorites
-  const filteredPrompts = mockPrompts.filter((prompt) => {
-    // Search filter
-    const matchesSearch =
-      searchQuery === "" ||
-      prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prompt.tags.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase())
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("recent");
+  const [selectedPrompts, setSelectedPrompts] = useState<number[]>([]);
+  const [currentCategory, setCurrentCategory] = useState("all");
+  
+  // Mock prompt data
+  const [prompts, setPrompts] = useState<Prompt[]>([
+    {
+      id: 1,
+      title: "Marketing Campaign Strategy",
+      model: "GPT-4",
+      date: "2023-07-15",
+      content: "Create a comprehensive marketing campaign strategy for a new product launch targeting millennials that incorporates social media, influencer partnerships, and traditional marketing channels. Include specific KPIs for measuring success and a timeline for implementation.",
+      tags: ["marketing", "strategy"],
+      favorite: true
+    },
+    {
+      id: 2,
+      title: "Research Literature Review",
+      model: "Claude",
+      date: "2023-07-12",
+      content: "Conduct a thorough literature review on the effects of climate change on marine ecosystems in the past decade. Synthesize key findings, identify gaps in current research, and suggest directions for future studies. Include references to relevant peer-reviewed publications.",
+      tags: ["research", "academic", "climate"],
+    },
+    {
+      id: 3,
+      title: "Website UX Improvement",
+      model: "GPT-4",
+      date: "2023-07-10",
+      content: "Analyze the following website design and provide specific recommendations for improving user experience, focusing on navigation structure, mobile responsiveness, and accessibility compliance. Prioritize suggestions based on potential impact and implementation difficulty.",
+      tags: ["design", "ux"],
+    },
+    {
+      id: 4,
+      title: "Code Review: React Component",
+      model: "Claude",
+      date: "2023-07-08",
+      content: "Review this React component for performance issues, potential bugs, and adherence to best practices. Provide specific code suggestions for improvements, explaining the reasoning behind each recommendation. Consider factors like state management, component lifecycle, and code reusability.",
+      tags: ["coding", "react", "technical"],
+      favorite: true
+    },
+    {
+      id: 5,
+      title: "Product Description Generator",
+      model: "GPT-3.5",
+      date: "2023-07-05",
+      content: "Generate compelling product descriptions for an e-commerce store selling eco-friendly home goods. Each description should highlight unique features, benefits, materials used, and how the product contributes to sustainability. Include appropriate keywords for SEO.",
+      tags: ["ecommerce", "content", "marketing"],
+    },
+    {
+      id: 6,
+      title: "Technical Documentation",
+      model: "GPT-4",
+      date: "2023-07-01",
+      content: "Create clear and comprehensive documentation for a REST API, including endpoint descriptions, request/response formats, authentication requirements, error handling, and usage examples. Format the documentation in markdown suitable for inclusion in a developer portal.",
+      tags: ["technical", "documentation", "api"],
+    },
+  ]);
+  
+  // Filter and sort prompts based on active settings
+  const getFilteredPrompts = () => {
+    let filtered = [...prompts];
+    
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (prompt) =>
+          prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          prompt.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
       );
-
-    // Model filter
-    const matchesModel = !selectedModel || prompt.model === selectedModel;
-
-    // Tags filter
-    const matchesTags =
-      selectedTags.length === 0 ||
-      selectedTags.every((tag) => prompt.tags.includes(tag));
-
-    // Favorites filter
-    const matchesFavorites = !showFavoritesOnly || prompt.isFavorite;
-
-    return matchesSearch && matchesModel && matchesTags && matchesFavorites;
-  });
-
-  const handleToggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag)
-        ? prev.filter((t) => t !== tag)
-        : [...prev, tag]
-    );
+    }
+    
+    // Apply category filter
+    if (currentCategory !== "all") {
+      filtered = filtered.filter(prompt => 
+        prompt.tags.includes(currentCategory)
+      );
+    }
+    
+    // Apply additional filters
+    switch (activeFilter) {
+      case "favorites":
+        filtered = filtered.filter(prompt => prompt.favorite);
+        break;
+      case "gpt4":
+        filtered = filtered.filter(prompt => prompt.model === "GPT-4");
+        break;
+      case "claude":
+        filtered = filtered.filter(prompt => prompt.model === "Claude");
+        break;
+    }
+    
+    // Apply sorting
+    switch (sortBy) {
+      case "recent":
+        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        break;
+      case "oldest":
+        filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        break;
+      case "alphabetical":
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+    }
+    
+    return filtered;
   };
-
-  const handleToggleFavorite = (id: number) => {
-    // In a real app, this would update the state and make an API call
-    toast({
-      title: "Favorite updated",
-      description: "Your prompt has been updated.",
-    });
-  };
-
-  const handleDeletePrompt = (id: number) => {
-    // In a real app, this would delete the prompt via an API call
-    toast({
-      title: "Prompt deleted",
-      description: "The prompt has been deleted from your library",
-    });
-  };
-
+  
+  const filteredPrompts = getFilteredPrompts();
+  
+  // Get unique tags from all prompts for categories
+  const allTags = Array.from(new Set(
+    prompts.flatMap(prompt => prompt.tags)
+  )).sort();
+  
   const handleLogout = () => {
     toast({
       title: "Logged out",
@@ -167,51 +186,131 @@ const MyPrompts = () => {
     navigate("/login");
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+  
+  const toggleFavorite = (id: number) => {
+    setPrompts(prompts.map(prompt => 
+      prompt.id === id 
+        ? { ...prompt, favorite: !prompt.favorite } 
+        : prompt
+    ));
+    
+    const prompt = prompts.find(p => p.id === id);
+    const newStatus = !prompt?.favorite;
+    
+    toast({
+      title: newStatus ? "Added to favorites" : "Removed from favorites",
+      description: `"${prompt?.title}" has been ${newStatus ? "added to" : "removed from"} your favorites`,
+    });
+  };
+  
+  const handleDeletePrompt = (id: number) => {
+    setPrompts(prompts.filter(prompt => prompt.id !== id));
+    toast({
+      title: "Prompt deleted",
+      description: "The prompt has been removed from your library",
+    });
+  };
+  
+  const handleBulkDelete = () => {
+    if (selectedPrompts.length === 0) return;
+    
+    setPrompts(prompts.filter(prompt => !selectedPrompts.includes(prompt.id)));
+    toast({
+      title: "Prompts deleted",
+      description: `${selectedPrompts.length} prompts have been removed from your library`,
+    });
+    setSelectedPrompts([]);
+  };
+  
+  const togglePromptSelection = (id: number) => {
+    setSelectedPrompts(prev => 
+      prev.includes(id) 
+        ? prev.filter(promptId => promptId !== id)
+        : [...prev, id]
+    );
+  };
+  
+  const handleSelectAll = () => {
+    if (selectedPrompts.length === filteredPrompts.length) {
+      setSelectedPrompts([]);
+    } else {
+      setSelectedPrompts(filteredPrompts.map(p => p.id));
+    }
+  };
+  
+  const handleExport = () => {
+    const promptsToExport = selectedPrompts.length > 0 
+      ? prompts.filter(p => selectedPrompts.includes(p.id)) 
+      : filteredPrompts;
+      
+    const exportData = JSON.stringify(promptsToExport, null, 2);
+    const blob = new Blob([exportData], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "my-prompts.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Prompts exported",
+      description: `${promptsToExport.length} prompts have been exported as JSON`,
+    });
+  };
+  
   const handleClearFilters = () => {
-    setSelectedModel(null);
-    setSelectedTags([]);
-    setShowFavoritesOnly(false);
+    setSearchQuery("");
+    setActiveFilter("all");
+    setSortBy("recent");
+    setCurrentCategory("all");
   };
-
-  const handleManageSubscription = () => {
-    navigate("/manage-subscription");
+  
+  const handleCreateNewPrompt = () => {
+    navigate("/dashboard");
+    
+    // In a real app, this would navigate to a create prompt page or open a modal
+    toast({
+      title: "Create new prompt",
+      description: "Opening prompt creator...",
+    });
   };
-
+  
   return (
-    <div className="min-h-screen bg-[#080c16] text-white">
+    <div className="min-h-screen bg-background/95">
       {/* Dashboard header */}
-      <header className="border-b border-gray-800 bg-[#0a101e]">
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            <img 
-              src="/lovable-uploads/df8a7871-32f3-4d83-826c-be5a1d06f2f1.png" 
-              alt="Kolabz Logo" 
-              className="h-8" 
-            />
+            {theme === 'dark' ? (
+              <img 
+                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            )}
           </Link>
 
           <div className="flex items-center space-x-4">
-            <div className="relative w-64 hidden md:block">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="search"
-                placeholder="Search prompts..."
-                className="pl-8 bg-[#131c2e] border-gray-700"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+            <ThemeToggle />
 
-            <div className="hidden md:flex items-center gap-2">
-              <ThemeToggle />
-              <LanguageSelector />
-            </div>
-
-            <div className="flex items-center space-x-2 cursor-pointer">
-              <span className="text-sm font-medium hidden md:inline-block text-gray-300">
+            <div 
+              className="flex items-center space-x-2 cursor-pointer" 
+              onClick={() => handleNavigation("/settings")}
+            >
+              <span className="text-sm font-medium hidden md:inline-block">
                 John Doe
               </span>
-              <div className="h-8 w-8 rounded-full bg-gray-700 text-gray-200 flex items-center justify-center">
+              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                 <User className="h-4 w-4" />
               </div>
             </div>
@@ -219,297 +318,419 @@ const MyPrompts = () => {
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-57px)]">
-        {/* Sidebar */}
-        <div className="w-64 min-h-full bg-[#0a101e] border-r border-gray-800 flex-shrink-0 hidden md:block">
-          <div className="py-6 px-4">
-            <nav className="space-y-1">
-              <Link
-                to="/dashboard"
-                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full"
-              >
-                <LayoutDashboard className="h-5 w-5" />
-                <span>Dashboard</span>
-              </Link>
-              <Link
-                to="/my-prompts"
-                className="flex items-center space-x-3 px-3 py-2 rounded-md bg-[#1a2235] text-blue-400 font-medium w-full"
-              >
-                <ListChecks className="h-5 w-5" />
-                <span>My Prompts</span>
-              </Link>
-              <Link
-                to="/settings"
-                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full"
-              >
-                <SettingsIcon className="h-5 w-5" />
-                <span>Settings</span>
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full text-left"
-              >
-                <LogOut className="h-5 w-5" />
-                <span>Logout</span>
-              </button>
-            </nav>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-12 gap-8">
+          {/* Sidebar */}
+          <div className="col-span-12 md:col-span-3 lg:col-span-2">
+            <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
+              <div className="p-4">
+                <nav className="space-y-1">
+                  <button
+                    onClick={() => handleNavigation("/dashboard")}
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
+                  >
+                    <LayoutDashboard className="h-5 w-5" />
+                    <span>Dashboard</span>
+                  </button>
+                  <button
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
+                  >
+                    <ListChecks className="h-5 w-5" />
+                    <span>My Prompts</span>
+                  </button>
+                  <button
+                    onClick={() => handleNavigation("/settings")}
+                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
+                  >
+                    <Settings className="h-5 w-5" />
+                    <span>Settings</span>
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span>Logout</span>
+                  </button>
+                </nav>
+              </div>
+
+              <div className="p-4 border-t border-border">
+                <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                  SUBSCRIPTION
+                </h4>
+                <div className="bg-muted rounded-md p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Pro Plan</span>
+                    <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
+                      Active
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mb-3">
+                    Next billing on Aug 12, 2023
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-xs"
+                    onClick={() => handleNavigation("/manage-subscription")}
+                  >
+                    Manage Subscription
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="px-4 pt-6 pb-8 border-t border-gray-800">
-            <h4 className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-3">
-              SUBSCRIPTION
-            </h4>
-            <div className="bg-[#131c2e] rounded-md p-3">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Pro Plan</span>
-                <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">
-                  Active
-                </span>
-              </div>
-              <div className="text-xs text-gray-400 mb-3">
-                Next billing on Aug 12, 2023
+          {/* Main content */}
+          <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold">My Prompts</h1>
+                <p className="text-muted-foreground">
+                  Browse, search and manage your saved prompts
+                </p>
               </div>
               <Button 
-                variant="outline" 
-                size="sm" 
-                className="w-full text-xs bg-[#1a2235] border-gray-700 text-gray-300 hover:bg-[#252e3f]" 
-                onClick={handleManageSubscription}
+                onClick={handleCreateNewPrompt}
+                className="hidden sm:flex"
               >
-                Manage Subscription
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Create New Prompt
               </Button>
             </div>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="flex-1 overflow-auto bg-[#080c16]">
-          <div className="container mx-auto p-6">
-            <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-6">
-              <div>
-                <h1 className="text-2xl font-bold text-white flex items-center">
-                  <ListChecks className="mr-2 h-5 w-5 text-blue-400" /> 
-                  My Prompts
-                </h1>
-                <p className="text-gray-400">Manage and organize your saved prompts</p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-                <div className="relative w-full sm:w-64 lg:w-auto">
-                  <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    type="search"
-                    placeholder="Search prompts..."
-                    className="pl-8 w-full bg-[#131c2e] border-gray-700"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  New Prompt
+            
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              {/* Categories & Filters Sidebar */}
+              <div className="md:col-span-3 space-y-6">
+                {/* Mobile Create Button */}
+                <Button 
+                  onClick={handleCreateNewPrompt}
+                  className="w-full sm:hidden"
+                >
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Create New Prompt
                 </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Filters sidebar */}
-              <div className="lg:col-span-1">
-                <Card className="bg-[#0a101e] border-gray-800 sticky top-6">
+              
+                <Card>
                   <CardHeader className="pb-3">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="text-white flex items-center text-lg">
-                        <Filter className="h-4 w-4 mr-2" />
-                        Filters
-                      </CardTitle>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={handleClearFilters}
-                        className="h-8 text-gray-400 hover:text-gray-300 hover:bg-[#131c2e]"
-                      >
-                        Clear
-                      </Button>
-                    </div>
+                    <CardTitle>Categories</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Model filter */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
-                        <SlidersHorizontal className="h-4 w-4 mr-2" /> 
-                        AI Models
-                      </h3>
-                      <div className="space-y-2">
-                        {allModels.map((model) => (
-                          <div key={model} className="flex items-center">
-                            <button
-                              onClick={() => setSelectedModel(selectedModel === model ? null : model)}
-                              className={`flex items-center w-full py-1.5 px-2 rounded-md text-sm ${
-                                selectedModel === model
-                                  ? "bg-blue-600 text-white"
-                                  : "text-gray-300 hover:bg-[#131c2e]"
-                              }`}
-                            >
-                              {selectedModel === model && (
-                                <Check className="h-4 w-4 mr-2 flex-shrink-0" />
-                              )}
-                              <span>{model}</span>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Separator className="bg-gray-800" />
-
-                    {/* Tags filter */}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-300 mb-3">Tags</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {allTags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant={selectedTags.includes(tag) ? "default" : "outline"}
-                            className={`cursor-pointer capitalize ${
-                              selectedTags.includes(tag)
-                                ? "bg-blue-600 hover:bg-blue-700 text-white"
-                                : "bg-[#131c2e] text-gray-300 hover:bg-[#1a2235] border-gray-700"
-                            }`}
-                            onClick={() => handleToggleTag(tag)}
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Separator className="bg-gray-800" />
-
-                    {/* Favorites filter */}
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-medium text-gray-300">Show Favorites Only</h3>
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id="favorites"
-                            checked={showFavoritesOnly}
-                            onChange={() => setShowFavoritesOnly(!showFavoritesOnly)}
-                            className="rounded bg-[#131c2e] border-gray-700 text-blue-600 focus:ring-blue-600"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <Button 
-                        className="w-full bg-[#131c2e] hover:bg-[#1a2235] text-gray-300 border border-gray-700"
+                  <CardContent className="px-2">
+                    <div className="space-y-1">
+                      <button
+                        onClick={() => setCurrentCategory("all")}
+                        className={`w-full px-3 py-2 text-sm rounded-md flex justify-between items-center ${
+                          currentCategory === "all" 
+                            ? "bg-primary/10 text-primary font-medium" 
+                            : "text-foreground hover:bg-muted"
+                        }`}
                       >
-                        <Download className="h-4 w-4 mr-2" />
-                        Export Prompts
-                      </Button>
+                        <span>All Prompts</span>
+                        <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
+                          {prompts.length}
+                        </span>
+                      </button>
+                      
+                      {allTags.map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => setCurrentCategory(tag)}
+                          className={`w-full px-3 py-2 text-sm rounded-md flex justify-between items-center ${
+                            currentCategory === tag
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "text-foreground hover:bg-muted"
+                          }`}
+                        >
+                          <span>#{tag}</span>
+                          <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
+                            {prompts.filter(p => p.tags.includes(tag)).length}
+                          </span>
+                        </button>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-
-              {/* Prompts list */}
-              <div className="lg:col-span-3 space-y-6">
-                {filteredPrompts.length > 0 ? (
-                  <>
-                    <div className="text-sm text-gray-400">
-                      Showing {filteredPrompts.length} of {mockPrompts.length} prompts
+                
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle>Filters</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="font-medium text-sm">Filter by</div>
+                      <div className="space-y-1 pl-1">
+                        <button
+                          onClick={() => setActiveFilter("all")}
+                          className={`block text-sm ${activeFilter === "all" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          All prompts
+                        </button>
+                        <button
+                          onClick={() => setActiveFilter("favorites")}
+                          className={`block text-sm ${activeFilter === "favorites" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          Favorites
+                        </button>
+                        <button
+                          onClick={() => setActiveFilter("gpt4")}
+                          className={`block text-sm ${activeFilter === "gpt4" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          GPT-4 only
+                        </button>
+                        <button
+                          onClick={() => setActiveFilter("claude")}
+                          className={`block text-sm ${activeFilter === "claude" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          Claude only
+                        </button>
+                      </div>
                     </div>
                     
-                    <div className="space-y-4">
-                      {filteredPrompts.map((prompt) => (
-                        <div
-                          key={prompt.id}
-                          className="border border-gray-800 rounded-lg p-4 hover:bg-[#0f1525] transition-all-200 bg-[#131c2e]"
+                    <Separator />
+                    
+                    <div className="space-y-2">
+                      <div className="font-medium text-sm">Sort by</div>
+                      <div className="space-y-1 pl-1">
+                        <button
+                          onClick={() => setSortBy("recent")}
+                          className={`block text-sm ${sortBy === "recent" ? "text-primary font-medium" : "text-muted-foreground"}`}
                         >
-                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
-                            <div>
-                              <h3 className="font-medium text-lg text-white flex items-center">
-                                {prompt.isFavorite && (
-                                  <span className="text-yellow-400 mr-2">★</span>
-                                )}
-                                {prompt.title}
-                              </h3>
-                              <div className="flex flex-wrap items-center gap-2 text-sm text-gray-400">
-                                <span>Model: {prompt.model}</span>
-                                <span className="hidden sm:inline">•</span>
-                                <span>Created: {prompt.date}</span>
-                              </div>
-                            </div>
-                            <div className="flex space-x-2">
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                onClick={() => handleToggleFavorite(prompt.id)}
-                                className="h-8 w-8 p-0 text-gray-400 hover:text-yellow-400 hover:bg-[#1a2235]"
-                                title={prompt.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                              >
-                                <span className="text-lg">{prompt.isFavorite ? "★" : "☆"}</span>
-                              </Button>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-gray-300 hover:bg-[#1a2235]">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-gray-300 hover:bg-[#1a2235]">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="sm" 
-                                className="h-8 w-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-900/30"
-                                onClick={() => handleDeletePrompt(prompt.id)}
-                              >
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-gray-300 text-sm line-clamp-2 mb-3">
-                            {prompt.content}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {prompt.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="text-xs bg-[#1a2235] text-gray-300 px-2 py-1 rounded-full"
-                              >
-                                #{tag}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+                          Most recent
+                        </button>
+                        <button
+                          onClick={() => setSortBy("oldest")}
+                          className={`block text-sm ${sortBy === "oldest" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          Oldest first
+                        </button>
+                        <button
+                          onClick={() => setSortBy("alphabetical")}
+                          className={`block text-sm ${sortBy === "alphabetical" ? "text-primary font-medium" : "text-muted-foreground"}`}
+                        >
+                          Alphabetical
+                        </button>
+                      </div>
                     </div>
-                  </>
-                ) : (
-                  <div className="bg-[#0a101e] rounded-lg border border-gray-800 p-8 text-center">
-                    <div className="w-16 h-16 bg-[#131c2e] rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-medium mb-2 text-white">No prompts found</h3>
-                    <p className="text-gray-400 mb-4">
-                      {searchQuery || selectedModel || selectedTags.length > 0 || showFavoritesOnly
-                        ? "No prompts match your current filters"
-                        : "You haven't saved any prompts yet"}
-                    </p>
-                    {searchQuery || selectedModel || selectedTags.length > 0 || showFavoritesOnly ? (
+                    
+                    {(activeFilter !== "all" || sortBy !== "recent" || currentCategory !== "all") && (
                       <Button 
                         variant="outline" 
+                        size="sm" 
+                        className="w-full mt-2" 
                         onClick={handleClearFilters}
-                        className="bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"
                       >
+                        <X className="mr-2 h-3 w-3" />
                         Clear Filters
                       </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Prompts Panel */}
+              <div className="md:col-span-9">
+                <div className="bg-card rounded-lg border border-border shadow-sm">
+                  <div className="p-4 border-b border-border">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-between">
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input 
+                          placeholder="Search prompts..." 
+                          className="pl-9 w-full"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-10">
+                              <SlidersHorizontal className="mr-2 h-4 w-4" />
+                              Sort & Filter
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => setSortBy("recent")}>
+                              Most recent
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSortBy("oldest")}>
+                              Oldest first
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSortBy("alphabetical")}>
+                              Alphabetical
+                            </DropdownMenuItem>
+                            
+                            <DropdownMenuSeparator />
+                            
+                            <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                            <DropdownMenuItem onClick={() => setActiveFilter("all")}>
+                              All prompts
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setActiveFilter("favorites")}>
+                              Favorites only
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setActiveFilter("gpt4")}>
+                              GPT-4 only
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setActiveFilter("claude")}>
+                              Claude only
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-10"
+                          onClick={handleExport}
+                        >
+                          <Download className="mr-2 h-4 w-4" />
+                          Export
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {selectedPrompts.length > 0 && (
+                    <div className="bg-muted/50 border-b border-border px-4 py-2 flex justify-between items-center">
+                      <div className="text-sm">
+                        {selectedPrompts.length} {selectedPrompts.length === 1 ? "prompt" : "prompts"} selected
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={handleSelectAll}
+                        >
+                          {selectedPrompts.length === filteredPrompts.length ? "Deselect All" : "Select All"}
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm"
+                          onClick={handleBulkDelete}
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete Selected
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="p-4">
+                    {filteredPrompts.length > 0 ? (
+                      <div className="space-y-4">
+                        {filteredPrompts.map((prompt) => (
+                          <div
+                            key={prompt.id}
+                            className={`border rounded-lg p-4 transition-all duration-200 ${
+                              selectedPrompts.includes(prompt.id) 
+                                ? "border-primary bg-primary/5" 
+                                : "border-border hover:border-primary/50 hover:shadow-sm"
+                            }`}
+                          >
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <div className="flex items-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedPrompts.includes(prompt.id)}
+                                    onChange={() => togglePromptSelection(prompt.id)}
+                                    className="mr-3 h-4 w-4 rounded border-gray-300"
+                                  />
+                                  <h3 className="font-medium text-lg">{prompt.title}</h3>
+                                  {prompt.favorite && (
+                                    <button 
+                                      onClick={() => toggleFavorite(prompt.id)}
+                                      className="ml-2 text-yellow-500 hover:text-yellow-600"
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                                        <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                  {!prompt.favorite && (
+                                    <button 
+                                      onClick={() => toggleFavorite(prompt.id)}
+                                      className="ml-2 text-muted-foreground hover:text-yellow-500"
+                                    >
+                                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
+                                  <div className="flex items-center">
+                                    <Clock className="h-3 w-3 mr-1" />
+                                    {prompt.date}
+                                  </div>
+                                  <div>|</div>
+                                  <div>{prompt.model}</div>
+                                </div>
+                              </div>
+                              <div className="flex gap-1">
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                  onClick={() => handleDeletePrompt(prompt.id)}
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            <p className="text-muted-foreground text-sm line-clamp-2 mt-2 mb-3">
+                              {prompt.content}
+                            </p>
+                            
+                            <div className="flex flex-wrap gap-2">
+                              {prompt.tags.map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full flex items-center"
+                                >
+                                  <Tag className="h-3 w-3 mr-1" />
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     ) : (
-                      <Button className="bg-blue-600 hover:bg-blue-700">
-                        <PlusCircle className="h-4 w-4 mr-2" />
-                        Create Your First Prompt
-                      </Button>
+                      <div className="text-center py-16">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Search className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                        <h3 className="text-lg font-medium mb-2">No prompts found</h3>
+                        <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                          {searchQuery || activeFilter !== "all" || currentCategory !== "all"
+                            ? "No prompts match your current filters. Try adjusting or clearing your filters."
+                            : "You haven't saved any prompts yet. Create your first prompt to get started."}
+                        </p>
+                        {searchQuery || activeFilter !== "all" || currentCategory !== "all" ? (
+                          <Button onClick={handleClearFilters}>
+                            Clear All Filters
+                          </Button>
+                        ) : (
+                          <Button onClick={handleCreateNewPrompt}>
+                            <PlusCircle className="mr-2 h-4 w-4" />
+                            Create Your First Prompt
+                          </Button>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
