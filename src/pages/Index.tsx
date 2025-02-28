@@ -10,10 +10,11 @@ import SupabaseConnectionTest from "@/components/SupabaseConnectionTest";
 const Index = () => {
   const [showConnectionTest, setShowConnectionTest] = useState(false);
 
-  // Add a key combo to show the connection test (Ctrl+Shift+S)
+  // Add a key combo to show the connection test (Cmd+Shift+S on Mac, Ctrl+Shift+S on Windows/Linux)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+      // Check for Cmd+Shift+S on Mac or Ctrl+Shift+S on other platforms
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'S') {
         e.preventDefault();
         setShowConnectionTest(prev => !prev);
       }
