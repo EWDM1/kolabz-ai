@@ -15,7 +15,8 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronLeft,
-  PanelLeft
+  PanelLeft,
+  CreditCard
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -308,6 +309,16 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             isCollapsed={isCollapsed}
           />
         </SidebarGroup>
+        
+        {/* Added the new Stripe Integration menu item */}
+        <SidebarItem
+          icon={<CreditCard className="h-5 w-5" />}
+          label="Stripe Integration"
+          href="/admin/stripe"
+          isActive={path === "/admin/stripe"}
+          onClick={onClose}
+          isCollapsed={isCollapsed}
+        />
         
         {!isCollapsed && <div className="h-px bg-border" />}
         

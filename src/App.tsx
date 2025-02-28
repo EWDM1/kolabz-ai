@@ -18,6 +18,7 @@ import EditUser from "./pages/admin/EditUser";
 import UserFilter from "./pages/admin/UserFilter";
 import ManageSubscription from "./pages/ManageSubscription";
 import MyPrompts from "./pages/MyPrompts";
+import StripeSettings from "./pages/admin/StripeSettings";
 
 // Reset default app CSS
 import "./App.css";
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/admin/users/new" element={<AddUser />} />
               <Route path="/admin/users/edit/:id" element={<EditUser />} />
               <Route path="/admin/users/filter" element={<UserFilter />} />
+              <Route path="/admin/stripe" element={<StripeSettings />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
