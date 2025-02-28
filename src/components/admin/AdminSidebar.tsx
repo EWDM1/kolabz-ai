@@ -25,7 +25,10 @@ import {
   List,
   BookOpen,
   Folder,
-  Layout
+  Layout,
+  Mail,
+  MessageSquareText,
+  BellRing,
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -159,267 +162,313 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   };
 
   return (
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 z-30 transform overflow-auto bg-card border-r border-border transition-all duration-300 ease-in-out md:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full",
-        isCollapsed ? "w-16" : "w-64"
-      )}
-    >
-      <div className="flex h-16 items-center border-b border-border px-3">
-        <Link 
-          to="/admin" 
-          className={cn(
-            "flex items-center gap-2",
-            isCollapsed && "justify-center"
-          )}
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-background/80 backdrop-blur-sm md:hidden"
           onClick={onClose}
-        >
-          {theme === 'dark' ? (
-            isCollapsed ? (
-              <img 
-                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 transform overflow-auto bg-card border-r border-border transition-all duration-300 ease-in-out md:translate-x-0",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          isCollapsed ? "w-16" : "w-64"
+        )}
+      >
+        <div className="flex h-16 items-center border-b border-border px-3">
+          <Link 
+            to="/admin" 
+            className={cn(
+              "flex items-center gap-2",
+              isCollapsed && "justify-center"
+            )}
+            onClick={onClose}
+          >
+            {theme === 'dark' ? (
+              isCollapsed ? (
+                <img 
+                  src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              ) : (
+                <img 
+                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              )
             ) : (
-              <img 
-                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            )
-          ) : (
-            isCollapsed ? (
-              <img 
-                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            ) : (
-              <img 
-                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            )
-          )}
-          {!isCollapsed && <span className="font-semibold">Admin</span>}
-        </Link>
-        <button 
-          className={cn(
-            "ml-auto p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20"
-          )}
-          onClick={toggleCollapse}
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {isCollapsed ? <PanelLeft className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-        </button>
-      </div>
-      
-      <div className={cn("py-6", isCollapsed ? "px-3" : "px-4", "space-y-4")}>
-        <div className="space-y-1">
+              isCollapsed ? (
+                <img 
+                  src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              ) : (
+                <img 
+                  src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                  alt="Kolabz Logo" 
+                  className="h-8" 
+                />
+              )
+            )}
+            {!isCollapsed && <span className="font-semibold">Admin</span>}
+          </Link>
+          <button 
+            className={cn(
+              "ml-auto p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors",
+              "focus:outline-none focus:ring-2 focus:ring-primary/20"
+            )}
+            onClick={toggleCollapse}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isCollapsed ? <PanelLeft className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          </button>
+        </div>
+        
+        <div className={cn("py-6", isCollapsed ? "px-3" : "px-4", "space-y-4")}>
+          <div className="space-y-1">
+            <SidebarItem
+              icon={<LayoutDashboard className="h-5 w-5" />}
+              label="Dashboard"
+              href="/admin"
+              isActive={path === "/admin"}
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            
+            <SidebarItem
+              icon={<PieChart className="h-5 w-5" />}
+              label="Analytics"
+              href="/admin/analytics"
+              isActive={path === "/admin/analytics"}
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </div>
+          
+          {!isCollapsed && <div className="h-px bg-border" />}
+          
+          <SidebarGroup
+            icon={<Users className="h-5 w-5" />}
+            label="User Management"
+            defaultOpen={path.includes("/admin/users")}
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem
+              icon={<Users className="h-4 w-4" />}
+              label="All Users"
+              href="/admin/users"
+              isActive={path === "/admin/users"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Users className="h-4 w-4" />}
+              label="Add New User"
+              href="/admin/users/new"
+              isActive={path === "/admin/users/new"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </SidebarGroup>
+          
+          <SidebarGroup
+            icon={<Globe className="h-5 w-5" />}
+            label="Website"
+            defaultOpen={path.includes("/admin/website") || path.includes("/admin/landing")}
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem
+              icon={<Files className="h-4 w-4" />}
+              label="All Pages"
+              href="/admin/website/pages"
+              isActive={path === "/admin/website/pages"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<PlusCircle className="h-4 w-4" />}
+              label="Add New Page"
+              href="/admin/website/new-page"
+              isActive={path === "/admin/website/new-page"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Layout className="h-4 w-4" />}
+              label="Homepage"
+              href="/admin/landing/edit"
+              isActive={path === "/admin/landing/edit"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Pencil className="h-4 w-4" />}
+              label="Visual Editor"
+              href="/admin/landing/editor"
+              isActive={path === "/admin/landing/editor"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Search className="h-4 w-4" />}
+              label="SEO Settings"
+              href="/admin/landing/seo"
+              isActive={path === "/admin/landing/seo"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </SidebarGroup>
+          
+          <SidebarGroup
+            icon={<BookOpen className="h-5 w-5" />}
+            label="Blog"
+            defaultOpen={path.includes("/admin/blog")}
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem
+              icon={<List className="h-4 w-4" />}
+              label="All Posts"
+              href="/admin/blog/posts"
+              isActive={path === "/admin/blog/posts"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<PlusCircle className="h-4 w-4" />}
+              label="Add New Post"
+              href="/admin/blog/new-post"
+              isActive={path === "/admin/blog/new-post"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Folder className="h-4 w-4" />}
+              label="Categories"
+              href="/admin/blog/categories"
+              isActive={path === "/admin/blog/categories"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Tag className="h-4 w-4" />}
+              label="Tags"
+              href="/admin/blog/tags"
+              isActive={path === "/admin/blog/tags"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </SidebarGroup>
+          
+          <SidebarGroup
+            icon={<Tag className="h-5 w-5" />}
+            label="Marketing"
+            defaultOpen={path.includes("/admin/marketing")}
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem
+              icon={<Tag className="h-4 w-4" />}
+              label="Discount Codes"
+              href="/admin/marketing/discounts"
+              isActive={path === "/admin/marketing/discounts"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </SidebarGroup>
+          
+          <SidebarGroup
+            icon={<Mail className="h-5 w-5" />}
+            label="Communications"
+            defaultOpen={path.includes("/admin/email") || path.includes("/admin/chat") || path.includes("/admin/notifications")}
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem
+              icon={<Mail className="h-4 w-4" />}
+              label="Email"
+              href="/admin/email"
+              isActive={path === "/admin/email"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<MessageSquareText className="h-4 w-4" />}
+              label="Chat"
+              href="/admin/chat"
+              isActive={path === "/admin/chat"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<BellRing className="h-4 w-4" />}
+              label="Notifications"
+              href="/admin/notifications"
+              isActive={path === "/admin/notifications"}
+              isSubItem
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+          </SidebarGroup>
+          
           <SidebarItem
-            icon={<LayoutDashboard className="h-5 w-5" />}
-            label="Dashboard"
-            href="/admin"
-            isActive={path === "/admin"}
+            icon={<Code className="h-5 w-5" />}
+            label="External Integrations"
+            href="/admin/integrations"
+            isActive={path === "/admin/integrations"}
             onClick={onClose}
             isCollapsed={isCollapsed}
           />
           
           <SidebarItem
-            icon={<PieChart className="h-5 w-5" />}
-            label="Analytics"
-            href="/admin/analytics"
-            isActive={path === "/admin/analytics"}
+            icon={<CreditCard className="h-5 w-5" />}
+            label="Stripe Integration"
+            href="/admin/stripe"
+            isActive={path === "/admin/stripe"}
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          
+          {!isCollapsed && <div className="h-px bg-border" />}
+          
+          <SidebarItem
+            icon={<Settings className="h-5 w-5" />}
+            label="Settings"
+            href="/admin/settings"
+            isActive={path === "/admin/settings"}
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          
+          <SidebarItem
+            icon={<HelpCircle className="h-5 w-5" />}
+            label="Help & Support"
+            href="/admin/help"
+            isActive={path === "/admin/help"}
             onClick={onClose}
             isCollapsed={isCollapsed}
           />
         </div>
-        
-        {!isCollapsed && <div className="h-px bg-border" />}
-        
-        <SidebarGroup
-          icon={<Users className="h-5 w-5" />}
-          label="User Management"
-          defaultOpen={path.includes("/admin/users")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Users className="h-4 w-4" />}
-            label="All Users"
-            href="/admin/users"
-            isActive={path === "/admin/users"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Users className="h-4 w-4" />}
-            label="Add New User"
-            href="/admin/users/new"
-            isActive={path === "/admin/users/new"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<Globe className="h-5 w-5" />}
-          label="Website"
-          defaultOpen={path.includes("/admin/website") || path.includes("/admin/landing")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Files className="h-4 w-4" />}
-            label="All Pages"
-            href="/admin/website/pages"
-            isActive={path === "/admin/website/pages"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<PlusCircle className="h-4 w-4" />}
-            label="Add New Page"
-            href="/admin/website/new-page"
-            isActive={path === "/admin/website/new-page"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Layout className="h-4 w-4" />}
-            label="Homepage"
-            href="/admin/landing/edit"
-            isActive={path === "/admin/landing/edit"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Pencil className="h-4 w-4" />}
-            label="Visual Editor"
-            href="/admin/landing/editor"
-            isActive={path === "/admin/landing/editor"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Search className="h-4 w-4" />}
-            label="SEO Settings"
-            href="/admin/landing/seo"
-            isActive={path === "/admin/landing/seo"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<BookOpen className="h-5 w-5" />}
-          label="Blog"
-          defaultOpen={path.includes("/admin/blog")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<List className="h-4 w-4" />}
-            label="All Posts"
-            href="/admin/blog/posts"
-            isActive={path === "/admin/blog/posts"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<PlusCircle className="h-4 w-4" />}
-            label="Add New Post"
-            href="/admin/blog/new-post"
-            isActive={path === "/admin/blog/new-post"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Folder className="h-4 w-4" />}
-            label="Categories"
-            href="/admin/blog/categories"
-            isActive={path === "/admin/blog/categories"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Tag className="h-4 w-4" />}
-            label="Tags"
-            href="/admin/blog/tags"
-            isActive={path === "/admin/blog/tags"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<Tag className="h-5 w-5" />}
-          label="Marketing"
-          defaultOpen={path.includes("/admin/marketing")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Tag className="h-4 w-4" />}
-            label="Discount Codes"
-            href="/admin/marketing/discounts"
-            isActive={path === "/admin/marketing/discounts"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarItem
-          icon={<Code className="h-5 w-5" />}
-          label="External Integrations"
-          href="/admin/integrations"
-          isActive={path === "/admin/integrations"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        <SidebarItem
-          icon={<CreditCard className="h-5 w-5" />}
-          label="Stripe Integration"
-          href="/admin/stripe"
-          isActive={path === "/admin/stripe"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        {!isCollapsed && <div className="h-px bg-border" />}
-        
-        <SidebarItem
-          icon={<Settings className="h-5 w-5" />}
-          label="Settings"
-          href="/admin/settings"
-          isActive={path === "/admin/settings"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        <SidebarItem
-          icon={<HelpCircle className="h-5 w-5" />}
-          label="Help & Support"
-          href="/admin/help"
-          isActive={path === "/admin/help"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 
