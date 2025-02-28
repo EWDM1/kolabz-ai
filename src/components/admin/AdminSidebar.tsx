@@ -1,425 +1,238 @@
 
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Settings, 
-  FileText, 
-  Tag, 
-  PieChart, 
-  Edit, 
-  Globe, 
-  MessageSquare, 
-  HelpCircle, 
-  ChevronDown,
-  ChevronRight,
+import { useNavigate, useLocation } from "react-router-dom";
+import {
   ChevronLeft,
-  PanelLeft,
+  ChevronRight,
+  Users,
+  Settings,
   CreditCard,
-  Code,
-  Pencil,
-  Search,
-  Files,
-  PlusCircle,
-  List,
-  BookOpen,
-  Folder,
-  Layout
+  Globe,
+  BarChart3,
+  FileText,
+  Mail,
+  MessageSquareText,
+  BellRing,
 } from "lucide-react";
-import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/components/AuthContext";
+import { useLanguage } from "@/components/LanguageContext";
 
-interface SidebarItemProps {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-  isActive: boolean;
-  isSubItem?: boolean;
-  onClick?: () => void;
-  isCollapsed?: boolean;
+// Define sidebar navigation items
+const navigationItems = [
+  {
+    title: "Core",
+    items: [
+      {
+        title: "dashboard",
+        href: "/admin",
+        icon: BarChart3,
+        adminOnly: false,
+      },
+      {
+        title: "users",
+        href: "/admin/users",
+        icon: Users,
+        adminOnly: false,
+      },
+      {
+        title: "payments",
+        href: "/admin/stripe",
+        icon: CreditCard,
+        adminOnly: true,
+      },
+      {
+        title: "settings",
+        href: "/admin/settings",
+        icon: Settings,
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    title: "Website",
+    items: [
+      {
+        title: "landing",
+        href: "/admin/landing/edit",
+        icon: Globe,
+        adminOnly: true,
+      },
+      {
+        title: "blog",
+        href: "/admin/blog/posts",
+        icon: FileText,
+        adminOnly: true,
+      },
+    ],
+  },
+  {
+    title: "Communications",
+    items: [
+      {
+        title: "email",
+        href: "/admin/email",
+        icon: Mail,
+        adminOnly: true,
+      },
+      {
+        title: "chat",
+        href: "/admin/chat",
+        icon: MessageSquareText,
+        adminOnly: true,
+      },
+      {
+        title: "notifications",
+        href: "/admin/notifications",
+        icon: BellRing,
+        adminOnly: true,
+      },
+    ],
+  },
+];
+
+// Define the props for the AdminSidebar component
+interface AdminSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-const SidebarItem = ({ 
-  icon, 
-  label, 
-  href, 
-  isActive, 
-  isSubItem = false, 
-  onClick,
-  isCollapsed = false
-}: SidebarItemProps) => (
-  <Link
-    to={href}
-    className={cn(
-      "flex items-center gap-3 rounded-md px-3 py-2 transition-colors hover:bg-primary/10 relative group",
-      isActive && "bg-primary/10 text-primary font-medium",
-      isSubItem && "ml-7 text-sm",
-      isCollapsed && "justify-center px-2"
-    )}
-    onClick={onClick}
-  >
-    <span className="flex-shrink-0">{icon}</span>
-    {!isCollapsed && <span>{label}</span>}
-    {isCollapsed && (
-      <div className="absolute left-full ml-2 rounded-md px-2 py-1 bg-popover text-popover-foreground 
-        shadow-md invisible opacity-0 translate-x-1 group-hover:visible group-hover:opacity-100 
-        group-hover:translate-x-0 transition-all whitespace-nowrap z-50">
-        {label}
-      </div>
-    )}
-  </Link>
-);
-
-interface SidebarGroupProps {
-  icon: React.ReactNode;
-  label: string;
-  children?: React.ReactNode;
-  defaultOpen?: boolean;
-  isCollapsed?: boolean;
-}
-
-const SidebarGroup = ({ 
-  icon, 
-  label, 
-  children, 
-  defaultOpen = false,
-  isCollapsed = false 
-}: SidebarGroupProps) => {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  // Close group when sidebar collapses
-  useEffect(() => {
-    if (isCollapsed) {
-      setIsOpen(false);
-    }
-  }, [isCollapsed]);
-
-  if (isCollapsed) {
-    return (
-      <div className="relative group">
-        <button
-          className={cn(
-            "flex w-full items-center justify-center rounded-md p-2 transition-colors hover:bg-primary/10",
-          )}
-        >
-          {icon}
-          <div className="absolute left-full ml-2 rounded-md bg-popover text-popover-foreground 
-            shadow-md invisible opacity-0 translate-x-1 group-hover:visible group-hover:opacity-100 
-            group-hover:translate-x-0 transition-all z-50 px-3 py-2 whitespace-nowrap">
-            {label}
-          </div>
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-1">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={cn(
-          "flex w-full items-center justify-between rounded-md px-3 py-2 transition-colors hover:bg-primary/10",
-          isOpen && "text-primary font-medium"
-        )}
-      >
-        <div className="flex items-center gap-3">
-          {icon}
-          <span>{label}</span>
-        </div>
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronRight className="h-4 w-4" />
-        )}
-      </button>
-      {isOpen && <div className="pt-1 pb-2">{children}</div>}
-    </div>
-  );
-};
-
-const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const AdminSidebar = ({ isOpen, onClose }: AdminSidebarProps) => {
+  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
-  const { theme } = useTheme();
-  const path = location.pathname;
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const { isSuperAdmin } = useAuth();
+  const { t } = useLanguage();
 
-  // Store the collapsed state in localStorage
+  // Load collapsed state from localStorage on mount
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
-      setIsCollapsed(savedState === "true");
+      setCollapsed(savedState === "true");
     }
   }, []);
 
-  const toggleCollapse = () => {
-    const newState = !isCollapsed;
-    setIsCollapsed(newState);
-    localStorage.setItem("adminSidebarCollapsed", String(newState));
+  // Save collapsed state to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("adminSidebarCollapsed", String(collapsed));
+    // Dispatch a storage event so other components can react
+    window.dispatchEvent(new Event("storage"));
+  }, [collapsed]);
+
+  const handleNavigation = (href: string) => {
+    navigate(href);
+    if (isOpen) {
+      onClose();
+    }
   };
 
   return (
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 z-30 transform overflow-auto bg-card border-r border-border transition-all duration-300 ease-in-out md:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full",
-        isCollapsed ? "w-16" : "w-64"
+    <>
+      {/* Mobile overlay */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
+          onClick={onClose}
+        />
       )}
-    >
-      <div className="flex h-16 items-center border-b border-border px-3">
-        <Link 
-          to="/admin" 
-          className={cn(
-            "flex items-center gap-2",
-            isCollapsed && "justify-center"
+
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "fixed top-0 bottom-0 left-0 z-50 flex-col md:flex",
+          "bg-card border-r border-border",
+          "transition-all duration-300 ease-in-out",
+          collapsed ? "w-16" : "w-64",
+          isOpen ? "flex" : "hidden md:flex"
+        )}
+      >
+        <div className="flex h-16 items-center justify-between px-4 border-b border-border">
+          {!collapsed && (
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold">{t("admin.panel") || "Admin"}</h2>
+            </div>
           )}
-          onClick={onClose}
-        >
-          {theme === 'dark' ? (
-            isCollapsed ? (
-              <img 
-                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            ) : (
-              <img 
-                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            )
-          ) : (
-            isCollapsed ? (
-              <img 
-                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            ) : (
-              <img 
-                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            )
-          )}
-          {!isCollapsed && <span className="font-semibold">Admin</span>}
-        </Link>
-        <button 
-          className={cn(
-            "ml-auto p-1.5 rounded-md text-muted-foreground hover:bg-muted transition-colors",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20"
-          )}
-          onClick={toggleCollapse}
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {isCollapsed ? <PanelLeft className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-        </button>
-      </div>
-      
-      <div className={cn("py-6", isCollapsed ? "px-3" : "px-4", "space-y-4")}>
-        <div className="space-y-1">
-          <SidebarItem
-            icon={<LayoutDashboard className="h-5 w-5" />}
-            label="Dashboard"
-            href="/admin"
-            isActive={path === "/admin"}
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
           
-          <SidebarItem
-            icon={<PieChart className="h-5 w-5" />}
-            label="Analytics"
-            href="/admin/analytics"
-            isActive={path === "/admin/analytics"}
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
         </div>
+
+        <ScrollArea className="flex-1 px-3 py-4">
+          <div className="space-y-6">
+            {navigationItems.map((group, groupIndex) => {
+              // Filter items based on admin permissions
+              const visibleItems = group.items.filter(
+                (item) => !item.adminOnly || isSuperAdmin
+              );
+              
+              // Only show the group if it has visible items
+              if (visibleItems.length === 0) return null;
+              
+              return (
+                <div key={groupIndex} className="space-y-2">
+                  {!collapsed && (
+                    <h3 className="text-xs uppercase tracking-wider text-muted-foreground px-2">
+                      {t(`admin.group.${group.title.toLowerCase()}`) || group.title}
+                    </h3>
+                  )}
+                  <nav className="space-y-1">
+                    {visibleItems.map((item, itemIndex) => {
+                      const isActive = location.pathname === item.href || 
+                                      (item.href !== "/admin" && location.pathname.startsWith(item.href));
+                      
+                      return (
+                        <Button
+                          key={itemIndex}
+                          variant="ghost"
+                          size={collapsed ? "icon" : "sm"}
+                          className={cn(
+                            "w-full justify-start",
+                            isActive
+                              ? "bg-muted font-medium text-foreground"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                          )}
+                          onClick={() => handleNavigation(item.href)}
+                        >
+                          <item.icon className={cn("h-5 w-5", collapsed ? "" : "mr-2")} />
+                          {!collapsed && <span>{t(`admin.${item.title}`) || item.title}</span>}
+                        </Button>
+                      );
+                    })}
+                  </nav>
+                </div>
+              );
+            })}
+          </div>
+        </ScrollArea>
         
-        {!isCollapsed && <div className="h-px bg-border" />}
-        
-        <SidebarGroup
-          icon={<Users className="h-5 w-5" />}
-          label="User Management"
-          defaultOpen={path.includes("/admin/users")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Users className="h-4 w-4" />}
-            label="All Users"
-            href="/admin/users"
-            isActive={path === "/admin/users"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Users className="h-4 w-4" />}
-            label="Add New User"
-            href="/admin/users/new"
-            isActive={path === "/admin/users/new"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<Globe className="h-5 w-5" />}
-          label="Website"
-          defaultOpen={path.includes("/admin/website") || path.includes("/admin/landing")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Files className="h-4 w-4" />}
-            label="All Pages"
-            href="/admin/website/pages"
-            isActive={path === "/admin/website/pages"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<PlusCircle className="h-4 w-4" />}
-            label="Add New Page"
-            href="/admin/website/new-page"
-            isActive={path === "/admin/website/new-page"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Layout className="h-4 w-4" />}
-            label="Homepage"
-            href="/admin/landing/edit"
-            isActive={path === "/admin/landing/edit"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Pencil className="h-4 w-4" />}
-            label="Visual Editor"
-            href="/admin/landing/editor"
-            isActive={path === "/admin/landing/editor"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Search className="h-4 w-4" />}
-            label="SEO Settings"
-            href="/admin/landing/seo"
-            isActive={path === "/admin/landing/seo"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<BookOpen className="h-5 w-5" />}
-          label="Blog"
-          defaultOpen={path.includes("/admin/blog")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<List className="h-4 w-4" />}
-            label="All Posts"
-            href="/admin/blog/posts"
-            isActive={path === "/admin/blog/posts"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<PlusCircle className="h-4 w-4" />}
-            label="Add New Post"
-            href="/admin/blog/new-post"
-            isActive={path === "/admin/blog/new-post"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Folder className="h-4 w-4" />}
-            label="Categories"
-            href="/admin/blog/categories"
-            isActive={path === "/admin/blog/categories"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<Tag className="h-4 w-4" />}
-            label="Tags"
-            href="/admin/blog/tags"
-            isActive={path === "/admin/blog/tags"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarGroup
-          icon={<Tag className="h-5 w-5" />}
-          label="Marketing"
-          defaultOpen={path.includes("/admin/marketing")}
-          isCollapsed={isCollapsed}
-        >
-          <SidebarItem
-            icon={<Tag className="h-4 w-4" />}
-            label="Discount Codes"
-            href="/admin/marketing/discounts"
-            isActive={path === "/admin/marketing/discounts"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-        </SidebarGroup>
-        
-        <SidebarItem
-          icon={<Code className="h-5 w-5" />}
-          label="External Integrations"
-          href="/admin/integrations"
-          isActive={path === "/admin/integrations"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        <SidebarItem
-          icon={<CreditCard className="h-5 w-5" />}
-          label="Stripe Integration"
-          href="/admin/stripe"
-          isActive={path === "/admin/stripe"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        {!isCollapsed && <div className="h-px bg-border" />}
-        
-        <SidebarItem
-          icon={<Settings className="h-5 w-5" />}
-          label="Settings"
-          href="/admin/settings"
-          isActive={path === "/admin/settings"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
-        
-        <SidebarItem
-          icon={<HelpCircle className="h-5 w-5" />}
-          label="Help & Support"
-          href="/admin/help"
-          isActive={path === "/admin/help"}
-          onClick={onClose}
-          isCollapsed={isCollapsed}
-        />
+        <div className="px-3 py-4 border-t border-border mt-auto">
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full justify-start",
+              collapsed ? "px-0" : ""
+            )}
+            size={collapsed ? "icon" : "sm"}
+            onClick={() => handleNavigation("/dashboard")}
+          >
+            <Globe className={cn("h-5 w-5", collapsed ? "" : "mr-2")} />
+            {!collapsed && <span>{t("nav.dashboard")}</span>}
+          </Button>
+        </div>
       </div>
-    </aside>
+    </>
   );
 };
 
