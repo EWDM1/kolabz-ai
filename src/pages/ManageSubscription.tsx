@@ -223,7 +223,7 @@ const ManageSubscription = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-3">
-                  <Button variant="outline" className="w-full" onClick={() => handleNavigation("/change-plan")}>
+                  <Button variant="outline" className="w-full" onClick={() => navigate("/change-plan")}>
                     {t("subscription.change_plan", "Change Plan")}
                   </Button>
                   <Button variant="outline" className="w-full text-destructive hover:bg-destructive/10" 

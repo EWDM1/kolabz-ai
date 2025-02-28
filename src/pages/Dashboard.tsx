@@ -95,10 +95,6 @@ const Dashboard = () => {
     navigate("/my-settings");
   };
 
-  const handleManageSubscription = () => {
-    navigate("/manage-subscription");
-  };
-
   const filteredPrompts = savedPrompts.filter(
     (prompt) =>
       prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -212,7 +208,7 @@ const Dashboard = () => {
                     variant="outline" 
                     size="sm" 
                     className="w-full text-xs" 
-                    onClick={handleManageSubscription}
+                    onClick={() => handleNavigation("/manage-subscription")}
                   >
                     Manage Subscription
                   </Button>
