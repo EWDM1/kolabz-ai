@@ -20,6 +20,7 @@ import ManageSubscription from "./pages/ManageSubscription";
 import MyPrompts from "./pages/MyPrompts";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
+import Settings from "./pages/Settings";
 
 // Reset default app CSS
 import "./App.css";
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/my-prompts" element={<MyPrompts />} />
               <Route path="/manage-subscription" element={<ManageSubscription />} />
+              <Route path="/settings" element={<Settings />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminDashboard />} />
