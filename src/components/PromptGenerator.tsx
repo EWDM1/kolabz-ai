@@ -20,6 +20,9 @@ const PromptGenerator = () => {
   const [constraints, setConstraints] = useState("");
   const [formatOption, setFormatOption] = useState("paragraph");
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [customRole, setCustomRole] = useState("");
+  const [customContext, setCustomContext] = useState("");
+  const [customTask, setCustomTask] = useState("");
 
   const handleGeneratePrompt = () => {
     if (!initialPrompt) return;
@@ -29,9 +32,9 @@ const PromptGenerator = () => {
     // In a real app, this would make an API call to generate the prompt
     setTimeout(() => {
       // Generate prompt using the universal prompt structure from the knowledge base
-      const rolePrefix = getRolePrefix();
-      const contextPrefix = getContextPrefix();
-      const taskDescription = getTaskDescription();
+      const rolePrefix = customRole.trim() ? `[Role] ${customRole}` : getRolePrefix();
+      const contextPrefix = customContext.trim() ? `[Context] ${customContext}` : getContextPrefix();
+      const taskDescription = customTask.trim() ? `[Task] ${customTask}` : getTaskDescription();
       const formatInstructions = getFormatInstructions();
       const constraintsSection = getConstraintsSection();
       
@@ -160,6 +163,74 @@ const PromptGenerator = () => {
     return "";
   };
 
+  const getExampleRole = () => {
+    switch (promptPurpose) {
+      case "content-creation":
+        return "Act as an expert content creator with deep knowledge of digital marketing";
+      case "data-analysis":
+        return "Act as a senior data scientist specialized in predictive analytics";
+      case "creative-writing":
+        return "Act as a bestselling novelist with expertise in science fiction";
+      case "technical":
+        return "Act as a software engineer with 10+ years of experience in cloud architecture";
+      case "marketing":
+        return "Act as a CMO of a Fortune 500 company with experience in brand storytelling";
+      default:
+        return "Act as an expert in this field";
+    }
+  };
+  
+  const getExampleContext = () => {
+    switch (promptPurpose) {
+      case "content-creation":
+        return "You're creating content for a tech-savvy audience that needs both depth and clarity";
+      case "data-analysis":
+        return "You're analyzing quarterly sales data to identify trends and provide actionable insights";
+      case "creative-writing":
+        return "You're writing for an audience that enjoys immersive, character-driven narratives";
+      case "technical":
+        return "You're documenting a complex system for both beginner and advanced developers";
+      case "marketing":
+        return "You're creating marketing materials for a product launch targeting millennials";
+      default:
+        return "Consider the audience needs detailed but accessible information";
+    }
+  };
+  
+  const getExampleTask = () => {
+    switch (promptPurpose) {
+      case "content-creation":
+        return "Create a comprehensive guide that explains the concept, benefits, and implementation steps";
+      case "data-analysis":
+        return "Analyze the data to identify key patterns, explain their significance, and recommend actions";
+      case "creative-writing":
+        return "Write a compelling story with a clear beginning, middle, and end that explores the theme";
+      case "technical":
+        return "Explain how this technology works, its advantages, limitations, and provide code examples";
+      case "marketing":
+        return "Develop a compelling value proposition and messaging that highlights benefits over features";
+      default:
+        return "Provide a thorough analysis with evidence-based conclusions";
+    }
+  };
+  
+  const getExampleConstraints = () => {
+    switch (promptPurpose) {
+      case "content-creation":
+        return "Keep reading level at grade 8-10, avoid jargon, stay under 1000 words, include 3-5 actionable tips";
+      case "data-analysis":
+        return "Focus on 3 key insights only, include visualizations descriptions, avoid technical statistics terminology";
+      case "creative-writing":
+        return "Maintain a hopeful tone, 500-800 words, no explicit content, suitable for young adult readers";
+      case "technical":
+        return "Must include code examples in Python, explain concepts before code, avoid deprecated methods";
+      case "marketing":
+        return "Use active voice, emotional appeal, keep sentences under 15 words, focus on benefits not features";
+      default:
+        return "Keep it concise, use simple language, include examples, avoid speculation";
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-4">
@@ -218,6 +289,64 @@ const PromptGenerator = () => {
       </div>
 
       <div>
+        <div className="grid gap-4 md:grid-cols-1">
+          <div>
+            <Label htmlFor="customRole">{t("generator.custom_role", "Role (optional)")}</Label>
+            <Textarea
+              id="customRole"
+              placeholder={getExampleRole()}
+              value={customRole}
+              onChange={(e) => setCustomRole(e.target.value)}
+              className={`w-full h-20 mt-1.5 ${
+                theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700'
+                  : 'bg-background border-input'
+              }`}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t("generator.role_description", "Define who the AI should act as (e.g., 'Act as a data scientist specialized in healthcare')")}
+            </p>
+          </div>
+          
+          <div>
+            <Label htmlFor="customContext">{t("generator.custom_context", "Context (optional)")}</Label>
+            <Textarea
+              id="customContext"
+              placeholder={getExampleContext()}
+              value={customContext}
+              onChange={(e) => setCustomContext(e.target.value)}
+              className={`w-full h-20 mt-1.5 ${
+                theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700'
+                  : 'bg-background border-input'
+              }`}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t("generator.context_description", "Provide background information to guide the response (e.g., 'This is for a technical audience with basic AI knowledge')")}
+            </p>
+          </div>
+          
+          <div>
+            <Label htmlFor="customTask">{t("generator.custom_task", "Task (optional)")}</Label>
+            <Textarea
+              id="customTask"
+              placeholder={getExampleTask()}
+              value={customTask}
+              onChange={(e) => setCustomTask(e.target.value)}
+              className={`w-full h-20 mt-1.5 ${
+                theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700'
+                  : 'bg-background border-input'
+              }`}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t("generator.task_description", "Clearly define what you want the AI to do (e.g., 'Create a 5-point summary of the key concepts in machine learning')")}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div>
         <Label htmlFor="initialPrompt">{t("generator.initial_prompt", "Your Initial Prompt")}</Label>
         <Textarea
           id="initialPrompt"
@@ -261,6 +390,13 @@ const PromptGenerator = () => {
                 <option value="step-by-step">{t("generator.style.step", "Chain of Thought")}</option>
                 <option value="few-shot">{t("generator.style.few_shot", "Few-Shot Learning")}</option>
               </select>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {promptStyle === "step-by-step" 
+                  ? t("generator.style_description.step", "Guides the AI to break down complex problems into steps (e.g., 'Think step by step')")
+                  : promptStyle === "few-shot" 
+                  ? t("generator.style_description.few_shot", "Provides examples to guide the AI's output format (e.g., 'Example 1: input → output')")
+                  : t("generator.style_description.standard", "Direct instructions without special techniques")}
+              </p>
             </div>
             
             <div>
@@ -281,13 +417,16 @@ const PromptGenerator = () => {
                 <option value="code">{t("generator.format_option.code", "Code Examples")}</option>
                 <option value="json">{t("generator.format_option.json", "JSON")}</option>
               </select>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("generator.format_description", "Specify how you want the information structured in the response")}
+              </p>
             </div>
             
             <div>
               <Label htmlFor="constraints">{t("generator.constraints", "Constraints (optional)")}</Label>
               <Textarea
                 id="constraints"
-                placeholder={t("generator.constraints_placeholder", "E.g., word count, tone, specific requirements...")}
+                placeholder={getExampleConstraints()}
                 value={constraints}
                 onChange={(e) => setConstraints(e.target.value)}
                 className={`w-full h-20 mt-1.5 ${
@@ -296,6 +435,9 @@ const PromptGenerator = () => {
                     : 'bg-background border-input'
                 }`}
               />
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("generator.constraints_description", "Set limits or requirements (e.g., 'Maximum 500 words, avoid technical jargon, include 3 examples')")}
+              </p>
             </div>
           </div>
         )}
