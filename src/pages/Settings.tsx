@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -14,7 +15,8 @@ import {
   Info,
   Check,
   X,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  ChevronLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,12 +29,17 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/components/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage } from "@/components/LanguageContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
+  const { language } = useLanguage();
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -316,6 +323,21 @@ const Settings = () => {
       setSidebarCollapsed(savedState === "true");
     }
   }, []);
+
+  // Get the correct header text based on the language
+  const getSettingsTitle = () => {
+    if (language === 'es') return 'Configuración de la cuenta';
+    if (language === 'fr') return 'Paramètres du compte';
+    if (language === 'pt') return 'Configurações da conta';
+    return 'Account Settings';
+  };
+
+  const getSettingsDescription = () => {
+    if (language === 'es') return 'Administre sus preferencias y perfil';
+    if (language === 'fr') return 'Gérez vos préférences et votre profil';
+    if (language === 'pt') return 'Gerencie suas preferências e perfil';
+    return 'Manage your account preferences and profile';
+  };
   
   return (
     <div className="min-h-screen bg-background">
@@ -333,10 +355,10 @@ const Settings = () => {
               <div className="mb-6">
                 <h1 className="text-3xl font-bold flex items-center gap-2">
                   <SettingsIcon className="h-8 w-8 text-primary" />
-                  Settings
+                  {getSettingsTitle()}
                 </h1>
                 <p className="text-muted-foreground">
-                  Manage your account preferences and system settings
+                  {getSettingsDescription()}
                 </p>
               </div>
               
@@ -363,46 +385,75 @@ const Settings = () => {
                 onSaveAdminSettings={handleSaveAdminSettings}
                 onDeleteAccount={handleDeleteAccount}
                 resetNotificationPreferences={resetNotificationPreferences}
+                language={language}
               />
             </main>
           </div>
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold flex items-center gap-2">
-              <SettingsIcon className="h-8 w-8 text-primary" />
-              Account Settings
-            </h1>
-            <p className="text-muted-foreground">
-              Manage your account preferences and profile
-            </p>
-          </div>
+        <div className="min-h-screen bg-background">
+          {/* Regular user header */}
+          <header className="sticky top-0 z-40 w-full bg-background border-b border-border">
+            <div className="container px-4 mx-auto">
+              <div className="flex h-16 items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Link to="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground">
+                    <ChevronLeft className="h-4 w-4 mr-1" />
+                    <span>{language === 'es' ? 'Volver al panel' : 
+                           language === 'fr' ? 'Retour au tableau de bord' : 
+                           language === 'pt' ? 'Voltar ao painel' : 
+                           'Back to Dashboard'}</span>
+                  </Link>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <LanguageSelector />
+                  <ThemeToggle />
+                  <div className="text-sm text-muted-foreground ml-2">
+                    {user?.name}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </header>
           
-          <SettingsContent 
-            profileForm={profileForm}
-            passwords={passwords}
-            notificationPrefs={notificationPrefs}
-            appearance={appearance}
-            privacySettings={privacySettings}
-            adminSettings={adminSettings}
-            isAdmin={isAdmin}
-            loading={loading}
-            onProfileChange={handleProfileChange}
-            onPasswordChange={handlePasswordChange}
-            onNotificationToggle={handleNotificationToggle}
-            onAppearanceChange={handleAppearanceChange}
-            onPrivacyToggle={handlePrivacyToggle}
-            onAdminToggle={handleAdminToggle}
-            onSaveProfile={handleSaveProfile}
-            onSavePassword={handleSavePassword}
-            onSaveNotifications={handleSaveNotifications}
-            onSaveAppearance={handleSaveAppearance}
-            onSavePrivacy={handleSavePrivacy}
-            onSaveAdminSettings={handleSaveAdminSettings}
-            onDeleteAccount={handleDeleteAccount}
-            resetNotificationPreferences={resetNotificationPreferences}
-          />
+          <div className="container px-4 mx-auto py-8">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold flex items-center gap-2">
+                <SettingsIcon className="h-8 w-8 text-primary" />
+                {getSettingsTitle()}
+              </h1>
+              <p className="text-muted-foreground">
+                {getSettingsDescription()}
+              </p>
+            </div>
+            
+            <SettingsContent 
+              profileForm={profileForm}
+              passwords={passwords}
+              notificationPrefs={notificationPrefs}
+              appearance={appearance}
+              privacySettings={privacySettings}
+              adminSettings={adminSettings}
+              isAdmin={isAdmin}
+              loading={loading}
+              onProfileChange={handleProfileChange}
+              onPasswordChange={handlePasswordChange}
+              onNotificationToggle={handleNotificationToggle}
+              onAppearanceChange={handleAppearanceChange}
+              onPrivacyToggle={handlePrivacyToggle}
+              onAdminToggle={handleAdminToggle}
+              onSaveProfile={handleSaveProfile}
+              onSavePassword={handleSavePassword}
+              onSaveNotifications={handleSaveNotifications}
+              onSaveAppearance={handleSaveAppearance}
+              onSavePrivacy={handleSavePrivacy}
+              onSaveAdminSettings={handleSaveAdminSettings}
+              onDeleteAccount={handleDeleteAccount}
+              resetNotificationPreferences={resetNotificationPreferences}
+              language={language}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -451,6 +502,7 @@ interface SettingsContentProps {
   };
   isAdmin: boolean;
   loading: boolean;
+  language: string;
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onNotificationToggle: (key: string) => void;
@@ -476,6 +528,7 @@ const SettingsContent = ({
   adminSettings,
   isAdmin,
   loading,
+  language,
   onProfileChange,
   onPasswordChange,
   onNotificationToggle,
@@ -491,29 +544,92 @@ const SettingsContent = ({
   onDeleteAccount,
   resetNotificationPreferences,
 }: SettingsContentProps) => {
+  // Translation helpers
+  const getTabLabel = (key: string) => {
+    const labels: Record<string, Record<string, string>> = {
+      profile: {
+        en: 'Profile',
+        es: 'Perfil',
+        fr: 'Profil',
+        pt: 'Perfil'
+      },
+      notifications: {
+        en: 'Notifications',
+        es: 'Notificaciones',
+        fr: 'Notifications',
+        pt: 'Notificações'
+      },
+      appearance: {
+        en: 'Appearance',
+        es: 'Apariencia',
+        fr: 'Apparence',
+        pt: 'Aparência'
+      },
+      privacy: {
+        en: 'Privacy',
+        es: 'Privacidad',
+        fr: 'Confidentialité',
+        pt: 'Privacidade'
+      },
+      admin: {
+        en: 'Admin',
+        es: 'Admin',
+        fr: 'Admin',
+        pt: 'Admin'
+      }
+    };
+    
+    return labels[key]?.[language] || labels[key]?.['en'] || key;
+  };
+  
+  const getButtonLabel = (key: string) => {
+    const labels: Record<string, Record<string, string>> = {
+      save: {
+        en: 'Save changes',
+        es: 'Guardar cambios',
+        fr: 'Enregistrer les modifications',
+        pt: 'Salvar alterações'
+      },
+      cancel: {
+        en: 'Cancel',
+        es: 'Cancelar',
+        fr: 'Annuler',
+        pt: 'Cancelar'
+      },
+      reset: {
+        en: 'Reset to defaults',
+        es: 'Restablecer valores predeterminados',
+        fr: 'Réinitialiser aux valeurs par défaut',
+        pt: 'Redefinir para padrões'
+      }
+    };
+    
+    return labels[key]?.[language] || labels[key]?.['en'] || key;
+  };
+
   return (
     <Tabs defaultValue="profile" className="space-y-6">
       <TabsList className="grid grid-cols-2 md:grid-cols-5 md:w-auto w-full">
         <TabsTrigger value="profile" className="flex items-center gap-2">
           <User className="h-4 w-4" />
-          <span className="hidden md:inline">Profile</span>
+          <span className="hidden md:inline">{getTabLabel('profile')}</span>
         </TabsTrigger>
         <TabsTrigger value="notifications" className="flex items-center gap-2">
           <Bell className="h-4 w-4" />
-          <span className="hidden md:inline">Notifications</span>
+          <span className="hidden md:inline">{getTabLabel('notifications')}</span>
         </TabsTrigger>
         <TabsTrigger value="appearance" className="flex items-center gap-2">
           <Moon className="h-4 w-4" />
-          <span className="hidden md:inline">Appearance</span>
+          <span className="hidden md:inline">{getTabLabel('appearance')}</span>
         </TabsTrigger>
         <TabsTrigger value="privacy" className="flex items-center gap-2">
           <Lock className="h-4 w-4" />
-          <span className="hidden md:inline">Privacy</span>
+          <span className="hidden md:inline">{getTabLabel('privacy')}</span>
         </TabsTrigger>
         {isAdmin && (
           <TabsTrigger value="admin" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
-            <span className="hidden md:inline">Admin</span>
+            <span className="hidden md:inline">{getTabLabel('admin')}</span>
           </TabsTrigger>
         )}
       </TabsList>
@@ -591,9 +707,9 @@ const SettingsContent = ({
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">{getButtonLabel('cancel')}</Button>
             <Button onClick={onSaveProfile} disabled={loading}>
-              {loading ? "Saving..." : "Save changes"}
+              {loading ? "Saving..." : getButtonLabel('save')}
             </Button>
           </CardFooter>
         </Card>
@@ -787,10 +903,10 @@ const SettingsContent = ({
               variant="outline" 
               onClick={resetNotificationPreferences}
             >
-              Reset to defaults
+              {getButtonLabel('reset')}
             </Button>
             <Button onClick={onSaveNotifications} disabled={loading}>
-              {loading ? "Saving..." : "Save preferences"}
+              {loading ? "Saving..." : getButtonLabel('save')}
             </Button>
           </CardFooter>
         </Card>
@@ -950,9 +1066,9 @@ const SettingsContent = ({
             </div>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline">Reset to defaults</Button>
+            <Button variant="outline">{getButtonLabel('reset')}</Button>
             <Button onClick={onSaveAppearance} disabled={loading}>
-              {loading ? "Saving..." : "Save preferences"}
+              {loading ? "Saving..." : getButtonLabel('save')}
             </Button>
           </CardFooter>
         </Card>
@@ -1036,7 +1152,7 @@ const SettingsContent = ({
               onClick={onSavePrivacy} 
               disabled={loading}
             >
-              {loading ? "Saving..." : "Save privacy settings"}
+              {loading ? "Saving..." : getButtonLabel('save')}
             </Button>
           </CardFooter>
         </Card>
@@ -1152,9 +1268,9 @@ const SettingsContent = ({
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="outline">Reset to defaults</Button>
+              <Button variant="outline">{getButtonLabel('reset')}</Button>
               <Button onClick={onSaveAdminSettings} disabled={loading}>
-                {loading ? "Saving..." : "Save system settings"}
+                {loading ? "Saving..." : getButtonLabel('save')}
               </Button>
             </CardFooter>
           </Card>
