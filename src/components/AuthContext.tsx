@@ -52,6 +52,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         if (session) {
           setUser(session.user);
+          console.log("User authenticated:", session.user);
+        } else {
+          console.log("No active session found");
         }
       } catch (error) {
         console.error("Error checking auth session:", error);
@@ -69,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log("Auth state changed:", _event, session?.user?.email);
       setUser(session?.user || null);
       setIsLoading(false);
     });
@@ -81,6 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setIsLoading(true);
+      console.log("Attempting login for:", email);
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -88,6 +93,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) {
+        console.error("Login error:", error);
         toast({
           variant: "destructive",
           title: "Login failed",
@@ -97,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data.user) {
+        console.log("Login successful:", data.user);
         toast({
           title: "Login successful",
           description: `Welcome back, ${data.user.email}!`,
@@ -125,6 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   ): Promise<boolean> => {
     try {
       setIsLoading(true);
+      console.log("Attempting registration for:", email);
       
       // Create user with Supabase
       const { data, error } = await supabase.auth.signUp({
@@ -138,6 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) {
+        console.error("Registration error:", error);
         toast({
           variant: "destructive",
           title: "Registration failed",
@@ -147,6 +156,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       if (data.user) {
+        console.log("Registration successful:", data.user);
         toast({
           title: "Registration successful",
           description: `Welcome, ${name}!`,
@@ -171,6 +181,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       setIsLoading(true);
+      console.log("Attempting logout");
       
       const { error } = await supabase.auth.signOut();
       
@@ -178,6 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw error;
       }
       
+      console.log("Logout successful");
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
@@ -196,15 +208,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Check roles using metadata from Supabase
-  const checkUserRole = () => {
-    if (!user) return false;
-    return user.app_metadata?.role === "superadmin";
-  };
-
-  // Calculate role statuses
-  const isSuperAdmin = checkUserRole();
+  // Check for admin role using metadata
+  const isSuperAdmin = user?.app_metadata?.role === "superadmin";
   const isAdmin = isSuperAdmin || user?.app_metadata?.role === "admin";
+
+  // Debug auth state
+  useEffect(() => {
+    console.log("Auth state:", { 
+      isAuthenticated: !!user, 
+      isAdmin, 
+      isSuperAdmin, 
+      user: user ? { email: user.email, metadata: user.app_metadata } : null 
+    });
+  }, [user, isAdmin, isSuperAdmin]);
 
   return (
     <AuthContext.Provider
