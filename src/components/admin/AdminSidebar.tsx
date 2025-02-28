@@ -19,7 +19,13 @@ import {
   CreditCard,
   Code,
   Pencil,
-  Search
+  Search,
+  Files,
+  PlusCircle,
+  List,
+  BookOpen,
+  Folder,
+  Layout
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -263,13 +269,31 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         
         <SidebarGroup
           icon={<Globe className="h-5 w-5" />}
-          label="Landing Page"
-          defaultOpen={path.includes("/admin/landing")}
+          label="Website"
+          defaultOpen={path.includes("/admin/website") || path.includes("/admin/landing")}
           isCollapsed={isCollapsed}
         >
           <SidebarItem
-            icon={<Edit className="h-4 w-4" />}
-            label="Edit Content"
+            icon={<Files className="h-4 w-4" />}
+            label="All Pages"
+            href="/admin/website/pages"
+            isActive={path === "/admin/website/pages"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<PlusCircle className="h-4 w-4" />}
+            label="Add New Page"
+            href="/admin/website/new-page"
+            isActive={path === "/admin/website/new-page"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<Layout className="h-4 w-4" />}
+            label="Homepage"
             href="/admin/landing/edit"
             isActive={path === "/admin/landing/edit"}
             isSubItem
@@ -297,6 +321,50 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         </SidebarGroup>
         
         <SidebarGroup
+          icon={<BookOpen className="h-5 w-5" />}
+          label="Blog"
+          defaultOpen={path.includes("/admin/blog")}
+          isCollapsed={isCollapsed}
+        >
+          <SidebarItem
+            icon={<List className="h-4 w-4" />}
+            label="All Posts"
+            href="/admin/blog/posts"
+            isActive={path === "/admin/blog/posts"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<PlusCircle className="h-4 w-4" />}
+            label="Add New Post"
+            href="/admin/blog/new-post"
+            isActive={path === "/admin/blog/new-post"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<Folder className="h-4 w-4" />}
+            label="Categories"
+            href="/admin/blog/categories"
+            isActive={path === "/admin/blog/categories"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<Tag className="h-4 w-4" />}
+            label="Tags"
+            href="/admin/blog/tags"
+            isActive={path === "/admin/blog/tags"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+        </SidebarGroup>
+        
+        <SidebarGroup
           icon={<Tag className="h-5 w-5" />}
           label="Marketing"
           defaultOpen={path.includes("/admin/marketing")}
@@ -307,15 +375,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             label="Discount Codes"
             href="/admin/marketing/discounts"
             isActive={path === "/admin/marketing/discounts"}
-            isSubItem
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          <SidebarItem
-            icon={<MessageSquare className="h-4 w-4" />}
-            label="Blog"
-            href="/admin/marketing/blog"
-            isActive={path === "/admin/marketing/blog"}
             isSubItem
             onClick={onClose}
             isCollapsed={isCollapsed}

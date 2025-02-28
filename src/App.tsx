@@ -58,10 +58,18 @@ const App = () => (
               <Route path="/admin/integrations" element={<IntegrationsSettings />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
               
-              {/* Landing Page Routes */}
+              {/* Website Routes */}
               <Route path="/admin/landing/edit" element={<LandingPageEdit />} />
               <Route path="/admin/landing/editor" element={<LandingPageEditor />} />
               <Route path="/admin/landing/seo" element={<LandingSEO />} />
+              <Route path="/admin/website/pages" element={<NotFound />} />
+              <Route path="/admin/website/new-page" element={<NotFound />} />
+              
+              {/* Blog Routes */}
+              <Route path="/admin/blog/posts" element={<NotFound />} />
+              <Route path="/admin/blog/new-post" element={<NotFound />} />
+              <Route path="/admin/blog/categories" element={<NotFound />} />
+              <Route path="/admin/blog/tags" element={<NotFound />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
