@@ -12,15 +12,12 @@ const Index = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Optional: Auto-redirect authenticated users to dashboard
-  // Uncomment this if you want to skip the landing page for logged-in users
-  /*
+  // Auto-redirect authenticated users to dashboard
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard");
     }
   }, [isAuthenticated, navigate]);
-  */
 
   return (
     <div className="flex min-h-screen flex-col">
