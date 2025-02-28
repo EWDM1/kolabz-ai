@@ -23,6 +23,16 @@ const Index = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  // Function to handle smooth scrolling
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    } else if (sectionId === 'top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       {/* Custom centered header for landing page */}
@@ -39,14 +49,11 @@ const Index = () => {
                     className="h-8 w-auto"
                   />
                 ) : (
-                  <>
-                    <img 
-                      src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
-                      alt="Kolabz" 
-                      className="h-8 w-auto"
-                    />
-                    <span className="ml-2 text-xl font-bold">Kolabz</span>
-                  </>
+                  <img 
+                    src="/lovable-uploads/57ae204a-def5-4ab7-ab03-2c4bcbd27557.png" 
+                    alt="Kolabz" 
+                    className="h-8 w-auto"
+                  />
                 )}
               </Link>
             </div>
@@ -54,15 +61,24 @@ const Index = () => {
             {/* Center aligned nav */}
             <div className="hidden md:flex md:items-center md:justify-center">
               <nav className="flex space-x-8">
-                <Link to="/" className="text-sm font-medium hover:text-primary">
+                <button 
+                  onClick={() => scrollToSection('top')} 
+                  className="text-sm font-medium hover:text-primary cursor-pointer"
+                >
                   Home
-                </Link>
-                <Link to="#features" className="text-sm font-medium hover:text-primary">
+                </button>
+                <button 
+                  onClick={() => scrollToSection('features')} 
+                  className="text-sm font-medium hover:text-primary cursor-pointer"
+                >
                   Features
-                </Link>
-                <Link to="#pricing" className="text-sm font-medium hover:text-primary">
+                </button>
+                <button 
+                  onClick={() => scrollToSection('pricing')} 
+                  className="text-sm font-medium hover:text-primary cursor-pointer"
+                >
                   Pricing
-                </Link>
+                </button>
                 {isAuthenticated && (
                   <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
                     Dashboard
