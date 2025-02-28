@@ -5,11 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageContext";
-import { CheckCircle, Info } from "lucide-react";
+import { CheckCircle, Info, Copy, Check } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const PromptGenerator = () => {
   const { theme } = useTheme();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [generatingPrompt, setGeneratingPrompt] = useState(false);
   const [promptGenerated, setPromptGenerated] = useState(false);
   const [initialPrompt, setInitialPrompt] = useState("");
@@ -23,6 +25,7 @@ const PromptGenerator = () => {
   const [customRole, setCustomRole] = useState("");
   const [customContext, setCustomContext] = useState("");
   const [customTask, setCustomTask] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleGeneratePrompt = () => {
     if (!initialPrompt) return;
@@ -45,6 +48,29 @@ const PromptGenerator = () => {
       setGeneratingPrompt(false);
       setPromptGenerated(true);
     }, 1500);
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(optimizedPrompt);
+      setCopied(true);
+      
+      toast({
+        title: t("generator.copy_success", "Copied to clipboard"),
+        description: t("generator.copy_description", "The optimized prompt has been copied to your clipboard"),
+      });
+      
+      // Reset copied state after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      toast({
+        title: t("generator.copy_error", "Failed to copy"),
+        description: t("generator.copy_error_description", "Could not copy text to clipboard"),
+        variant: "destructive",
+      });
+    }
   };
 
   const getRolePrefix = () => {
@@ -542,14 +568,25 @@ const PromptGenerator = () => {
             </pre>
           </div>
           
-          <div className="mt-4">
-            <h4 className="text-sm font-medium mb-2">{t("generator.tips.title", "Tips for better results")}</h4>
-            <ul className="text-xs space-y-1 text-muted-foreground">
-              <li>• {t("generator.tips.specific", "Be specific with your instructions")}</li>
-              <li>• {t("generator.tips.examples", "Include examples when possible")}</li>
-              <li>• {t("generator.tips.constraints", "Set clear constraints (length, tone, etc.)")}</li>
-              <li>• {t("generator.tips.iterate", "Iterate and refine for best results")}</li>
-            </ul>
+          <div className="mt-4 flex justify-between items-start">
+            <div>
+              <h4 className="text-sm font-medium mb-2">{t("generator.tips.title", "Tips for better results")}</h4>
+              <ul className="text-xs space-y-1 text-muted-foreground">
+                <li>• {t("generator.tips.specific", "Be specific with your instructions")}</li>
+                <li>• {t("generator.tips.examples", "Include examples when possible")}</li>
+                <li>• {t("generator.tips.constraints", "Set clear constraints (length, tone, etc.)")}</li>
+                <li>• {t("generator.tips.iterate", "Iterate and refine for best results")}</li>
+              </ul>
+            </div>
+            <Button 
+              onClick={copyToClipboard} 
+              variant="secondary" 
+              size="sm"
+              className="flex items-center gap-1.5"
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? t("generator.copied", "Copied!") : t("generator.copy", "Copy")}
+            </Button>
           </div>
         </div>
       )}
