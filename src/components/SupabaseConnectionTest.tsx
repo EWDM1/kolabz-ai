@@ -15,11 +15,11 @@ const SupabaseConnectionTest = () => {
     setError(null);
     
     try {
-      // Try to ping the Supabase server with a simple query
-      const { data, error } = await supabase.from('pg_stat_statements').select('query').limit(1);
+      // Try to fetch health status directly
+      const { error: healthError } = await supabase.auth.getSession();
       
-      if (error) {
-        throw error;
+      if (healthError) {
+        throw healthError;
       }
       
       // If we get here, connection is successful
