@@ -48,7 +48,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/my-prompts" element={<MyPrompts />} />
                 <Route path="/manage-subscription" element={<ManageSubscription />} />
-                <Route path="/mysettings" element={<MySettings />} />
+                <Route path="/my-settings" element={<MySettings />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />

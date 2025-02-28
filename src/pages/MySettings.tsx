@@ -196,7 +196,7 @@ const MySettings = () => {
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/mysettings")}
+                    onClick={() => handleNavigation("/my-settings")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
                   >
                     <Settings className="h-5 w-5" />
