@@ -92,7 +92,7 @@ const UserFilter = () => {
       )}>
         <Banner
           id="welcome-banner"
-          message={`👋 Welcome back, ${user?.name}! Filter users to find exactly who you're looking for.`}
+          message={`👋 Welcome back, ${user?.user_metadata?.name || user?.email}! Filter users to find exactly who you're looking for.`}
           variant="rainbow"
           height="2.5rem"
         />

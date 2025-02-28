@@ -77,7 +77,7 @@ const AdminLayout = ({
       )}>
         <Banner
           id="welcome-banner"
-          message={bannerMessage || `👋 Welcome back, ${user?.name}!`}
+          message={bannerMessage || `👋 Welcome back, ${user?.user_metadata?.name || user?.email}!`}
           variant="rainbow"
           height="2.5rem"
         />
