@@ -592,8 +592,8 @@ const MySettings = () => {
                         Next billing date: August 12, 2023
                       </p>
                       <div className="flex gap-3">
-                        <Button variant="outline" asChild>
-                          <Link to="/manage-subscription">Manage Subscription</Link>
+                        <Button variant="outline" onClick={handleManageSubscription}>
+                          Manage Subscription
                         </Button>
                         <Button variant="outline">
                           Change Plan
@@ -639,8 +639,13 @@ const MySettings = () => {
                           <span className="text-right text-green-600 dark:text-green-400">Paid</span>
                         </div>
                       </div>
-                      <Button className="w-full mt-2" variant="outline" size="sm" asChild>
-                        <Link to="/manage-subscription">View All Invoices</Link>
+                      <Button 
+                        className="w-full mt-2" 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleManageSubscription}
+                      >
+                        View All Invoices
                       </Button>
                     </div>
                   </CardContent>
