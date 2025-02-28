@@ -6,11 +6,13 @@ import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/components/LanguageContext";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,19 +68,19 @@ const Header = () => {
             onClick={() => scrollToSection('features')} 
             className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
-            Features
+            {t("nav.features", "Features")}
           </button>
           <button 
             onClick={() => scrollToSection('pricing')} 
             className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
-            Pricing
+            {t("nav.pricing", "Pricing")}
           </button>
           <button 
             onClick={() => scrollToSection('about')} 
             className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
-            About Us
+            {t("nav.about", "About Us")}
           </button>
         </nav>
 
@@ -91,11 +93,11 @@ const Header = () => {
             <ThemeToggle />
           </div>
           <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">Log In</Link>
+            <Link to="/login">{t("nav.login", "Log In")}</Link>
           </Button>
           <Button size="sm" className="relative overflow-hidden group" asChild>
             <Link to="/signup">
-              <span className="relative z-10">Sign Up</span>
+              <span className="relative z-10">{t("nav.signup", "Sign Up")}</span>
               <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary group-hover:translate-y-0 translate-y-10 transition-transform duration-300"></span>
             </Link>
           </Button>
@@ -156,31 +158,31 @@ const Header = () => {
               className="py-2 border-b border-border text-left"
               onClick={() => scrollToSection('features')}
             >
-              Features
+              {t("nav.features", "Features")}
             </button>
             <button
               className="py-2 border-b border-border text-left"
               onClick={() => scrollToSection('pricing')}
             >
-              Pricing
+              {t("nav.pricing", "Pricing")}
             </button>
             <button
               className="py-2 border-b border-border text-left"
               onClick={() => scrollToSection('about')}
             >
-              About Us
+              {t("nav.about", "About Us")}
             </button>
           </nav>
 
           <div className="mt-auto pt-6 grid gap-4">
             <Button variant="outline" className="w-full" asChild>
               <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                Log In
+                {t("nav.login", "Log In")}
               </Link>
             </Button>
             <Button className="w-full" asChild>
               <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                Sign Up
+                {t("nav.signup", "Sign Up")}
               </Link>
             </Button>
           </div>
