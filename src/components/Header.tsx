@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/components/AuthContext";
 import { useState } from "react";
-import ThemeToggle from "./ThemeToggle";
-import LanguageSelector from "./LanguageSelector";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

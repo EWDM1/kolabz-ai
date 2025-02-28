@@ -3,10 +3,22 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "@supabase/supabase-js";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 // User roles
 export type UserRole = "superadmin" | "admin" | "user";
+
+// Export the User type from Supabase
+export type User = SupabaseUser;
+
+// Extended User type for admin interface
+export interface ExtendedUser extends User {
+  name?: string;
+  role?: UserRole;
+  status?: "active" | "inactive";
+  lastLogin?: string;
+  lastActive?: string;
+}
 
 // Auth context interface
 interface AuthContextType {

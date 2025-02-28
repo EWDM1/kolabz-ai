@@ -51,11 +51,11 @@ const AddUserForm = () => {
     setIsLoading(true);
     
     try {
+      // Note: We're only passing the required parameters now
       const success = await register(
         formData.email,
         formData.password,
-        formData.name,
-        formData.role
+        formData.name
       );
       
       if (success) {
