@@ -1,4 +1,9 @@
+
 import React, { createContext, useContext, useState, useEffect } from "react";
+import enTranslations from "@/translations/en";
+import esTranslations from "@/translations/es";
+import frTranslations from "@/translations/fr";
+import ptTranslations from "@/translations/pt";
 
 // Define the supported languages
 type Language = "en" | "es" | "fr" | "pt";
@@ -20,509 +25,47 @@ const languageOptions: { value: Language; label: string }[] = [
 
 // Dictionary of translations
 const translations: Record<Language, Record<string, string>> = {
-  en: {
-    // Header
-    "nav.features": "Features",
-    "nav.pricing": "Pricing",
-    "nav.about": "About Us",
-    "nav.login": "Log In",
-    "nav.signup": "Sign Up",
-    
-    // Hero
-    "hero.tagline": "Craft perfect prompts in seconds",
-    "hero.title": "Master AI Prompts",
-    "hero.titleAccent": "With Precision",
-    "hero.description": "Kolabz empowers you to generate optimized prompts for any AI model. Create, refine, and save prompts that get better results, every time.",
-    "hero.cta.trial": "Start Free Trial",
-    "hero.cta.pricing": "See Pricing",
-    "hero.security": "Secure payments via Stripe • 7-day free trial • Cancel anytime",
-    
-    // Features
-    "features.title": "Designed for prompt engineering excellence",
-    "features.description": "Kolabz combines intuitive design with powerful functionality to help you generate prompts that get exceptional results from any AI model.",
-    "features.guided.title": "Guided Prompt Refinement",
-    "features.guided.description": "Step-by-step assistance to craft the perfect prompt for any AI model, with contextual suggestions based on your goals.",
-    "features.multi.title": "Multi-LLM Optimization",
-    "features.multi.description": "Tailor your prompts specifically for GPT-4, Claude, Gemini, and more with model-specific enhancements.",
-    "features.instant.title": "Instant Improvement",
-    "features.instant.description": "Transform vague ideas into structured, detailed prompts that yield significantly better AI responses.",
-    "features.save.title": "Save & Reuse",
-    "features.save.description": "Build a personal library of your best prompts, organized by category and purpose for quick access.",
-    "features.science.title": "The science of effective prompting",
-    "features.science.description": "Our platform is built on extensive research into what makes AI responses most useful. We've distilled these insights into an intuitive system that anyone can use.",
-    
-    // Pricing
-    "pricing.title": "Simple, transparent pricing",
-    "pricing.description": "Choose the plan that's right for you. All plans include a 7-day free trial. No credit card required to start.",
-    "pricing.toggle.monthly": "Monthly",
-    "pricing.toggle.annual": "Annual",
-    "pricing.save": "Save 16%",
-    "pricing.free.name": "Free Trial",
-    "pricing.free.description": "Test drive Kolabz with limited features",
-    "pricing.pro.name": "Pro",
-    "pricing.pro.description": "Perfect for individual creators and professionals",
-    "pricing.team.name": "Team",
-    "pricing.team.description": "Ideal for teams and businesses",
-    "pricing.cta.trial": "Start Free Trial",
-    "pricing.cta.subscribe": "Subscribe Now",
-    "pricing.disclaimer": "All plans include a 7-day free trial. No credit card required to start. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.",
-    
-    // About
-    "about.title": "About Us",
-    "about.vision": "Our Vision for AI Prompt Engineering",
-    "about.description": "We're on a mission to help creators, developers, and businesses harness the power of AI through better prompts.",
-    
-    "about.team.title": "Our Team",
-    "about.team.description": "Founded by AI enthusiasts and prompt engineering experts with a passion for making AI more accessible.",
-    "about.team.item1": "Industry experts",
-    "about.team.item2": "AI researchers",
-    "about.team.item3": "Prompt engineers",
-    
-    "about.expertise.title": "Our Expertise",
-    "about.expertise.description": "Specialized in prompt engineering, AI model optimization, and creating user-friendly AI tools.",
-    "about.expertise.item1": "Prompt optimization",
-    "about.expertise.item2": "Model fine-tuning",
-    "about.expertise.item3": "AI workflow design",
-    
-    "about.values.title": "Our Values",
-    "about.values.description": "We believe in democratizing AI, transparency, and creating tools that respect privacy and ethics.",
-    "about.values.item1": "Ethical AI",
-    "about.values.item2": "Transparency",
-    "about.values.item3": "Privacy-first",
-    
-    "about.mission.title": "Our Mission",
-    "about.mission.description": "To empower everyone to unlock the full potential of AI through better prompts and intuitive tools.",
-    "about.mission.item1": "Accessibility",
-    "about.mission.item2": "Education",
-    "about.mission.item3": "Innovation",
-    
-    "about.founded": "Founded in 2024, Kolabz has helped thousands of users create better AI outputs through optimized prompts. Our platform is designed for everyone from beginners to advanced users looking to get the most out of AI models.",
-    
-    // Footer
-    "footer.product": "Product",
-    "footer.company": "Company",
-    "footer.legal": "Legal",
-    "footer.help": "Help Center",
-    "footer.careers": "Careers",
-    "footer.blog": "Blog",
-    "footer.contact": "Contact",
-    "footer.privacy": "Privacy Policy",
-    "footer.terms": "Terms of Service",
-    "footer.cookies": "Cookie Policy",
-    "footer.gdpr": "GDPR",
-    "footer.description": "Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.",
-    "footer.copyright": "© 2023 Kolabz. All rights reserved.",
-    "footer.tagline": "Made with care for creators everywhere",
-    
-    // Dashboard/Settings
-    "dashboard.welcome": "Welcome back!",
-    "settings.title": "Settings",
-    "settings.save": "Save Changes",
+  en: enTranslations,
+  es: esTranslations,
+  fr: frTranslations,
+  pt: ptTranslations
+};
 
-    // Pricing features
-    "pricing.features.optimizations": "5 prompt optimizations",
-    "pricing.features.save": "Save up to 5 prompts",
-    "pricing.features.templates": "Access to basic templates",
-    "pricing.features.collaboration": "Team collaboration",
-    "pricing.features.unlimited_opt": "Unlimited prompt optimizations",
-    "pricing.features.unlimited_lib": "Unlimited prompt library",
-    "pricing.features.all_templates": "Access to all templates",
-    "pricing.features.export": "1-click export to any platform",
-    "pricing.features.priority": "Priority support",
-    "pricing.features.everything": "Everything in Pro",
-    "pricing.features.workspaces": "Team workspaces",
-    "pricing.features.collab_features": "Collaboration features",
-    "pricing.features.custom": "Custom templates",
-    "pricing.features.dedicated": "Dedicated support",
-    "pricing.savings.pro": "$20/year",
-    "pricing.savings.team": "$48/year",
-    "pricing.most_popular": "Most Popular",
-    "pricing.save_amount": "Save",
+// Create the context with default values
+const LanguageContext = createContext<LanguageContextType>({
+  language: "en",
+  setLanguage: () => {},
+  languageOptions,
+  t: (key: string, defaultText?: string) => defaultText || key,
+});
 
-    // Prompt Generator
-    "generator.target_model": "Target AI Model",
-    "generator.prompt_purpose": "Prompt Purpose",
-    "generator.initial_prompt": "Your Initial Prompt",
-    "generator.placeholder": "Enter your initial prompt idea here...",
-    "generator.generating": "Generating...",
-    "generator.generate": "Generate Optimized Prompt",
-    "generator.optimized": "Optimized Prompt",
-    "generator.copy": "Copy",
-    "generator.purpose.content": "Content Creation",
-    "generator.purpose.data": "Data Analysis",
-    "generator.purpose.creative": "Creative Writing",
-    "generator.purpose.technical": "Technical Documentation",
-    "generator.purpose.marketing": "Marketing",
-    "generator.output.create": "Create a comprehensive",
-    "generator.output.content": "content piece",
-    "generator.output.analysis": "analysis",
-    "generator.output.about": "about",
-    "generator.output.structure": "with the following structure",
-    "generator.output.intro": "Introduction that explains the core concepts",
-    "generator.output.detailed": "Detailed explanation with examples",
-    "generator.output.practical": "Practical applications or implications",
-    "generator.output.conclusion": "Conclusion with key takeaways",
-    "generator.output.include": "Include relevant data points and ensure information is accurate and up-to-date."
-  },
-  es: {
-    // Header
-    "nav.features": "Características",
-    "nav.pricing": "Precios",
-    "nav.about": "Nosotros",
-    "nav.login": "Iniciar Sesión",
-    "nav.signup": "Registrarse",
-    
-    // Hero
-    "hero.tagline": "Crea prompts perfectos en segundos",
-    "hero.title": "Domina Prompts de IA",
-    "hero.titleAccent": "Con Precisión",
-    "hero.description": "Kolabz te permite generar prompts optimizados para cualquier modelo de IA. Crea, refina y guarda prompts que obtienen mejores resultados, cada vez.",
-    "hero.cta.trial": "Comenzar Prueba Gratuita",
-    "hero.cta.pricing": "Ver Precios",
-    "hero.security": "Pagos seguros a través de Stripe • Prueba gratuita de 7 días • Cancela cuando quieras",
-    
-    // Features
-    "features.title": "Diseñado para la excelencia en ingeniería de prompts",
-    "features.description": "Kolabz combina un diseño intuitivo con una funcionalidad potente para ayudarte a generar prompts que obtienen resultados excepcionales de cualquier modelo de IA.",
-    "features.guided.title": "Refinamiento Guiado de Prompts",
-    "features.guided.description": "Asistencia paso a paso para crear el prompt perfecto para cualquier modelo de IA, con sugerencias contextuales basadas en tus objetivos.",
-    "features.multi.title": "Optimización Multi-LLM",
-    "features.multi.description": "Personaliza tus prompts específicamente para GPT-4, Claude, Gemini y más, con mejoras específicas para cada modelo.",
-    "features.instant.title": "Mejora Instantánea",
-    "features.instant.description": "Transforma ideas vagas en prompts estructurados y detallados que generan respuestas de IA significativamente mejores.",
-    "features.save.title": "Guardar y Reutilizar",
-    "features.save.description": "Construye una biblioteca personal de tus mejores prompts, organizados por categoría y propósito para un acceso rápido.",
-    "features.science.title": "La ciencia del prompting efectivo",
-    "features.science.description": "Nuestra plataforma está construida sobre una extensa investigación sobre lo que hace que las respuestas de IA sean más útiles. Hemos destilado estos conocimientos en un sistema intuitivo que cualquiera puede usar.",
-    
-    // Pricing
-    "pricing.title": "Precios simples y transparentes",
-    "pricing.description": "Elige el plan que sea adecuado para ti. Todos los planes incluyen una prueba gratuita de 7 días. No se requiere tarjeta de crédito para comenzar.",
-    "pricing.toggle.monthly": "Mensual",
-    "pricing.toggle.annual": "Anual",
-    "pricing.save": "Ahorra 16%",
-    "pricing.free.name": "Prueba Gratuita",
-    "pricing.free.description": "Prueba Kolabz con funciones limitadas",
-    "pricing.pro.name": "Pro",
-    "pricing.pro.description": "Perfecto para creadores y profesionales individuales",
-    "pricing.team.name": "Equipo",
-    "pricing.team.description": "Ideal para equipos y empresas",
-    "pricing.cta.trial": "Iniciar Prueba Gratuita",
-    "pricing.cta.subscribe": "Suscribirse Ahora",
-    "pricing.disclaimer": "Todos los planes incluyen una prueba gratuita de 7 días. No se requiere tarjeta de crédito para comenzar. Cancela en cualquier momento. Si no estás satisfecho, contáctanos dentro de los 30 días para un reembolso completo.",
-    
-    // About
-    "about.title": "Sobre Nosotros",
-    "about.vision": "Nuestra Visión para la Ingeniería de Prompts de IA",
-    "about.description": "Estamos en una misión para ayudar a creadores, desarrolladores y empresas a aprovechar el poder de la IA a través de mejores prompts.",
-    
-    "about.team.title": "Nuestro Equipo",
-    "about.team.description": "Fundado por entusiastas de la IA y expertos en ingeniería de prompts con pasión por hacer la IA más accesible.",
-    "about.team.item1": "Expertos de la industria",
-    "about.team.item2": "Investigadores de IA",
-    "about.team.item3": "Ingenieros de prompts",
-    
-    "about.expertise.title": "Nuestra Experiencia",
-    "about.expertise.description": "Especializados en ingeniería de prompts, optimización de modelos de IA y creación de herramientas de IA fáciles de usar.",
-    "about.expertise.item1": "Optimización de prompts",
-    "about.expertise.item2": "Ajuste de modelos",
-    "about.expertise.item3": "Diseño de flujos de trabajo de IA",
-    
-    "about.values.title": "Nuestros Valores",
-    "about.values.description": "Creemos en democratizar la IA, la transparencia y la creación de herramientas que respeten la privacidad y la ética.",
-    "about.values.item1": "IA Ética",
-    "about.values.item2": "Transparencia",
-    "about.values.item3": "Privacidad primero",
-    
-    "about.mission.title": "Nuestra Misión",
-    "about.mission.description": "Capacitar a todos para desbloquear todo el potencial de la IA a través de mejores prompts y herramientas intuitivas.",
-    "about.mission.item1": "Accesibilidad",
-    "about.mission.item2": "Educación",
-    "about.mission.item3": "Innovación",
-    
-    "about.founded": "Fundada en 2024, Kolabz ha ayudado a miles de usuarios a crear mejores resultados de IA a través de prompts optimizados. Nuestra plataforma está diseñada para todos, desde principiantes hasta usuarios avanzados que buscan obtener el máximo provecho de los modelos de IA.",
-    
-    // Footer
-    "footer.product": "Producto",
-    "footer.company": "Empresa",
-    "footer.legal": "Legal",
-    "footer.help": "Centro de Ayuda",
-    "footer.careers": "Carreras",
-    "footer.blog": "Blog",
-    "footer.contact": "Contacto",
-    "footer.privacy": "Política de Privacidad",
-    "footer.terms": "Términos de Servicio",
-    "footer.cookies": "Política de Cookies",
-    "footer.gdpr": "GDPR",
-    "footer.description": "Kolabz te ayuda a crear prompts perfectos para cualquier modelo de IA, mejorando tu productividad y creatividad.",
-    "footer.copyright": "© 2023 Kolabz. Todos los derechos reservados.",
-    "footer.tagline": "Hecho con cuidado para creadores en todas partes",
-    
-    // Dashboard/Settings
-    "dashboard.welcome": "¡Bienvenido de nuevo!",
-    "settings.title": "Configuración",
-    "settings.save": "Guardar Cambios",
+export const useLanguage = () => useContext(LanguageContext);
 
-    // Pricing features
-    "pricing.features.optimizations": "5 prompt optimizations",
-    "pricing.features.save": "Guardar hasta 5 prompts",
-    "pricing.features.templates": "Acceso a plantillas básicas",
-    "pricing.features.collaboration": "Colaboración en equipo",
-    "pricing.features.unlimited_opt": "Optimizaciones de prompt ilimitadas",
-    "pricing.features.unlimited_lib": "Biblioteca de prompts ilimitada",
-    "pricing.features.all_templates": "Acceso a todas las plantillas",
-    "pricing.features.export": "Exportación con 1 clic a cualquier plataforma",
-    "pricing.features.priority": "Soporte prioritario",
-    "pricing.features.everything": "Todo en Pro",
-    "pricing.features.workspaces": "Espacios de trabajo en equipo",
-    "pricing.features.collab_features": "Funciones de colaboración",
-    "pricing.features.custom": "Plantillas personalizadas",
-    "pricing.features.dedicated": "Soporte dedicado",
-    "pricing.savings.pro": "$20/año",
-    "pricing.savings.team": "$48/año",
-    "pricing.most_popular": "Más Popular",
-    "pricing.save_amount": "Ahorra",
+export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>(() => {
+    // Get from local storage or default to English
+    const savedLanguage = localStorage.getItem("kolabz-language");
+    return (savedLanguage as Language) || "en";
+  });
 
-    // Prompt Generator
-    "generator.target_model": "Modelo de IA objetivo",
-    "generator.prompt_purpose": "Propósito del prompt",
-    "generator.initial_prompt": "Tu prompt inicial",
-    "generator.placeholder": "Introduce aquí tu idea de prompt inicial...",
-    "generator.generating": "Generando...",
-    "generator.generate": "Generar prompt optimizado",
-    "generator.optimized": "Prompt optimizado",
-    "generator.copy": "Copiar",
-    "generator.purpose.content": "Creación de contenido",
-    "generator.purpose.data": "Análisis de datos",
-    "generator.purpose.creative": "Escritura creativa",
-    "generator.purpose.technical": "Documentación técnica",
-    "generator.purpose.marketing": "Marketing",
-    "generator.output.create": "Crea un",
-    "generator.output.content": "pieza de contenido",
-    "generator.output.analysis": "análisis",
-    "generator.output.about": "sobre",
-    "generator.output.structure": "con la siguiente estructura",
-    "generator.output.intro": "Introducción que explique los conceptos clave",
-    "generator.output.detailed": "Explicación detallada con ejemplos",
-    "generator.output.practical": "Aplicaciones o implicaciones prácticas",
-    "generator.output.conclusion": "Conclusión con puntos clave",
-    "generator.output.include": "Incluye puntos de datos relevantes y asegúrate de que la información sea precisa y esté actualizada."
-  },
-  fr: {
-    // Header
-    "nav.features": "Fonctionnalités",
-    "nav.pricing": "Tarifs",
-    "nav.about": "À Propos",
-    "nav.login": "Connexion",
-    "nav.signup": "S'inscrire",
-    
-    // Hero
-    "hero.tagline": "Créez des prompts parfaits en quelques secondes",
-    "hero.title": "Maîtrisez les Prompts IA",
-    "hero.titleAccent": "Avec Précision",
-    "hero.description": "Kolabz vous permet de générer des prompts optimisés pour n'importe quel modèle d'IA. Créez, affinez et sauvegardez des prompts qui obtiennent de meilleurs résultats, à chaque fois.",
-    "hero.cta.trial": "Commencer l'Essai Gratuit",
-    "hero.cta.pricing": "Voir les Prix",
-    "hero.security": "Paiements sécurisés via Stripe • Essai gratuit de 7 jours • Annulez à tout moment",
-    
-    // Features
-    "features.title": "Conçu pour l'excellence en ingénierie de prompts",
-    "features.description": "Kolabz combine un design intuitif avec des fonctionnalités puissantes pour vous aider à générer des prompts qui obtiennent des résultats exceptionnels de n'importe quel modèle d'IA.",
-    "features.guided.title": "Raffinement Guidé de Prompts",
-    "features.guided.description": "Assistance étape par étape pour créer le prompt parfait pour n'importe quel modèle d'IA, avec des suggestions contextuelles basées sur vos objectifs.",
-    "features.multi.title": "Optimisation Multi-LLM",
-    "features.multi.description": "Adaptez vos prompts spécifiquement pour GPT-4, Claude, Gemini, et plus avec des améliorations spécifiques à chaque modèle.",
-    "features.instant.title": "Amélioration Instantanée",
-    "features.instant.description": "Transformez des idées vagues en prompts structurés et détaillés qui génèrent des réponses d'IA significativement meilleures.",
-    "features.save.title": "Sauvegarder et Réutiliser",
-    "features.save.description": "Construisez une bibliothèque personnelle de vos meilleurs prompts, organisés par catégorie et objectif pour un accès rapide.",
-    "features.science.title": "La science du prompting efficace",
-    "features.science.description": "Notre plateforme est construite sur une recherche approfondie sur ce qui rend les réponses d'IA les plus utiles. Nous avons distillé ces connaissances dans un système intuitif que tout le monde peut utiliser.",
-    
-    // Pricing
-    "pricing.title": "Tarification simple et transparente",
-    "pricing.description": "Choisissez le plan qui vous convient. Tous les plans incluent un essai gratuit de 7 jours. Aucune carte de crédit requise pour commencer.",
-    "pricing.toggle.monthly": "Mensuel",
-    "pricing.toggle.annual": "Annuel",
-    "pricing.save": "Économisez 16%",
-    "pricing.free.name": "Essai Gratuit",
-    "pricing.free.description": "Testez Kolabz avec des fonctionnalités limitées",
-    "pricing.pro.name": "Pro",
-    "pricing.pro.description": "Parfait pour les créateurs et professionnels individuels",
-    "pricing.team.name": "Équipe",
-    "pricing.team.description": "Idéal pour les équipes et les entreprises",
-    "pricing.cta.trial": "Commencer l'Essai Gratuit",
-    "pricing.cta.subscribe": "S'abonner Maintenant",
-    "pricing.disclaimer": "Tous les plans incluent un essai gratuit de 7 jours. Aucune carte de crédit requise pour commencer. Annulez à tout moment. Si vous n'êtes pas satisfait, contactez-nous dans les 30 jours pour un remboursement complet.",
-    
-    // About
-    "about.title": "À Propos de Nous",
-    "about.vision": "Notre Vision pour l'Ingénierie de Prompts IA",
-    "about.description": "Notre mission est d'aider les créateurs, les développeurs et les entreprises à exploiter la puissance de l'IA grâce à de meilleurs prompts.",
-    
-    "about.team.title": "Notre Équipe",
-    "about.team.description": "Fondée par des passionnés d'IA et des experts en ingénierie de prompts avec une passion pour rendre l'IA plus accessible.",
-    "about.team.item1": "Experts de l'industrie",
-    "about.team.item2": "Chercheurs en IA",
-    "about.team.item3": "Ingénieurs de prompts",
-    
-    "about.expertise.title": "Notre Expertise",
-    "about.expertise.description": "Spécialisés dans l'ingénierie de prompts, l'optimisation de modèles d'IA et la création d'outils d'IA conviviaux.",
-    "about.expertise.item1": "Optimisation de prompts",
-    "about.expertise.item2": "Ajustement de modèles",
-    "about.expertise.item3": "Conception de flux de travail IA",
-    
-    "about.values.title": "Nos Valeurs",
-    "about.values.description": "Nous croyons en la démocratisation de l'IA, la transparence et la création d'outils qui respectent la confidentialité et l'éthique.",
-    "about.values.item1": "IA Éthique",
-    "about.values.item2": "Transparence",
-    "about.values.item3": "Priorité à la confidentialité",
-    
-    "about.mission.title": "Notre Mission",
-    "about.mission.description": "Permettre à chacun de libérer tout le potentiel de l'IA grâce à de meilleurs prompts et des outils intuitifs.",
-    "about.mission.item1": "Accessibilité",
-    "about.mission.item2": "Éducation",
-    "about.mission.item3": "Innovation",
-    
-    "about.founded": "Fondée en 2024, Kolabz a aidé des milliers d'utilisateurs à créer de meilleurs résultats d'IA grâce à des prompts optimisés. Notre plateforme est conçue pour tous, des débutants aux utilisateurs avancés qui cherchent à tirer le meilleur parti des modèles d'IA.",
-    
-    // Footer
-    "footer.product": "Produit",
-    "footer.company": "Entreprise",
-    "footer.legal": "Juridique",
-    "footer.help": "Centre d'Aide",
-    "footer.careers": "Carrières",
-    "footer.blog": "Blog",
-    "footer.contact": "Contact",
-    "footer.privacy": "Politique de Confidentialité",
-    "footer.terms": "Conditions d'Utilisation",
-    "footer.cookies": "Politique des Cookies",
-    "footer.gdpr": "RGPD",
-    "footer.description": "Kolabz vous aide à créer des prompts parfaits pour n'importe quel modèle d'IA, améliorant votre productivité et créativité.",
-    "footer.copyright": "© 2023 Kolabz. Tous droits réservés.",
-    "footer.tagline": "Fait avec soin pour les créateurs du monde entier",
-    
-    // Dashboard/Settings
-    "dashboard.welcome": "Bon retour parmi nous!",
-    "settings.title": "Paramètres",
-    "settings.save": "Enregistrer les Modifications",
+  useEffect(() => {
+    // Save to local storage when language changes
+    localStorage.setItem("kolabz-language", language);
+    document.documentElement.setAttribute("lang", language);
+  }, [language]);
 
-    // Pricing features
-    "pricing.features.optimizations": "5 optimisations de prompt",
-    "pricing.features.save": "Enregistrer jusqu'à 5 prompts",
-    "pricing.features.templates": "Accès aux modèles de base",
-    "pricing.features.collaboration": "Collaboration en équipe",
-    "pricing.features.unlimited_opt": "Optimisations de prompt illimitées",
-    "pricing.features.unlimited_lib": "Bibliothèque de prompts illimitée",
-    "pricing.features.all_templates": "Accès à tous les modèles",
-    "pricing.features.export": "Exportation en 1 clic vers n'importe quelle plateforme",
-    "pricing.features.priority": "Support prioritaire",
-    "pricing.features.everything": "Tout dans Pro",
-    "pricing.features.workspaces": "Espaces de travail d'équipe",
-    "pricing.features.collab_features": "Fonctionnalités de collaboration",
-    "pricing.features.custom": "Modèles personnalisés",
-    "pricing.features.dedicated": "Support dédié",
-    "pricing.savings.pro": "20 $/an",
-    "pricing.savings.team": "48 $/an",
-    "pricing.most_popular": "Le plus populaire",
-    "pricing.save_amount": "Économiser",
+  // Translation function
+  const t = (key: string, defaultText?: string): string => {
+    // Get the current language's translations
+    const langTranslations = translations[language] || {};
+    
+    // Return the translation if it exists, otherwise return the default text or the key itself
+    return langTranslations[key] || defaultText || key;
+  };
 
-    // Prompt Generator
-    "generator.target_model": "Modèle d'IA cible",
-    "generator.prompt_purpose": "Objectif du prompt",
-    "generator.initial_prompt": "Votre prompt initial",
-    "generator.placeholder": "Entrez votre idée de prompt initial ici...",
-    "generator.generating": "Génération...",
-    "generator.generate": "Générer un prompt optimisé",
-    "generator.optimized": "Prompt optimisé",
-    "generator.copy": "Copier",
-    "generator.purpose.content": "Création de contenu",
-    "generator.purpose.data": "Analyse de données",
-    "generator.purpose.creative": "Écriture créative",
-    "generator.purpose.technical": "Documentation technique",
-    "generator.purpose.marketing": "Marketing",
-    "generator.output.create": "Créer un",
-    "generator.output.content": "élément de contenu",
-    "generator.output.analysis": "analyse",
-    "generator.output.about": "sur",
-    "generator.output.structure": "avec la structure suivante",
-    "generator.output.intro": "Introduction expliquant les concepts clés",
-    "generator.output.detailed": "Explication détaillée avec des exemples",
-    "generator.output.practical": "Applications ou implications pratiques",
-    "generator.output.conclusion": "Conclusion avec les points clés à retenir",
-    "generator.output.include": "Inclure les points de données pertinents et s'assurer que les informations sont exactes et à jour."
-  },
-  pt: {
-    // Header
-    "nav.features": "Recursos",
-    "nav.pricing": "Preços",
-    "nav.about": "Sobre Nós",
-    "nav.login": "Entrar",
-    "nav.signup": "Cadastrar",
-    
-    // Hero
-    "hero.tagline": "Crie prompts perfeitos em segundos",
-    "hero.title": "Domine Prompts de IA",
-    "hero.titleAccent": "Com Precisão",
-    "hero.description": "Kolabz permite que você gere prompts otimizados para qualquer modelo de IA. Crie, refine e salve prompts que obtêm melhores resultados, sempre.",
-    "hero.cta.trial": "Iniciar Teste Gratuito",
-    "hero.cta.pricing": "Ver Preços",
-    "hero.security": "Pagamentos seguros via Stripe • Teste gratuito de 7 dias • Cancele quando quiser",
-    
-    // Features
-    "features.title": "Projetado para excelência em engenharia de prompts",
-    "features.description": "Kolabz combina design intuitivo com funcionalidade poderosa para ajudá-lo a gerar prompts que obtêm resultados excepcionais de qualquer modelo de IA.",
-    "features.guided.title": "Refinamento Guiado de Prompts",
-    "features.guided.description": "Assistência passo a passo para criar o prompt perfeito para qualquer modelo de IA, com sugestões contextuais baseadas em seus objetivos.",
-    "features.multi.title": "Otimização Multi-LLM",
-    "features.multi.description": "Adapte seus prompts especificamente para GPT-4, Claude, Gemini e mais, com melhorias específicas para cada modelo.",
-    "features.instant.title": "Melhoria Instantânea",
-    "features.instant.description": "Transforme ideias vagas em prompts estruturados e detalhados que geram respostas de IA significativamente melhores.",
-    "features.save.title": "Salvar e Reutilizar",
-    "features.save.description": "Construa uma biblioteca pessoal dos seus melhores prompts, organizados por categoria e propósito para acesso rápido.",
-    "features.science.title": "A ciência do prompting efetivo",
-    "features.science.description": "Nossa plataforma é construída em extensa pesquisa sobre o que torna as respostas de IA mais úteis. Destilamos esses insights em um sistema intuitivo que qualquer pessoa pode usar.",
-    
-    // Pricing
-    "pricing.title": "Preços simples e transparentes",
-    "pricing.description": "Escolha o plano certo para você. Todos os planos incluem um teste gratuito de 7 dias. Não é necessário cartão de crédito para começar.",
-    "pricing.toggle.monthly": "Mensal",
-    "pricing.toggle.annual": "Anual",
-    "pricing.save": "Economize 16%",
-    "pricing.free.name": "Teste Gratuito",
-    "pricing.free.description": "Experimente o Kolabz com recursos limitados",
-    "pricing.pro.name": "Pro",
-    "pricing.pro.description": "Perfeito para criadores e profissionais individuais",
-    "pricing.team.name": "Equipe",
-    "pricing.team.description": "Ideal para equipes e empresas",
-    "pricing.cta.trial": "Iniciar Teste Gratuito",
-    "pricing.cta.subscribe": "Assinar Agora",
-    "pricing.disclaimer": "Todos os planos incluem um teste gratuito de 7 dias. Não é necessário cartão de crédito para começar. Cancele a qualquer momento. Se não estiver satisfeito, entre em contato conosco em 30 dias para um reembolso total.",
-    
-    // About
-    "about.title": "Sobre Nós",
-    "about.vision": "Nossa Visão para Engenharia de Prompts de IA",
-    "about.description": "Estamos em uma missão para ajudar criadores, desenvolvedores e empresas a aproveitar o poder da IA através de melhores prompts.",
-    
-    "about.team.title": "Nossa Equipe",
-    "about.team.description": "Fundada por entusiastas de IA e especialistas em engenharia de prompts com paixão por tornar a IA mais acessível.",
-    "about.team.item1": "Especialistas da indústria",
-    "about.team.item2": "Pesquisadores de IA",
-    "about.team.item3": "Engenheiros de prompts",
-    
-    "about.expertise.title": "Nossa Expertise",
-    "about.expertise.description": "Especializados em engenharia de prompts, otimização de modelos de IA e criação de ferramentas de IA fáceis de usar.",
-    "about.expertise.item1": "Otimização de prompts",
-    "about.expertise.item2": "Ajuste de modelos",
-    "about.expertise.item3": "Design de fluxo de trabalho de IA",
-    
-    "about.values.title": "Nossos Valores",
-    "about.values.description": "Acreditamos na democratização da IA, transparência e criação de ferramentas que respeitam a privacidade e a ética.",
-    "about.values.item1": "IA Ética",
-    "about.values.item2": "Transparência",
-    "about.values.item3": "Privacidade em primeiro lugar",
-    
-    "about.mission.title": "Nossa Missão",
-    "about.mission.description": "Capacitar todos a desbloquear todo o potencial da IA através de melhores prompts e ferramentas intuitivas.",
-    "about.mission.item1": "Acessibilidade",
-    "about.mission.item2": "Educação",
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, languageOptions, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
