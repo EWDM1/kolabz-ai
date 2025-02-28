@@ -160,7 +160,7 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-12 gap-8">
+        <div className="grid grid-cols-12 gap-4 lg:gap-8">
           {/* Sidebar */}
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
             <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
@@ -269,22 +269,22 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Tabs defaultValue="create">
-                <div className="flex justify-between items-center mb-6">
-                  <TabsList>
+              <Tabs defaultValue="create" className="w-full">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+                  <TabsList className="flex-shrink-0">
                     <TabsTrigger value="create">Create Prompt</TabsTrigger>
                     <TabsTrigger value="saved">
                       Saved Prompts <span className="ml-1 text-xs">{savedPrompts.length}</span>
                     </TabsTrigger>
                   </TabsList>
 
-                  <div className="md:hidden">
+                  <div className="md:hidden w-full">
                     <div className="relative">
                       <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
                         type="search"
                         placeholder="Search..."
-                        className="pl-8 w-40"
+                        className="pl-8 w-full"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                       />
@@ -292,24 +292,24 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <TabsContent value="create" className="space-y-6">
+                <TabsContent value="create" className="space-y-6 mt-2">
                   <div className="bg-card rounded-lg shadow-sm border border-border p-6">
                     <h2 className="text-2xl font-display font-bold mb-6">Create New Prompt</h2>
                     <PromptGenerator />
                   </div>
                 </TabsContent>
 
-                <TabsContent value="saved" className="space-y-6">
+                <TabsContent value="saved" className="space-y-6 mt-2">
                   <Card>
                     <CardHeader>
-                      <div className="flex justify-between items-center">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div>
                           <CardTitle>Saved Prompts</CardTitle>
                           <CardDescription>
                             Browse and manage your saved prompts
                           </CardDescription>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <Button size="sm" onClick={() => navigate("/my-prompts")}>
                             View All Prompts
                           </Button>
@@ -328,12 +328,12 @@ const Dashboard = () => {
                               key={prompt.id}
                               className="border border-border rounded-lg p-4 hover:shadow-sm transition-all-200 bg-card"
                             >
-                              <div className="flex justify-between items-start mb-2">
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
                                 <div>
                                   <h3 className="font-medium text-lg">{prompt.title}</h3>
-                                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                                  <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                     <span>Model: {prompt.model}</span>
-                                    <span>•</span>
+                                    <span className="hidden sm:inline">•</span>
                                     <span>Created: {prompt.date}</span>
                                   </div>
                                 </div>
