@@ -112,15 +112,15 @@ const Settings = () => {
   };
   
   // Handle notification toggle
-  const handleNotificationToggle = (key: keyof typeof notificationPrefs) => {
+  const handleNotificationToggle = (key: string) => {
     setNotificationPrefs((prev) => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key as keyof typeof notificationPrefs],
     }));
   };
   
   // Handle appearance changes
-  const handleAppearanceChange = (key: keyof typeof appearance, value: any) => {
+  const handleAppearanceChange = (key: string, value: any) => {
     if (key === "theme") {
       setTheme(value);
     }
@@ -132,19 +132,30 @@ const Settings = () => {
   };
   
   // Handle privacy toggle
-  const handlePrivacyToggle = (key: keyof typeof privacySettings) => {
+  const handlePrivacyToggle = (key: string) => {
     setPrivacySettings((prev) => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key as keyof typeof privacySettings],
     }));
   };
   
   // Handle admin settings toggle
-  const handleAdminToggle = (key: keyof typeof adminSettings) => {
+  const handleAdminToggle = (key: string) => {
     setAdminSettings((prev) => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key as keyof typeof adminSettings],
     }));
+  };
+  
+  // Reset all notification preferences to default
+  const resetNotificationPreferences = () => {
+    setNotificationPrefs({
+      emailUpdates: true,
+      productNews: true,
+      securityAlerts: true,
+      marketingEmails: false,
+      featuredPrompts: true,
+    });
   };
   
   // Save profile
@@ -339,6 +350,7 @@ const Settings = () => {
                 onSavePrivacy={handleSavePrivacy}
                 onSaveAdminSettings={handleSaveAdminSettings}
                 onDeleteAccount={handleDeleteAccount}
+                resetNotificationPreferences={resetNotificationPreferences}
               />
             </main>
           </div>
@@ -377,6 +389,7 @@ const Settings = () => {
             onSavePrivacy={handleSavePrivacy}
             onSaveAdminSettings={handleSaveAdminSettings}
             onDeleteAccount={handleDeleteAccount}
+            resetNotificationPreferences={resetNotificationPreferences}
           />
         </div>
       )}
@@ -428,10 +441,10 @@ interface SettingsContentProps {
   loading: boolean;
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onNotificationToggle: (key: keyof typeof notificationPrefs) => void;
+  onNotificationToggle: (key: string) => void;
   onAppearanceChange: (key: string, value: any) => void;
-  onPrivacyToggle: (key: keyof typeof privacySettings) => void;
-  onAdminToggle: (key: keyof typeof adminSettings) => void;
+  onPrivacyToggle: (key: string) => void;
+  onAdminToggle: (key: string) => void;
   onSaveProfile: () => void;
   onSavePassword: () => void;
   onSaveNotifications: () => void;
@@ -439,6 +452,7 @@ interface SettingsContentProps {
   onSavePrivacy: () => void;
   onSaveAdminSettings: () => void;
   onDeleteAccount: () => void;
+  resetNotificationPreferences: () => void;
 }
 
 const SettingsContent = ({
@@ -463,6 +477,7 @@ const SettingsContent = ({
   onSavePrivacy,
   onSaveAdminSettings,
   onDeleteAccount,
+  resetNotificationPreferences,
 }: SettingsContentProps) => {
   return (
     <Tabs defaultValue="profile" className="space-y-6">
@@ -758,11 +773,7 @@ const SettingsContent = ({
           <CardFooter className="flex justify-between">
             <Button 
               variant="outline" 
-              onClick={() => onNotificationToggle("emailUpdates" as keyof typeof notificationPrefs) && 
-                           onNotificationToggle("productNews" as keyof typeof notificationPrefs) && 
-                           onNotificationToggle("securityAlerts" as keyof typeof notificationPrefs) && 
-                           onNotificationToggle("marketingEmails" as keyof typeof notificationPrefs) && 
-                           onNotificationToggle("featuredPrompts" as keyof typeof notificationPrefs)}
+              onClick={resetNotificationPreferences}
             >
               Reset to defaults
             </Button>
