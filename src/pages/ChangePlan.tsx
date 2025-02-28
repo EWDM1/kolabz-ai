@@ -29,6 +29,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthContext";
 import { 
   isTestMode, 
   toggleStripeTestMode 
@@ -45,7 +46,11 @@ const ChangePlan = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
+  const { isAdmin, isSuperAdmin } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
+  
+  // Admin check for test mode visibility
+  const canAccessTestMode = isAdmin || isSuperAdmin;
 
   useEffect(() => {
     // Log test mode status on component mount
@@ -261,23 +266,25 @@ const ChangePlan = () => {
                 Back to Subscription
               </Button>
               
-              {/* Test mode toggle */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleToggleTestMode}
-                className={`gap-1 ${testMode ? 'border-orange-300 text-orange-600 hover:text-orange-700 hover:border-orange-400 dark:border-orange-800 dark:text-orange-500' : ''}`}
-              >
-                {testMode ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                {testMode ? 'Test Mode' : 'Live Mode'}
-              </Button>
+              {/* Test mode toggle - only visible to admins */}
+              {canAccessTestMode && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleToggleTestMode}
+                  className={`gap-1 ${testMode ? 'border-orange-300 text-orange-600 hover:text-orange-700 hover:border-orange-400 dark:border-orange-800 dark:text-orange-500' : ''}`}
+                >
+                  {testMode ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                  {testMode ? 'Test Mode' : 'Live Mode'}
+                </Button>
+              )}
             </div>
             
             <h1 className="text-2xl font-bold mb-2">Change Plan</h1>
             <p className="text-muted-foreground mb-6">Compare plans and select the option that's right for you</p>
             
-            {/* Test mode banner */}
-            {testMode && (
+            {/* Test mode banner - only visible when test mode is active AND user is admin */}
+            {testMode && canAccessTestMode && (
               <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300 p-4 rounded-lg mb-6 flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
                 <div>

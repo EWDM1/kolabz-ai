@@ -4,6 +4,7 @@ import { CardElement, useStripe, useElements, Elements } from '@stripe/react-str
 import { getStripe } from '@/integrations/stripe/stripeService';
 import { Button } from '@/components/ui/button';
 import { isTestMode } from '@/integrations/stripe/stripeConfig';
+import { useAuth } from '@/components/AuthContext';
 
 interface PaymentMethodFormProps {
   onSuccess: (paymentMethod: any) => void;
@@ -15,6 +16,10 @@ const PaymentMethodForm = ({ onSuccess, onError }: PaymentMethodFormProps) => {
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { isAdmin, isSuperAdmin } = useAuth();
+  
+  // Admin check for test mode visibility
+  const canAccessTestMode = isAdmin || isSuperAdmin;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -56,7 +61,7 @@ const PaymentMethodForm = ({ onSuccess, onError }: PaymentMethodFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {isTestMode() && (
+      {isTestMode() && canAccessTestMode && (
         <div className="p-2 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 text-xs rounded flex items-center gap-2">
           <span className="font-semibold">Test Mode Active</span>
           <span>Use test card: 4242 4242 4242 4242, any future date, any CVC</span>
