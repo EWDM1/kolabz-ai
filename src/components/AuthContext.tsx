@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 // User roles
-export type UserRole = "admin" | "user" | "customer";
+export type UserRole = "superadmin" | "admin" | "user";
 
 // User interface
 export interface User {
@@ -21,6 +21,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   register: (email: string, password: string, name: string, role?: UserRole) => Promise<boolean>;
 }
 
@@ -33,7 +34,7 @@ const initialAdmin = {
   id: "1",
   email: "eric@ewdigitalmarkeitng.com",
   name: "Eric",
-  role: "admin" as UserRole,
+  role: "superadmin" as UserRole,
   password: "Boludosteam1982!!"
 };
 
@@ -60,12 +61,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       ];
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initialUsers));
+    } else {
+      // Convert any existing "customer" roles to "user"
+      const users = JSON.parse(storedUsers);
+      let hasChanges = false;
+      
+      const updatedUsers = users.map((user: any) => {
+        if (user.role === "customer") {
+          hasChanges = true;
+          return {...user, role: "user"};
+        }
+        return user;
+      });
+      
+      if (hasChanges) {
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
+      }
     }
 
     // Check if user is already logged in
     const currentUser = localStorage.getItem(CURRENT_USER_KEY);
     if (currentUser) {
-      setUser(JSON.parse(currentUser));
+      const parsedUser = JSON.parse(currentUser);
+      // Convert "customer" role to "user" if needed
+      if (parsedUser.role === "customer") {
+        parsedUser.role = "user";
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
+      }
+      setUser(parsedUser);
     }
   }, []);
 
@@ -83,6 +106,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (matchedUser) {
           // Remove password before storing in state
           const { password, ...userWithoutPassword } = matchedUser;
+          
+          // Convert "customer" role to "user" if needed
+          if (userWithoutPassword.role === "customer") {
+            userWithoutPassword.role = "user";
+          }
+          
           setUser(userWithoutPassword);
           localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
           
@@ -117,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string, 
     password: string, 
     name: string, 
-    role: UserRole = "customer"
+    role: UserRole = "user"  // Default role is now "user"
   ): Promise<boolean> => {
     try {
       // Get users from localStorage
@@ -189,7 +218,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === "admin",
+        isAdmin: user?.role === "admin" || user?.role === "superadmin",
+        isSuperAdmin: user?.role === "superadmin",
         register,
       }}
     >

@@ -8,14 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "@/hooks/use-toast";
 
 const AddUserForm = () => {
-  const { register } = useAuth();
+  const { register, isSuperAdmin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "customer" as UserRole,
+    role: "user" as UserRole,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -70,7 +70,7 @@ const AddUserForm = () => {
           email: "",
           password: "",
           confirmPassword: "",
-          role: "customer",
+          role: "user",
         });
       }
     } catch (error) {
@@ -157,9 +157,9 @@ const AddUserForm = () => {
               onChange={handleChange}
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <option value="admin">Admin</option>
               <option value="user">User</option>
-              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+              {isSuperAdmin && <option value="superadmin">Super Admin</option>}
             </select>
           </div>
           

@@ -1,52 +1,32 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserRole } from "@/components/AuthContext";
+import { UserRole, useAuth } from "@/components/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { AdminUser } from "./UserTable";
 
 interface EditUserFormProps {
-  user: AdminUser | null;
-  onSave: (user: AdminUser) => void;
-  onCancel: () => void;
-}
-
-const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<{
-    id: string;
+  userId: string;
+  initialData: {
     name: string;
     email: string;
     role: UserRole;
-    status: "active" | "inactive";
-    password?: string;
-    confirmPassword?: string;
-  }>({
-    id: "",
-    name: "",
-    email: "",
-    role: "customer",
-    status: "active",
+  };
+  onSuccess?: () => void;
+}
+
+const EditUserForm = ({ userId, initialData, onSuccess }: EditUserFormProps) => {
+  const { isSuperAdmin } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: initialData.name,
+    email: initialData.email,
     password: "",
     confirmPassword: "",
+    role: initialData.role as UserRole,
   });
-
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status || "active",
-        password: "",
-        confirmPassword: "",
-      });
-    }
-  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -59,16 +39,7 @@ const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.name || !formData.email) {
-      toast({
-        variant: "destructive",
-        title: "Required fields missing",
-        description: "Please fill in all required fields",
-      });
-      return;
-    }
-    
+    // Validation if changing password
     if (formData.password && formData.password !== formData.confirmPassword) {
       toast({
         variant: "destructive",
@@ -81,22 +52,21 @@ const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
     setIsLoading(true);
     
     try {
-      // In a real app, this would make an API call
-      // For this demo, we'll directly update our local state
-      const updatedUser: AdminUser = {
-        id: formData.id,
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-        status: formData.status,
-      };
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      onSave(updatedUser);
+      // In a real app, this would make an API call to update the user
+      console.log("Updated user:", { userId, ...formData });
       
       toast({
         title: "User updated successfully",
-        description: `${formData.name}'s profile has been updated`,
+        description: `${formData.name}'s information has been updated`,
       });
+      
+      // Call onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
@@ -109,23 +79,21 @@ const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
     }
   };
 
-  if (!user) return null;
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Edit User</CardTitle>
         <CardDescription>
-          Update user information and permissions
+          Make changes to user information and settings
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="edit-name">Full Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
-                id="edit-name"
+                id="name"
                 name="name"
                 placeholder="John Doe"
                 value={formData.name}
@@ -135,9 +103,9 @@ const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-email">Email</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="edit-email"
+                id="email"
                 name="email"
                 type="email"
                 placeholder="john@example.com"
@@ -150,65 +118,53 @@ const EditUserForm = ({ user, onSave, onCancel }: EditUserFormProps) => {
           
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="edit-role">User Role</Label>
-              <select
-                id="edit-role"
-                name="role"
-                value={formData.role}
+              <Label htmlFor="password">New Password (leave empty to keep current)</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
                 onChange={handleChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-                <option value="customer">Customer</option>
-              </select>
+              />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-status">Status</Label>
-              <select
-                id="edit-status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="edit-password">Password (leave blank to keep current)</Label>
-            <Input
-              id="edit-password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-          </div>
-          
-          {formData.password && (
-            <div className="space-y-2">
-              <Label htmlFor="edit-confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
               <Input
-                id="edit-confirmPassword"
+                id="confirmPassword"
                 name="confirmPassword"
                 type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                disabled={!formData.password}
               />
             </div>
-          )}
+          </div>
           
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onCancel}>
-              Cancel
-            </Button>
+          <div className="space-y-2">
+            <Label htmlFor="role">User Role</Label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={!isSuperAdmin && formData.role !== "user"}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              {isSuperAdmin && <option value="superadmin">Super Admin</option>}
+            </select>
+            {!isSuperAdmin && formData.role !== "user" && (
+              <p className="text-xs text-amber-500 mt-1">
+                Only Super Admins can change roles other than "User"
+              </p>
+            )}
+          </div>
+          
+          <div className="flex justify-end">
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Saving..." : "Save Changes"}
+              {isLoading ? "Updating User..." : "Update User"}
             </Button>
           </div>
         </form>
