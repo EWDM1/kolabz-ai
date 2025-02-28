@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -8,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const UserFilter = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,8 +22,15 @@ const UserFilter = () => {
     role: "",
     status: ""
   });
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/dashboard");
+    }
+  }, [isAdmin, navigate]);
 
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
@@ -57,8 +65,15 @@ const UserFilter = () => {
     };
   }, [sidebarCollapsed]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setFilterValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setFilterValues(prev => ({
       ...prev,
       [name]: value
@@ -79,6 +94,10 @@ const UserFilter = () => {
       role: "",
       status: ""
     });
+  };
+
+  const handleBackToUsers = () => {
+    navigate("/admin/users");
   };
 
   return (
@@ -102,12 +121,15 @@ const UserFilter = () => {
         <main className="flex-1 overflow-y-auto py-6">
           <div className="space-y-6 max-w-3xl mx-auto">
             <div className="flex items-center">
-              <Link to="/admin/users">
-                <Button variant="ghost" size="sm" className="gap-1">
-                  <ChevronLeft className="h-4 w-4" />
-                  Back to Users
-                </Button>
-              </Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1"
+                onClick={handleBackToUsers}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Back to Users
+              </Button>
             </div>
             
             <div>
@@ -131,7 +153,7 @@ const UserFilter = () => {
                         name="name"
                         placeholder="Search by name"
                         value={filterValues.name}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                       />
                     </div>
                     
@@ -143,7 +165,7 @@ const UserFilter = () => {
                         type="email"
                         placeholder="Search by email"
                         value={filterValues.email}
-                        onChange={handleChange}
+                        onChange={handleInputChange}
                       />
                     </div>
                   </div>
@@ -151,33 +173,37 @@ const UserFilter = () => {
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="role">Role</Label>
-                      <select
-                        id="role"
-                        name="role"
+                      <Select
                         value={filterValues.role}
-                        onChange={handleChange}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        onValueChange={(value) => handleSelectChange("role", value)}
                       >
-                        <option value="">All Roles</option>
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                        <option value="customer">Customer</option>
-                      </select>
+                        <SelectTrigger id="role">
+                          <SelectValue placeholder="All Roles" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Roles</SelectItem>
+                          <SelectItem value="superadmin">Super Admin</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="user">User</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="status">Status</Label>
-                      <select
-                        id="status"
-                        name="status"
+                      <Select
                         value={filterValues.status}
-                        onChange={handleChange}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        onValueChange={(value) => handleSelectChange("status", value)}
                       >
-                        <option value="">All Statuses</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                      </select>
+                        <SelectTrigger id="status">
+                          <SelectValue placeholder="All Statuses" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">All Statuses</SelectItem>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   

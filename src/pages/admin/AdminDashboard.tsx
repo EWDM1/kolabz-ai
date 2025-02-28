@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -37,7 +38,6 @@ import {
   CreditCard, 
   FileText, 
   BadgeHelp, 
-  PanelLeft,
   ChevronDown,
   ChevronRight,
   MoreHorizontal,
@@ -120,10 +120,17 @@ const recentTickets = [
   },
 ];
 
+// Stripe product IDs
+const STRIPE_PRODUCTS = {
+  KOLABZ_TEAM: "prod_RqwcOPtG0427U9",
+  KOLABZ_PRO: "prod_RqwbC4WUVuoadC"
+};
+
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const navigate = useNavigate();
   
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
@@ -132,6 +139,17 @@ const AdminDashboard = () => {
       setSidebarCollapsed(savedState === "true");
     }
   }, []);
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate("/dashboard");
+    }
+  }, [isAdmin, navigate]);
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
   
   return (
     <div className="flex min-h-screen bg-background">
@@ -321,7 +339,9 @@ const AdminDashboard = () => {
                       <div className="text-sm text-muted-foreground">
                         Showing <strong>4</strong> of <strong>12</strong> recent signups
                       </div>
-                      <Button variant="outline" size="sm">View All Users</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleNavigation("/admin/users")}>
+                        View All Users
+                      </Button>
                     </CardFooter>
                   </Card>
                 </TabsContent>
@@ -393,11 +413,19 @@ const AdminDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => handleNavigation("/admin/users")}
+                  >
                     <Users className="h-4 w-4 mr-2" />
                     View All Users
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => handleNavigation("/admin/users/new")}
+                  >
                     <Users className="h-4 w-4 mr-2" />
                     Add New User
                   </Button>
@@ -412,11 +440,19 @@ const AdminDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => handleNavigation("/admin/stripe")}
+                  >
                     <CreditCard className="h-4 w-4 mr-2" />
                     View Transactions
                   </Button>
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                    onClick={() => handleNavigation("/admin/stripe")}
+                  >
                     <CreditCard className="h-4 w-4 mr-2" />
                     Subscription Plans
                   </Button>

@@ -76,6 +76,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (hasChanges) {
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
+        toast({
+          title: "System Update",
+          description: "Customer roles have been updated to User roles",
+        });
       }
     }
 
@@ -90,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       setUser(parsedUser);
     }
-  }, []);
+  }, [toast]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -146,7 +150,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string, 
     password: string, 
     name: string, 
-    role: UserRole = "user"  // Default role is now "user"
+    role: UserRole = "user"  // Default role is user
   ): Promise<boolean> => {
     try {
       // Get users from localStorage
@@ -181,12 +185,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Automatically log in the new user if not an admin-created account
       const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
+      
+      // Only if this is a self-registration (not admin creating a user)
+      if (role === "user" && !user) {
+        setUser(userWithoutPassword);
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
+      }
 
       toast({
         title: "Registration successful",
-        description: `Welcome, ${name}!`,
+        description: user ? `User ${name} has been registered.` : `Welcome, ${name}!`,
       });
 
       return true;
