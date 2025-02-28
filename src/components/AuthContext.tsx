@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 // User roles
-export type UserRole = "admin" | "user" | "customer";
+export type UserRole = "superadmin" | "admin" | "user";
 
 // User interface
 export interface User {
@@ -21,6 +21,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   register: (email: string, password: string, name: string, role?: UserRole) => Promise<boolean>;
 }
 
@@ -28,12 +29,12 @@ interface AuthContextType {
 const USERS_STORAGE_KEY = 'kolabz-users';
 const CURRENT_USER_KEY = 'kolabz-current-user';
 
-// Initial admin user
+// Initial superadmin user
 const initialAdmin = {
   id: "1",
   email: "eric@ewdigitalmarkeitng.com",
   name: "Eric",
-  role: "admin" as UserRole,
+  role: "superadmin" as UserRole,
   password: "Boludosteam1982!!"
 };
 
@@ -117,7 +118,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string, 
     password: string, 
     name: string, 
-    role: UserRole = "customer"
+    role: UserRole = "user"  // Default role is now "user" instead of "customer"
   ): Promise<boolean> => {
     try {
       // Get users from localStorage
@@ -189,7 +190,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === "admin",
+        isAdmin: user?.role === "admin" || user?.role === "superadmin",
+        isSuperAdmin: user?.role === "superadmin",
         register,
       }}
     >

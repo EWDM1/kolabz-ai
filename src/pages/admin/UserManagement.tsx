@@ -20,9 +20,9 @@ import { toast } from "@/hooks/use-toast";
 const mockUsers: AdminUser[] = [
   {
     id: "1",
-    name: "John Smith",
-    email: "john@example.com",
-    role: "admin",
+    name: "Eric Smith",
+    email: "eric@example.com",
+    role: "superadmin",
     status: "active",
     lastActive: "Today, 2:30 PM"
   },
@@ -30,7 +30,7 @@ const mockUsers: AdminUser[] = [
     id: "2",
     name: "Sarah Johnson",
     email: "sarah@example.com",
-    role: "user",
+    role: "admin",
     status: "active",
     lastActive: "Yesterday, 4:20 PM"
   },
@@ -73,7 +73,7 @@ const UserManagement = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [users, setUsers] = useState<AdminUser[]>(mockUsers);
-  const { user } = useAuth();
+  const { user, isSuperAdmin } = useAuth();
   const navigate = useNavigate();
 
   // Check the sidebar collapsed state from localStorage
@@ -110,10 +110,32 @@ const UserManagement = () => {
   }, [sidebarCollapsed]);
 
   const handleEditUser = (user: AdminUser) => {
+    // If not super admin, restrict editing of non-user roles
+    if (!isSuperAdmin && user.role !== "user") {
+      toast({
+        variant: "destructive",
+        title: "Permission denied",
+        description: "You can only edit users with the 'User' role.",
+      });
+      return;
+    }
+    
     navigate(`/admin/users/edit/${user.id}`, { state: { user } });
   };
 
   const handleDeleteUser = (userId: string) => {
+    const userToDelete = users.find(u => u.id === userId);
+    
+    // If not super admin, restrict deleting of non-user roles
+    if (!isSuperAdmin && userToDelete && userToDelete.role !== "user") {
+      toast({
+        variant: "destructive",
+        title: "Permission denied",
+        description: "You can only delete users with the 'User' role.",
+      });
+      return;
+    }
+    
     // In a real application, this would call an API
     setUsers(users.filter(user => user.id !== userId));
     toast({
@@ -124,6 +146,22 @@ const UserManagement = () => {
 
   const handleDeleteSelected = () => {
     if (selectedUsers.length === 0) return;
+    
+    // Check permissions for non-super admins
+    if (!isSuperAdmin) {
+      const hasRestrictedUsers = users
+        .filter(user => selectedUsers.includes(user.id))
+        .some(user => user.role !== "user");
+        
+      if (hasRestrictedUsers) {
+        toast({
+          variant: "destructive",
+          title: "Permission denied",
+          description: "You can only delete users with the 'User' role.",
+        });
+        return;
+      }
+    }
     
     // In a real application, this would call an API
     setUsers(users.filter(user => !selectedUsers.includes(user.id)));
