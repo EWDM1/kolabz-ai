@@ -17,7 +17,8 @@ import {
   Search,
   Tag,
   FileText,
-  Pencil
+  Pencil,
+  X // Add X icon import
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
