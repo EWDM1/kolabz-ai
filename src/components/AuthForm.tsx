@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthContext";
+import { Loader2 } from "lucide-react";
 
 interface AuthFormProps {
   mode: "login" | "signup";
@@ -12,8 +13,7 @@ interface AuthFormProps {
 
 const AuthForm = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate();
-  const { login, register } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, register, isLoading } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,25 +30,22 @@ const AuthForm = ({ mode }: AuthFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
         if (success) {
-          // Check if user is admin and redirect accordingly
-          navigate("/admin");
+          navigate("/dashboard");
         }
       } else {
         const success = await register(formData.email, formData.password, formData.name);
         if (success) {
+          // Navigate to dashboard after successful signup
           navigate("/dashboard");
         }
       }
     } catch (error) {
       console.error("Authentication error:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -74,6 +71,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
               required
               value={formData.name}
               onChange={handleChange}
+              disabled={isLoading}
             />
           </div>
         )}
@@ -88,6 +86,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             required
             value={formData.email}
             onChange={handleChange}
+            disabled={isLoading}
           />
         </div>
 
@@ -107,17 +106,19 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             required
             value={formData.password}
             onChange={handleChange}
+            disabled={isLoading}
           />
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading
-            ? mode === "login"
-              ? "Signing in..."
-              : "Creating account..."
-            : mode === "login"
-            ? "Sign in"
-            : "Create account"}
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {mode === "login" ? "Signing in..." : "Creating account..."}
+            </>
+          ) : (
+            mode === "login" ? "Sign in" : "Create account"
+          )}
         </Button>
       </form>
 

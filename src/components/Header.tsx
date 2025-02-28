@@ -1,193 +1,222 @@
 
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useTheme } from "@/components/ThemeProvider";
-import { LanguageSelector } from "@/components/LanguageSelector";
-import { useLanguage } from "@/components/LanguageContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/components/AuthContext";
+import { useState } from "react";
+import ThemeToggle from "./ThemeToggle";
+import LanguageSelector from "./LanguageSelector";
 
 const Header = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme } = useTheme();
-  const { t } = useLanguage();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout, isAdmin } = useAuth();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Function to handle smooth scrolling
-  const scrollToSection = (sectionId: string) => {
-    setIsMenuOpen(false); // Close mobile menu if open
+  // Function to get user's initials for avatar fallback
+  const getUserInitials = () => {
+    if (!user) return "U";
     
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+    // If we have user metadata with a name
+    if (user.user_metadata && user.user_metadata.name) {
+      const nameParts = user.user_metadata.name.split(" ");
+      if (nameParts.length >= 2) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      }
+      return user.user_metadata.name[0].toUpperCase();
     }
+    
+    // Fallback to email
+    return user.email ? user.email[0].toUpperCase() : "U";
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "py-3 bg-background/80 backdrop-blur-md shadow-sm"
-          : "py-5 bg-transparent"
-      }`}
-    >
-      <div className="container px-4 mx-auto flex items-center justify-between">
-        <Link 
-          to="/" 
-          className="flex items-center space-x-2"
-          aria-label="Kolabz Home"
-        >
-          {theme === 'dark' ? (
-            <img 
-              src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-              alt="Kolabz Logo" 
-              className="h-10" 
-            />
-          ) : (
-            <img 
-              src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-              alt="Kolabz Logo" 
-              className="h-10" 
-            />
-          )}
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <button 
-            onClick={() => scrollToSection('features')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
-          >
-            {t("nav.features", "Features")}
-          </button>
-          <button 
-            onClick={() => scrollToSection('pricing')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
-          >
-            {t("nav.pricing", "Pricing")}
-          </button>
-          <button 
-            onClick={() => scrollToSection('about')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
-          >
-            {t("nav.about", "About Us")}
-          </button>
-        </nav>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center space-x-3">
+    <header className="border-b">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <LanguageSelector />
-          </div>
-          <div className="flex items-center">
-            <ThemeToggle />
-          </div>
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">{t("nav.login", "Log In")}</Link>
-          </Button>
-          <Button size="sm" className="relative overflow-hidden group" asChild>
-            <Link to="/signup">
-              <span className="relative z-10">{t("nav.signup", "Sign Up")}</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary group-hover:translate-y-0 translate-y-10 transition-transform duration-300"></span>
+            <Link to="/" className="flex items-center">
+              <img 
+                src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
+                alt="Kolabz" 
+                className="h-8 w-auto"
+              />
+              <span className="ml-2 text-xl font-bold">Kolabz</span>
             </Link>
-          </Button>
-        </div>
+            <nav className="ml-10 hidden space-x-8 md:flex">
+              <Link to="/" className="text-sm font-medium hover:text-primary">
+                Home
+              </Link>
+              <Link to="#features" className="text-sm font-medium hover:text-primary">
+                Features
+              </Link>
+              <Link to="#pricing" className="text-sm font-medium hover:text-primary">
+                Pricing
+              </Link>
+            </nav>
+          </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-1">
-          <div className="flex items-center">
-            <LanguageSelector />
-          </div>
-          <div className="flex items-center">
+          <div className="hidden md:flex md:items-center md:space-x-4">
             <ThemeToggle />
+            <LanguageSelector />
+            
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.email || ""} />
+                      <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-prompts">My Prompts</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-settings">Settings</Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin">Admin Dashboard</Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => logout()}>
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Log in</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/signup">Sign up</Link>
+                </Button>
+              </div>
+            )}
           </div>
-          <button
-            className="text-foreground p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+
+          <div className="flex md:hidden">
+            <button
+              type="button"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              <span className="sr-only">Open main menu</span>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`md:hidden fixed inset-0 z-40 bg-background transform transition-transform duration-300 ease-in-out ${
-          isMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col h-full p-8">
-          <div className="flex justify-between items-center mb-10">
-            <Link to="/" className="inline-block" onClick={() => setIsMenuOpen(false)}>
-              {theme === 'dark' ? (
-                <img 
-                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-                  alt="Kolabz Logo" 
-                  className="h-8" 
-                />
-              ) : (
-                <img 
-                  src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                  alt="Kolabz Logo" 
-                  className="h-8" 
-                />
-              )}
+      {mobileMenuOpen && (
+        <div className="md:hidden">
+          <div className="space-y-1 px-4 pb-3 pt-2">
+            <Link
+              to="/"
+              className="block px-3 py-2 text-base font-medium"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Home
             </Link>
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="p-2"
-              aria-label="Close menu"
+            <Link
+              to="#features"
+              className="block px-3 py-2 text-base font-medium"
+              onClick={() => setMobileMenuOpen(false)}
             >
-              <X size={20} />
-            </button>
-          </div>
-
-          <nav className="flex flex-col space-y-6 text-lg mb-auto">
-            <button
-              className="py-2 border-b border-border text-left"
-              onClick={() => scrollToSection('features')}
+              Features
+            </Link>
+            <Link
+              to="#pricing"
+              className="block px-3 py-2 text-base font-medium"
+              onClick={() => setMobileMenuOpen(false)}
             >
-              {t("nav.features", "Features")}
-            </button>
-            <button
-              className="py-2 border-b border-border text-left"
-              onClick={() => scrollToSection('pricing')}
-            >
-              {t("nav.pricing", "Pricing")}
-            </button>
-            <button
-              className="py-2 border-b border-border text-left"
-              onClick={() => scrollToSection('about')}
-            >
-              {t("nav.about", "About Us")}
-            </button>
-          </nav>
-
-          <div className="mt-auto pt-6 grid gap-4">
-            <Button variant="outline" className="w-full" asChild>
-              <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                {t("nav.login", "Log In")}
-              </Link>
-            </Button>
-            <Button className="w-full" asChild>
-              <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                {t("nav.signup", "Sign Up")}
-              </Link>
-            </Button>
+              Pricing
+            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="block px-3 py-2 text-base font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="block px-3 py-2 text-base font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  className="block w-full px-3 py-2 text-left text-base font-medium"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="block px-3 py-2 text-base font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/signup"
+                  className="block px-3 py-2 text-base font-medium"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
+            <div className="flex items-center space-x-2 px-3 py-2">
+              <ThemeToggle />
+              <LanguageSelector />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 };

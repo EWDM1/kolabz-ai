@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -42,37 +43,124 @@ const App = () => (
               <Toaster />
               <Sonner />
               <Routes>
+                {/* Public Routes */}
                 <Route path="/" element={<Index />} />
                 <Route path="/index" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/my-prompts" element={<MyPrompts />} />
-                <Route path="/manage-subscription" element={<ManageSubscription />} />
-                <Route path="/my-settings" element={<MySettings />} />
+                
+                {/* Protected User Routes */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/my-prompts" element={
+                  <ProtectedRoute>
+                    <MyPrompts />
+                  </ProtectedRoute>
+                } />
+                <Route path="/manage-subscription" element={
+                  <ProtectedRoute>
+                    <ManageSubscription />
+                  </ProtectedRoute>
+                } />
+                <Route path="/my-settings" element={
+                  <ProtectedRoute>
+                    <MySettings />
+                  </ProtectedRoute>
+                } />
                 
                 {/* Admin Routes */}
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/users" element={<UserManagement />} />
-                <Route path="/admin/users/new" element={<AddUser />} />
-                <Route path="/admin/users/edit/:id" element={<EditUser />} />
-                <Route path="/admin/users/filter" element={<UserFilter />} />
-                <Route path="/admin/stripe" element={<StripeSettings />} />
-                <Route path="/admin/integrations" element={<IntegrationsSettings />} />
-                <Route path="/admin/settings" element={<AdminSettings />} />
+                <Route path="/admin" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <UserManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users/new" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AddUser />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users/edit/:id" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <EditUser />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/users/filter" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <UserFilter />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/stripe" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <StripeSettings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/integrations" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <IntegrationsSettings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/settings" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminSettings />
+                  </ProtectedRoute>
+                } />
                 
-                {/* Website Routes */}
-                <Route path="/admin/landing/edit" element={<LandingPageEdit />} />
-                <Route path="/admin/landing/editor" element={<LandingPageEditor />} />
-                <Route path="/admin/landing/seo" element={<LandingSEO />} />
-                <Route path="/admin/website/pages" element={<NotFound />} />
-                <Route path="/admin/website/new-page" element={<NotFound />} />
+                {/* Website Routes (Admin) */}
+                <Route path="/admin/landing/edit" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <LandingPageEdit />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/landing/editor" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <LandingPageEditor />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/landing/seo" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <LandingSEO />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/website/pages" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/website/new-page" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
                 
-                {/* Blog Routes */}
-                <Route path="/admin/blog/posts" element={<NotFound />} />
-                <Route path="/admin/blog/new-post" element={<NotFound />} />
-                <Route path="/admin/blog/categories" element={<NotFound />} />
-                <Route path="/admin/blog/tags" element={<NotFound />} />
+                {/* Blog Routes (Admin) */}
+                <Route path="/admin/blog/posts" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/blog/new-post" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/blog/categories" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin/blog/tags" element={
+                  <ProtectedRoute requiredRole="admin">
+                    <NotFound />
+                  </ProtectedRoute>
+                } />
                 
                 <Route path="*" element={<NotFound />} />
               </Routes>
