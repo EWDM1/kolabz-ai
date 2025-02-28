@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
 
 interface AdminLayoutProps {
-  children: React.ReactNode;
-  title: string;
+  children: ReactNode;
+  title?: string;
   description?: string;
   bannerMessage?: string;
   requireAdmin?: boolean;
@@ -84,8 +84,8 @@ const AdminLayout = ({
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="space-y-6 max-w-7xl mx-auto">
+        <main className="flex-1 overflow-y-auto py-6 px-4 md:px-6 lg:px-8">
+          <div className="grid gap-4 lg:gap-8">
             {(title || description) && (
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>

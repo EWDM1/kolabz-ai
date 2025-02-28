@@ -1,24 +1,17 @@
 
 import { useState, useEffect } from "react";
-import { Banner } from "@/components/ui/banner";
-import AdminHeader from "@/components/admin/AdminHeader";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft } from "lucide-react";
 import { Link, useParams, useLocation, useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/components/AuthContext";
 import { AdminUser } from "@/components/admin/UserTable";
 import { toast } from "@/hooks/use-toast";
 
 const EditUser = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,39 +26,6 @@ const EditUser = () => {
   };
   
   const [userData, setUserData] = useState<AdminUser>(initialUserData);
-
-  // Check the sidebar collapsed state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem("adminSidebarCollapsed");
-    if (savedState !== null) {
-      setSidebarCollapsed(savedState === "true");
-    }
-  }, []);
-
-  // Listen for storage events to sync sidebar state across components
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedState = localStorage.getItem("adminSidebarCollapsed");
-      if (savedState !== null) {
-        setSidebarCollapsed(savedState === "true");
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    
-    // Check for changes every second (for same-window updates)
-    const interval = setInterval(() => {
-      const savedState = localStorage.getItem("adminSidebarCollapsed");
-      if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
-        setSidebarCollapsed(savedState === "true");
-      }
-    }, 1000);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
-  }, [sidebarCollapsed]);
 
   // Fetch user data if not provided in location state
   useEffect(() => {
@@ -115,130 +75,108 @@ const EditUser = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className={cn(
-        "flex-1 transition-all duration-300 ease-in-out w-full",
-        sidebarCollapsed ? "md:ml-16" : "md:ml-64",
-        "px-4 md:px-6 lg:px-8"
-      )}>
-        <Banner
-          id="welcome-banner"
-          message={`👋 Welcome back, ${user?.name}! Edit user information below.`}
-          variant="rainbow"
-          height="2.5rem"
-        />
+    <AdminLayout
+      title="Edit User"
+      description="Update user information and permissions"
+      bannerMessage="👋 Welcome back! Edit user information below."
+    >
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <div className="flex items-center">
+          <Link to="/admin/users">
+            <Button variant="ghost" size="sm" className="gap-1">
+              <ChevronLeft className="h-4 w-4" />
+              Back to Users
+            </Button>
+          </Link>
+        </div>
         
-        <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-        
-        <main className="flex-1 overflow-y-auto py-6">
-          <div className="space-y-6 max-w-3xl mx-auto">
-            <div className="flex items-center">
-              <Link to="/admin/users">
-                <Button variant="ghost" size="sm" className="gap-1">
-                  <ChevronLeft className="h-4 w-4" />
-                  Back to Users
+        <Card>
+          <CardHeader>
+            <CardTitle>User Information</CardTitle>
+            <CardDescription>
+              Make changes to the user's profile information below
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="John Doe"
+                    value={userData.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    value={userData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="role">User Role</Label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={userData.role}
+                    onChange={handleChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                    <option value="customer">Customer</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={userData.status}
+                    onChange={handleChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Reset Password (leave blank to keep current)</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="New password"
+                />
+              </div>
+              
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Updating User..." : "Update User"}
                 </Button>
-              </Link>
-            </div>
-            
-            <div>
-              <h1 className="text-3xl font-bold">Edit User</h1>
-              <p className="text-muted-foreground">
-                Update user information and permissions
-              </p>
-            </div>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>User Information</CardTitle>
-                <CardDescription>
-                  Make changes to the user's profile information below
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="John Doe"
-                        value={userData.name}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="john@example.com"
-                        value={userData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="role">User Role</Label>
-                      <select
-                        id="role"
-                        name="role"
-                        value={userData.role}
-                        onChange={handleChange}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="user">User</option>
-                        <option value="customer">Customer</option>
-                      </select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="status">Status</Label>
-                      <select
-                        id="status"
-                        name="status"
-                        value={userData.status}
-                        onChange={handleChange}
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Reset Password (leave blank to keep current)</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="New password"
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading ? "Updating User..." : "Update User"}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 
