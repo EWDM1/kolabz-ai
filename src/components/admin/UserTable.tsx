@@ -8,13 +8,13 @@ import { User, UserRole } from "@/components/AuthContext";
 export interface AdminUser extends User {
   status: "active" | "inactive";
   lastLogin?: string;
-  lastActive?: string; // Add this property to match what's used in mockUsers
+  lastActive?: string;
 }
 
 interface UserTableProps {
   users: AdminUser[];
-  selectedUsers: string[]; // Add this to match the props being passed
-  setSelectedUsers: (users: string[]) => void; // Add this to match the props being passed
+  selectedUsers: string[];
+  setSelectedUsers: (users: string[]) => void;
   onEdit?: (user: AdminUser) => void;
   onDelete?: (userId: string) => void;
 }

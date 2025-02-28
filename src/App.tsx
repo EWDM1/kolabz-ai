@@ -21,7 +21,6 @@ import ManageSubscription from "./pages/ManageSubscription";
 import MyPrompts from "./pages/MyPrompts";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
-import Settings from "./pages/Settings";
 import AdminSettings from "./pages/admin/AdminSettings";
 import LandingPageEdit from "./pages/admin/LandingPageEdit";
 import LandingPageEditor from "./pages/admin/LandingPageEditor";
@@ -48,7 +47,6 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/my-prompts" element={<MyPrompts />} />
                 <Route path="/manage-subscription" element={<ManageSubscription />} />
-                <Route path="/settings" element={<Settings />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
