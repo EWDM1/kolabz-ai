@@ -33,7 +33,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "py-3 bg-background/80 backdrop-blur-md shadow-sm"
           : "py-5 bg-transparent"
@@ -64,28 +64,32 @@ const Header = () => {
         <nav className="hidden md:flex items-center space-x-8">
           <button 
             onClick={() => scrollToSection('features')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
             Features
           </button>
           <button 
             onClick={() => scrollToSection('pricing')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
             Pricing
           </button>
           <button 
             onClick={() => scrollToSection('about')} 
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all-200"
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
           >
             About Us
           </button>
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden md:flex items-center space-x-4">
-          <LanguageSelector />
-          <ThemeToggle />
+        <div className="hidden md:flex items-center space-x-3">
+          <div className="flex items-center">
+            <LanguageSelector />
+          </div>
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
           <Button variant="ghost" size="sm" asChild>
             <Link to="/login">Log In</Link>
           </Button>
@@ -98,9 +102,13 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-2">
-          <LanguageSelector />
-          <ThemeToggle />
+        <div className="md:hidden flex items-center space-x-1">
+          <div className="flex items-center">
+            <LanguageSelector />
+          </div>
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
           <button
             className="text-foreground p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}

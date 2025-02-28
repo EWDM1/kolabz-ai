@@ -16,11 +16,11 @@ export function LanguageSelector() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Select Language">
-          <Globe className="h-5 w-5" />
+        <Button variant="ghost" size="icon" aria-label="Select Language" className="h-9 w-9">
+          <Globe className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-[150px]">
         {languageOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
