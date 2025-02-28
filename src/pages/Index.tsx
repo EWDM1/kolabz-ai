@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
@@ -9,7 +8,6 @@ import SupabaseConnectionTest from "@/components/SupabaseConnectionTest";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Award, Heart, Bookmark } from "lucide-react";
-
 const Index = () => {
   const [showConnectionTest, setShowConnectionTest] = useState(false);
 
@@ -30,20 +28,16 @@ const Index = () => {
         console.log("Keyboard shortcut triggered: Alt/Option+S");
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
-    
+
     // Log that the event listener was added
     console.log("Keyboard event listener added");
-    
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       console.log("Keyboard event listener removed");
     };
   }, []);
-
-  return (
-    <>
+  return <>
       <Header />
       <main>
         <Hero />
@@ -205,42 +199,26 @@ const Index = () => {
             </div>
             
             <div className="mt-16 text-center">
-              <p className="text-muted-foreground max-w-3xl mx-auto mb-8">
-                Founded in 2023, Kolabz has helped thousands of users create better AI outputs through optimized prompts. 
-                Our platform is designed for everyone from beginners to advanced users looking to get the most out of AI models.
-              </p>
-              <Button
-                variant="outline"
-                className="rounded-full px-8"
-                onClick={() => window.open("/contact", "_self")}
-              >
-                Get in Touch
-              </Button>
+              <p className="text-muted-foreground max-w-3xl mx-auto mb-8">Founded in 2024, Kolabz has helped thousands of users create better AI outputs through optimized prompts. Our platform is designed for everyone from beginners to advanced users looking to get the most out of AI models.</p>
+              
             </div>
           </div>
         </section>
         
         {/* Supabase Connection Test */}
         <div className="container py-8 flex justify-center">
-          <Button 
-            onClick={() => setShowConnectionTest(prev => !prev)}
-            className="bg-primary hover:bg-primary/90"
-          >
+          <Button onClick={() => setShowConnectionTest(prev => !prev)} className="bg-primary hover:bg-primary/90">
             {showConnectionTest ? "Hide" : "Show"} Supabase Connection Test
           </Button>
         </div>
         
-        {showConnectionTest && (
-          <section className="py-12 bg-muted">
+        {showConnectionTest && <section className="py-12 bg-muted">
             <div className="container">
               <SupabaseConnectionTest />
             </div>
-          </section>
-        )}
+          </section>}
       </main>
       <Footer />
-    </>
-  );
+    </>;
 };
-
 export default Index;
