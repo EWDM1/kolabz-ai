@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -14,7 +14,9 @@ import {
   Check,
   X,
   AlertCircle,
-  ArrowLeft
+  ArrowLeft,
+  ToggleLeft,
+  ToggleRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,10 +30,27 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/components/LanguageContext";
+import { 
+  isTestMode, 
+  toggleStripeTestMode 
+} from "@/integrations/stripe/stripeConfig";
+import { 
+  cancelSubscription, 
+  formatCardDetails
+} from "@/integrations/stripe/stripeService";
+import { PaymentMethodFormWrapper } from "@/components/stripe/PaymentMethodForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose
+} from "@/components/ui/dialog";
 
 const ManageSubscription = () => {
   const { toast } = useToast();
@@ -39,6 +58,21 @@ const ManageSubscription = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
+  const [testMode, setTestMode] = useState(isTestMode());
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  
+  // Mock payment method data - in a real app, this would come from your backend
+  const [paymentMethod, setPaymentMethod] = useState({
+    last4: '4242',
+    expiry: '12/24'
+  });
+
+  useEffect(() => {
+    // In a real implementation, you would fetch the customer's payment method
+    // from your backend/Stripe
+    console.log("Stripe test mode is", testMode ? "enabled" : "disabled");
+  }, [testMode]);
 
   const handleLogout = () => {
     toast({
@@ -52,22 +86,85 @@ const ManageSubscription = () => {
     navigate(path);
   };
   
-  const handleUpdateCard = () => {
+  const handleToggleTestMode = () => {
+    const newMode = !testMode;
+    toggleStripeTestMode(newMode);
+    setTestMode(newMode);
+    
+    toast({
+      title: newMode ? "Test Mode Enabled" : "Live Mode Enabled",
+      description: newMode 
+        ? "You are now using Stripe in test mode. No real charges will be made." 
+        : "Warning: You are now using Stripe in live mode. Real charges will be made.",
+      variant: newMode ? "default" : "destructive",
+    });
+  };
+  
+  const handleUpdateCard = async (paymentMethod: any) => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    
+    try {
+      // In a real implementation, you would send this payment method to your backend
+      console.log("Payment method updated:", paymentMethod);
+      
+      // Update local state with new card details
+      setPaymentMethod({
+        last4: paymentMethod.card.last4,
+        expiry: `${paymentMethod.card.exp_month.toString().padStart(2, '0')}/${paymentMethod.card.exp_year.toString().slice(-2)}`
+      });
+      
+      // Close the dialog
+      setPaymentDialogOpen(false);
+      
       toast({
         title: t("payment.updated.title", "Card updated"),
         description: t("payment.updated.description", "Your payment method has been updated successfully"),
       });
-    }, 1500);
+    } catch (error) {
+      console.error("Error updating payment method:", error);
+      toast({
+        variant: "destructive",
+        title: "Error updating card",
+        description: "There was a problem updating your payment method. Please try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCancelSubscription = () => {
+  const handleCancelSubscription = async () => {
+    setLoading(true);
+    
+    try {
+      // Call the cancellation service
+      const result = await cancelSubscription();
+      
+      if (result.success) {
+        setCancelDialogOpen(false);
+        
+        toast({
+          title: "Subscription Cancelled",
+          description: "Your subscription has been cancelled successfully. You will have access until the end of your billing period.",
+        });
+      }
+    } catch (error) {
+      console.error("Error cancelling subscription:", error);
+      toast({
+        variant: "destructive",
+        title: "Error cancelling subscription",
+        description: "There was a problem cancelling your subscription. Please try again or contact support.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePaymentError = (error: any) => {
+    console.error("Payment error:", error);
     toast({
       variant: "destructive",
-      title: t("subscription.cancel.title", "Are you sure?"),
-      description: t("subscription.cancel.description", "Please contact support to cancel your subscription."),
+      title: "Payment Error",
+      description: error.message || "There was a problem processing your payment. Please try again.",
     });
   };
 
@@ -179,15 +276,39 @@ const ManageSubscription = () => {
 
           {/* Main content */}
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
-            <div className="flex items-center mb-6">
+            <div className="flex items-center justify-between mb-6">
               <Button variant="ghost" size="sm" onClick={() => navigate("/dashboard")} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Dashboard
+              </Button>
+              
+              {/* Test mode toggle */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleToggleTestMode}
+                className={`gap-1 ${testMode ? 'border-orange-300 text-orange-600 hover:text-orange-700 hover:border-orange-400 dark:border-orange-800 dark:text-orange-500' : ''}`}
+              >
+                {testMode ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                {testMode ? 'Test Mode' : 'Live Mode'}
               </Button>
             </div>
             
             <h1 className="text-2xl font-bold mb-2">{t("subscription.title", "Manage Subscription")}</h1>
             <p className="text-muted-foreground mb-6">{t("subscription.description", "Manage your plan, billing information and view payment history")}</p>
+            
+            {/* Test mode banner */}
+            {testMode && (
+              <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300 p-4 rounded-lg mb-6 flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium">Stripe Test Mode Active</h3>
+                  <p className="text-sm mt-1">
+                    You're currently in test mode. No real charges will be made. Use the test card <span className="font-medium">4242 4242 4242 4242</span> with any future expiration date and any CVC.
+                  </p>
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Current plan card */}
@@ -226,10 +347,39 @@ const ManageSubscription = () => {
                   <Button variant="outline" className="w-full" onClick={() => navigate("/change-plan")}>
                     {t("subscription.change_plan", "Change Plan")}
                   </Button>
-                  <Button variant="outline" className="w-full text-destructive hover:bg-destructive/10" 
-                    onClick={handleCancelSubscription}>
-                    {t("subscription.cancel", "Cancel Subscription")}
-                  </Button>
+                  
+                  <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full text-destructive hover:bg-destructive/10">
+                        {t("subscription.cancel", "Cancel Subscription")}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Cancel Subscription</DialogTitle>
+                        <DialogDescription>
+                          Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your billing period.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4">
+                        <p className="text-sm text-muted-foreground">
+                          Your subscription will remain active until the end of your current billing period on <span className="font-medium">August 12, 2023</span>.
+                        </p>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Keep Subscription</Button>
+                        </DialogClose>
+                        <Button 
+                          variant="destructive" 
+                          onClick={handleCancelSubscription}
+                          disabled={loading}
+                        >
+                          {loading ? "Processing..." : "Confirm Cancellation"}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardFooter>
               </Card>
               
@@ -246,8 +396,8 @@ const ManageSubscription = () => {
                         <CreditCard className="h-6 w-6" />
                       </div>
                       <div>
-                        <p className="font-medium">•••• •••• •••• 4242</p>
-                        <p className="text-xs text-muted-foreground">Expires 12/24</p>
+                        <p className="font-medium">•••• •••• •••• {paymentMethod.last4}</p>
+                        <p className="text-xs text-muted-foreground">Expires {paymentMethod.expiry}</p>
                       </div>
                     </div>
                     <span className="text-xs px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
@@ -255,31 +405,28 @@ const ManageSubscription = () => {
                     </span>
                   </div>
                   
-                  <div className="space-y-4 pt-2">
-                    <h3 className="text-sm font-medium">{t("payment.update_method", "Update Payment Method")}</h3>
-                    <div className="space-y-3">
-                      <div className="space-y-2">
-                        <Label htmlFor="card-number">{t("payment.card_number", "Card Number")}</Label>
-                        <Input id="card-number" placeholder="1234 5678 9012 3456" />
+                  <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="w-full">
+                        {t("payment.update", "Update Payment Method")}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Update Payment Method</DialogTitle>
+                        <DialogDescription>
+                          Enter your new card details below
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4">
+                        <PaymentMethodFormWrapper
+                          onSuccess={handleUpdateCard}
+                          onError={handlePaymentError}
+                        />
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-2">
-                          <Label htmlFor="expiry">{t("payment.expiry", "Expiration Date")}</Label>
-                          <Input id="expiry" placeholder="MM/YY" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cvc">{t("payment.cvc", "CVC")}</Label>
-                          <Input id="cvc" placeholder="123" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
-                <CardFooter>
-                  <Button className="w-full" onClick={handleUpdateCard} disabled={loading}>
-                    {loading ? t("payment.updating", "Updating...") : t("payment.update", "Update Payment Method")}
-                  </Button>
-                </CardFooter>
               </Card>
             </div>
             

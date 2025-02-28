@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -10,7 +10,10 @@ import {
   ArrowLeft,
   Check,
   CreditCard,
-  Sparkles
+  Sparkles,
+  AlertCircle,
+  ToggleLeft,
+  ToggleRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +29,13 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/components/LanguageContext";
+import { 
+  isTestMode, 
+  toggleStripeTestMode 
+} from "@/integrations/stripe/stripeConfig";
+import { 
+  changeSubscriptionPlan 
+} from "@/integrations/stripe/stripeService";
 
 const ChangePlan = () => {
   const { toast } = useToast();
@@ -34,6 +44,13 @@ const ChangePlan = () => {
   const [selectedPlan, setSelectedPlan] = useState("pro");
   const [isAnnual, setIsAnnual] = useState(true);
   const { t } = useLanguage();
+  const [loading, setLoading] = useState(false);
+  const [testMode, setTestMode] = useState(isTestMode());
+
+  useEffect(() => {
+    // Log test mode status on component mount
+    console.log("Stripe test mode is", testMode ? "enabled" : "disabled");
+  }, [testMode]);
 
   const handleLogout = () => {
     toast({
@@ -47,12 +64,46 @@ const ChangePlan = () => {
     navigate(path);
   };
 
-  const handleChangePlan = () => {
+  const handleToggleTestMode = () => {
+    const newMode = !testMode;
+    toggleStripeTestMode(newMode);
+    setTestMode(newMode);
+    
     toast({
-      title: "Plan updated",
-      description: `You have successfully switched to the ${selectedPlan === 'free' ? 'Free' : selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
+      title: newMode ? "Test Mode Enabled" : "Live Mode Enabled",
+      description: newMode 
+        ? "You are now using Stripe in test mode. No real charges will be made." 
+        : "Warning: You are now using Stripe in live mode. Real charges will be made.",
+      variant: newMode ? "default" : "destructive",
     });
-    navigate("/manage-subscription");
+  };
+
+  const handleChangePlan = async () => {
+    setLoading(true);
+    
+    try {
+      // Call the Stripe service to change the plan
+      const result = await changeSubscriptionPlan(selectedPlan, isAnnual);
+      
+      if (result.success) {
+        toast({
+          title: "Plan updated",
+          description: `You have successfully switched to the ${selectedPlan === 'free' ? 'Free' : selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
+        });
+        
+        // Navigate back to subscription management
+        navigate("/manage-subscription");
+      }
+    } catch (error) {
+      console.error("Error changing plan:", error);
+      toast({
+        variant: "destructive",
+        title: "Error changing plan",
+        description: "There was a problem changing your subscription plan. Please try again or contact support.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const planDetails = [
@@ -204,15 +255,39 @@ const ChangePlan = () => {
 
           {/* Main content */}
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
-            <div className="flex items-center mb-6">
+            <div className="flex items-center justify-between mb-6">
               <Button variant="ghost" size="sm" onClick={() => navigate("/manage-subscription")} className="gap-1">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Subscription
+              </Button>
+              
+              {/* Test mode toggle */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleToggleTestMode}
+                className={`gap-1 ${testMode ? 'border-orange-300 text-orange-600 hover:text-orange-700 hover:border-orange-400 dark:border-orange-800 dark:text-orange-500' : ''}`}
+              >
+                {testMode ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                {testMode ? 'Test Mode' : 'Live Mode'}
               </Button>
             </div>
             
             <h1 className="text-2xl font-bold mb-2">Change Plan</h1>
             <p className="text-muted-foreground mb-6">Compare plans and select the option that's right for you</p>
+            
+            {/* Test mode banner */}
+            {testMode && (
+              <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300 p-4 rounded-lg mb-6 flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium">Stripe Test Mode Active</h3>
+                  <p className="text-sm mt-1">
+                    You're currently in test mode. No real charges will be made when changing plans.
+                  </p>
+                </div>
+              </div>
+            )}
             
             {/* Billing Toggle */}
             <div className="flex items-center justify-start space-x-4 mb-8">
@@ -323,9 +398,16 @@ const ChangePlan = () => {
                   size="lg" 
                   onClick={handleChangePlan}
                   className="w-full md:w-auto"
+                  disabled={loading}
                 >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Confirm Plan Change
+                  {loading ? (
+                    "Processing..."
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Confirm Plan Change
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

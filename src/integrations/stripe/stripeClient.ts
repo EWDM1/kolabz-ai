@@ -1,85 +1,80 @@
 
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import { getPublishableKey } from './stripeConfig';
 
-// This variable will hold the Stripe instance once loaded
-let stripePromise: Promise<Stripe | null>;
+let stripePromise: Promise<any> | null = null;
 
-// Function to initialize the Stripe client
-export const getStripe = (publishableKey?: string) => {
+export const getStripeClient = () => {
   if (!stripePromise) {
-    // Use provided key or try to fetch from environment
-    const key = publishableKey || process.env.STRIPE_PUBLISHABLE_KEY;
-    
-    if (!key) {
-      console.error('Stripe publishable key is missing!');
-      return Promise.resolve(null);
-    }
-    
-    stripePromise = loadStripe(key);
+    stripePromise = loadStripe(getPublishableKey());
   }
-  
   return stripePromise;
 };
 
-// Helper function to format amount with currency
-export const formatCurrency = (amount: number, currency = 'USD') => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency,
-  }).format(amount);
+export const createCustomer = async (email: string) => {
+  // This would typically be an API call to your backend
+  console.log(`Creating customer for ${email}`);
+  return { id: 'cus_mock_' + Math.random().toString(36).substring(2, 15) };
 };
 
-// Helper function to validate a credit card number (Luhn algorithm)
-export const isValidCardNumber = (number: string) => {
-  // Remove all non-digit characters
-  const digits = number.replace(/\D/g, '');
-  
-  if (digits.length < 13 || digits.length > 19) {
-    return false;
-  }
-  
-  // Luhn algorithm
-  let sum = 0;
-  let shouldDouble = false;
-  
-  for (let i = digits.length - 1; i >= 0; i--) {
-    let digit = parseInt(digits.charAt(i));
-    
-    if (shouldDouble) {
-      digit *= 2;
-      if (digit > 9) digit -= 9;
+export const createSubscription = async (
+  customerId: string, 
+  priceId: string
+) => {
+  // This would typically be an API call to your backend
+  console.log(`Creating subscription for customer ${customerId} with price ${priceId}`);
+  return { id: 'sub_mock_' + Math.random().toString(36).substring(2, 15) };
+};
+
+export const cancelSubscription = async (subscriptionId: string) => {
+  // This would typically be an API call to your backend
+  console.log(`Cancelling subscription ${subscriptionId}`);
+  return { status: 'canceled' };
+};
+
+export const updateSubscription = async (
+  subscriptionId: string, 
+  priceId: string
+) => {
+  // This would typically be an API call to your backend
+  console.log(`Updating subscription ${subscriptionId} to price ${priceId}`);
+  return { status: 'active', current_period_end: new Date().setMonth(new Date().getMonth() + 1) };
+};
+
+export const getSubscription = async (subscriptionId: string) => {
+  // This would typically be an API call to your backend
+  console.log(`Getting subscription ${subscriptionId}`);
+  return {
+    id: subscriptionId,
+    status: 'active',
+    current_period_end: new Date().setMonth(new Date().getMonth() + 1),
+    items: {
+      data: [
+        {
+          price: {
+            id: 'price_mock',
+            product: 'prod_mock'
+          }
+        }
+      ]
     }
-    
-    sum += digit;
-    shouldDouble = !shouldDouble;
-  }
-  
-  return sum % 10 === 0;
+  };
 };
 
-// Function to detect card type based on the number
-export const getCardType = (number: string) => {
-  const digits = number.replace(/\D/g, '');
-  
-  // Visa
-  if (/^4/.test(digits)) {
-    return 'visa';
-  }
-  
-  // Mastercard
-  if (/^5[1-5]/.test(digits) || /^2[2-7]/.test(digits)) {
-    return 'mastercard';
-  }
-  
-  // American Express
-  if (/^3[47]/.test(digits)) {
-    return 'amex';
-  }
-  
-  // Discover
-  if (/^6(?:011|5)/.test(digits)) {
-    return 'discover';
-  }
-  
-  return 'unknown';
+export const getCustomerPaymentMethods = async (customerId: string) => {
+  // This would typically be an API call to your backend
+  console.log(`Getting payment methods for customer ${customerId}`);
+  return {
+    data: [
+      {
+        id: 'pm_mock_' + Math.random().toString(36).substring(2, 15),
+        card: {
+          brand: 'visa',
+          last4: '4242',
+          exp_month: 12,
+          exp_year: 2024
+        }
+      }
+    ]
+  };
 };
