@@ -45,23 +45,21 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-slide-up delay-400">
-              <Button 
-                size="lg" 
-                className="relative overflow-hidden group" 
-                onClick={() => scrollToSection('pricing')}
-              >
-                <span className="relative z-10">
-                  {t("hero.cta.pricing", "See Pricing")}
-                </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary group-hover:translate-y-0 translate-y-12 transition-transform duration-300"></span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <Button size="lg" className="relative overflow-hidden group" asChild>
+                <Link to="/signup">
+                  <span className="relative z-10">
+                    {t("hero.cta.trial", "Start Free Trial")}
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary group-hover:translate-y-0 translate-y-12 transition-transform duration-300"></span>
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </Button>
               <Button 
                 size="lg" 
                 variant="outline" 
-                onClick={() => scrollToSection('features')}
+                onClick={() => scrollToSection('pricing')}
               >
-                {t("hero.cta.features", "Explore Features")}
+                {t("hero.cta.pricing", "See Pricing")}
               </Button>
             </div>
             

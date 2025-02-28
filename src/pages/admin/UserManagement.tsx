@@ -25,7 +25,7 @@ const mockUsers: AdminUser[] = [
     role: "admin",
     status: "active",
     lastActive: "Today, 2:30 PM"
-  } as AdminUser,
+  },
   {
     id: "2",
     name: "Sarah Johnson",
@@ -33,7 +33,7 @@ const mockUsers: AdminUser[] = [
     role: "user",
     status: "active",
     lastActive: "Yesterday, 4:20 PM"
-  } as AdminUser,
+  },
   {
     id: "3",
     name: "Michael Brown",
@@ -41,7 +41,7 @@ const mockUsers: AdminUser[] = [
     role: "user",
     status: "inactive",
     lastActive: "Last week"
-  } as AdminUser,
+  },
   {
     id: "4",
     name: "Lisa Davis",
@@ -49,7 +49,7 @@ const mockUsers: AdminUser[] = [
     role: "user",
     status: "active",
     lastActive: "Today, 11:15 AM"
-  } as AdminUser,
+  },
   {
     id: "5",
     name: "James Wilson",
@@ -57,7 +57,7 @@ const mockUsers: AdminUser[] = [
     role: "user",
     status: "active",
     lastActive: "Yesterday, 9:45 AM"
-  } as AdminUser,
+  },
   {
     id: "6",
     name: "Emily Taylor",
@@ -65,7 +65,7 @@ const mockUsers: AdminUser[] = [
     role: "user",
     status: "inactive",
     lastActive: "Never"
-  } as AdminUser
+  }
 ];
 
 const UserManagement = () => {
@@ -195,7 +195,7 @@ const UserManagement = () => {
       )}>
         <Banner
           id="welcome-banner"
-          message={`👋 Welcome back, ${user?.user_metadata?.name || user?.email}! Here you can manage all platform users.`}
+          message={`👋 Welcome back, ${user?.name}! Here you can manage all platform users.`}
           variant="rainbow"
           height="2.5rem"
         />

@@ -3,9 +3,13 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Edit, Trash, CheckCircle, XCircle } from "lucide-react";
-import { ExtendedUser, UserRole } from "@/components/AuthContext";
+import { User, UserRole } from "@/components/AuthContext";
 
-export type AdminUser = ExtendedUser;
+export interface AdminUser extends User {
+  status: "active" | "inactive";
+  lastLogin?: string;
+  lastActive?: string;
+}
 
 interface UserTableProps {
   users: AdminUser[];
@@ -25,9 +29,9 @@ export function UserTable({
   const [searchQuery, setSearchQuery] = useState("");
   
   const filteredUsers = users.filter(user => 
-    user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleRowSelection = (userId: string) => {
@@ -38,7 +42,7 @@ export function UserTable({
     }
   };
 
-  const getRoleBadgeClass = (role?: UserRole) => {
+  const getRoleBadgeClass = (role: UserRole) => {
     switch (role) {
       case "superadmin":
         return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
@@ -105,11 +109,11 @@ export function UserTable({
                         onChange={() => handleRowSelection(user.id)}
                       />
                     </td>
-                    <td className="py-3 px-4">{user.name || 'No name'}</td>
-                    <td className="py-3 px-4">{user.email || 'No email'}</td>
+                    <td className="py-3 px-4">{user.name}</td>
+                    <td className="py-3 px-4">{user.email}</td>
                     <td className="py-3 px-4">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role)}`}>
-                        {user.role || 'user'}
+                        {user.role}
                       </span>
                     </td>
                     <td className="py-3 px-4">

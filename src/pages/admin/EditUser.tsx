@@ -58,7 +58,7 @@ const EditUser = () => {
       
       toast({
         title: "User updated",
-        description: `${userData.name || 'User'}'s information has been updated successfully.`,
+        description: `${userData.name}'s information has been updated successfully.`,
       });
       
       navigate("/admin/users");
@@ -106,7 +106,7 @@ const EditUser = () => {
                     id="name"
                     name="name"
                     placeholder="John Doe"
-                    value={userData.name || ''}
+                    value={userData.name}
                     onChange={handleChange}
                     required
                   />
@@ -119,7 +119,7 @@ const EditUser = () => {
                     name="email"
                     type="email"
                     placeholder="john@example.com"
-                    value={userData.email || ''}
+                    value={userData.email}
                     onChange={handleChange}
                     required
                   />
@@ -132,7 +132,7 @@ const EditUser = () => {
                   <select
                     id="role"
                     name="role"
-                    value={userData.role || 'user'}
+                    value={userData.role}
                     onChange={handleChange}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -147,7 +147,7 @@ const EditUser = () => {
                   <select
                     id="status"
                     name="status"
-                    value={userData.status || 'active'}
+                    value={userData.status}
                     onChange={handleChange}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
