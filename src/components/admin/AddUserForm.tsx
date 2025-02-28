@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { UserRole, useAuth } from "@/components/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const AddUserForm = () => {
   const { register, isSuperAdmin } = useAuth();
@@ -19,18 +18,11 @@ const AddUserForm = () => {
     role: "user" as UserRole,
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
-
-  const handleRoleChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      role: value as UserRole,
     }));
   };
 
@@ -158,24 +150,17 @@ const AddUserForm = () => {
           
           <div className="space-y-2">
             <Label htmlFor="role">User Role</Label>
-            <Select
+            <select
+              id="role"
+              name="role"
               value={formData.role}
-              onValueChange={handleRoleChange}
+              onChange={handleChange}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <SelectTrigger id="role" className="w-full">
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                {isSuperAdmin && <SelectItem value="superadmin">Super Admin</SelectItem>}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              {formData.role === "user" && "Standard user with access to their own dashboard only"}
-              {formData.role === "admin" && "Admin can manage users and basic settings"}
-              {formData.role === "superadmin" && "Super Admin has full access to all features"}
-            </p>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              {isSuperAdmin && <option value="superadmin">Super Admin</option>}
+            </select>
           </div>
           
           <div className="flex justify-end">

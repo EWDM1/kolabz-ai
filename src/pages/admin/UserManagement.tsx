@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -13,6 +12,7 @@ import {
   Upload, 
   Trash2
 } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
 import { toast } from "@/hooks/use-toast";
@@ -73,7 +73,7 @@ const UserManagement = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [users, setUsers] = useState<AdminUser[]>(mockUsers);
-  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // Check the sidebar collapsed state from localStorage
@@ -83,13 +83,6 @@ const UserManagement = () => {
       setSidebarCollapsed(savedState === "true");
     }
   }, []);
-
-  // Redirect if not admin
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate("/dashboard");
-    }
-  }, [isAdmin, navigate]);
 
   // Listen for storage events to sync sidebar state across components
   useEffect(() => {
@@ -191,10 +184,6 @@ const UserManagement = () => {
     input.click();
   };
 
-  const handleAddUser = () => {
-    navigate("/admin/users/new");
-  };
-
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -222,10 +211,12 @@ const UserManagement = () => {
                   Manage your platform users
                 </p>
               </div>
-              <Button onClick={handleAddUser}>
-                <UserRoundPlus className="mr-2 h-4 w-4" />
-                Add New User
-              </Button>
+              <Link to="/admin/users/new">
+                <Button>
+                  <UserRoundPlus className="mr-2 h-4 w-4" />
+                  Add New User
+                </Button>
+              </Link>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
