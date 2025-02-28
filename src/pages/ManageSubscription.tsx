@@ -31,17 +31,19 @@ import { useTheme } from "@/components/ThemeProvider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/components/LanguageContext";
 
 const ManageSubscription = () => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out",
+      title: t("logout.title", "Logged out"),
+      description: t("logout.description", "You have been successfully logged out"),
     });
     navigate("/login");
   };
@@ -55,8 +57,8 @@ const ManageSubscription = () => {
     setTimeout(() => {
       setLoading(false);
       toast({
-        title: "Card updated",
-        description: "Your payment method has been updated successfully",
+        title: t("payment.updated.title", "Card updated"),
+        description: t("payment.updated.description", "Your payment method has been updated successfully"),
       });
     }, 1500);
   };
@@ -64,15 +66,15 @@ const ManageSubscription = () => {
   const handleCancelSubscription = () => {
     toast({
       variant: "destructive",
-      title: "Are you sure?",
-      description: "Please contact support to cancel your subscription.",
+      title: t("subscription.cancel.title", "Are you sure?"),
+      description: t("subscription.cancel.description", "Please contact support to cancel your subscription."),
     });
   };
 
   const handleDownloadInvoice = (invoiceDate: string) => {
     toast({
-      title: "Invoice downloaded",
-      description: `Invoice for ${invoiceDate} has been downloaded`,
+      title: t("invoice.download.title", "Invoice downloaded"),
+      description: t("invoice.download.description", `Invoice for ${invoiceDate} has been downloaded`),
     });
   };
 
@@ -102,7 +104,7 @@ const ManageSubscription = () => {
 
             <div 
               className="flex items-center space-x-2 cursor-pointer" 
-              onClick={() => handleNavigation("/settings")}
+              onClick={() => handleNavigation("/my-settings")}
             >
               <span className="text-sm font-medium hidden md:inline-block">
                 John Doe
@@ -130,14 +132,14 @@ const ManageSubscription = () => {
                     <span>Dashboard</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/dashboard")}
+                    onClick={() => handleNavigation("/my-prompts")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <ListChecks className="h-5 w-5" />
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/settings")}
+                    onClick={() => handleNavigation("/my-settings")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
@@ -184,49 +186,49 @@ const ManageSubscription = () => {
               </Button>
             </div>
             
-            <h1 className="text-2xl font-bold mb-2">Manage Subscription</h1>
-            <p className="text-muted-foreground mb-6">Manage your plan, billing information and view payment history</p>
+            <h1 className="text-2xl font-bold mb-2">{t("subscription.title", "Manage Subscription")}</h1>
+            <p className="text-muted-foreground mb-6">{t("subscription.description", "Manage your plan, billing information and view payment history")}</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Current plan card */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Current Plan</CardTitle>
-                  <CardDescription>Review your current subscription details</CardDescription>
+                  <CardTitle>{t("subscription.current_plan.title", "Current Plan")}</CardTitle>
+                  <CardDescription>{t("subscription.current_plan.description", "Review your current subscription details")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-4 bg-primary/5 rounded-lg border border-primary/20">
                     <div>
-                      <h3 className="font-bold text-lg">Pro Plan</h3>
-                      <p className="text-sm text-muted-foreground">$10.00/month, billed annually</p>
+                      <h3 className="font-bold text-lg">{t("subscription.pro_plan", "Pro Plan")}</h3>
+                      <p className="text-sm text-muted-foreground">{t("subscription.pro_plan.price", "$10.00/month, billed annually")}</p>
                     </div>
                     <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full flex items-center gap-1">
-                      <Check className="h-3 w-3" /> Active
+                      <Check className="h-3 w-3" /> {t("subscription.status.active", "Active")}
                     </span>
                   </div>
                   
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Billing cycle</span>
-                      <span className="font-medium">Annual (save 16%)</span>
+                      <span className="text-muted-foreground">{t("subscription.billing_cycle", "Billing cycle")}</span>
+                      <span className="font-medium">{t("subscription.billing_cycle.annual", "Annual (save 16%)")}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Next billing date</span>
+                      <span className="text-muted-foreground">{t("subscription.next_billing", "Next billing date")}</span>
                       <span className="font-medium">August 12, 2023</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Amount due</span>
+                      <span className="text-muted-foreground">{t("subscription.amount_due", "Amount due")}</span>
                       <span className="font-medium">$100.00</span>
                     </div>
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-3">
                   <Button variant="outline" className="w-full" onClick={() => handleNavigation("/change-plan")}>
-                    Change Plan
+                    {t("subscription.change_plan", "Change Plan")}
                   </Button>
                   <Button variant="outline" className="w-full text-destructive hover:bg-destructive/10" 
                     onClick={handleCancelSubscription}>
-                    Cancel Subscription
+                    {t("subscription.cancel", "Cancel Subscription")}
                   </Button>
                 </CardFooter>
               </Card>
@@ -234,8 +236,8 @@ const ManageSubscription = () => {
               {/* Payment method card */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment Method</CardTitle>
-                  <CardDescription>Manage your payment information</CardDescription>
+                  <CardTitle>{t("payment.title", "Payment Method")}</CardTitle>
+                  <CardDescription>{t("payment.description", "Manage your payment information")}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
@@ -249,24 +251,24 @@ const ManageSubscription = () => {
                       </div>
                     </div>
                     <span className="text-xs px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
-                      Default
+                      {t("payment.status.default", "Default")}
                     </span>
                   </div>
                   
                   <div className="space-y-4 pt-2">
-                    <h3 className="text-sm font-medium">Update Payment Method</h3>
+                    <h3 className="text-sm font-medium">{t("payment.update_method", "Update Payment Method")}</h3>
                     <div className="space-y-3">
                       <div className="space-y-2">
-                        <Label htmlFor="card-number">Card Number</Label>
+                        <Label htmlFor="card-number">{t("payment.card_number", "Card Number")}</Label>
                         <Input id="card-number" placeholder="1234 5678 9012 3456" />
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-2">
-                          <Label htmlFor="expiry">Expiration Date</Label>
+                          <Label htmlFor="expiry">{t("payment.expiry", "Expiration Date")}</Label>
                           <Input id="expiry" placeholder="MM/YY" />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="cvc">CVC</Label>
+                          <Label htmlFor="cvc">{t("payment.cvc", "CVC")}</Label>
                           <Input id="cvc" placeholder="123" />
                         </div>
                       </div>
@@ -275,7 +277,7 @@ const ManageSubscription = () => {
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full" onClick={handleUpdateCard} disabled={loading}>
-                    {loading ? "Updating..." : "Update Payment Method"}
+                    {loading ? t("payment.updating", "Updating...") : t("payment.update", "Update Payment Method")}
                   </Button>
                 </CardFooter>
               </Card>
@@ -284,16 +286,16 @@ const ManageSubscription = () => {
             {/* Billing history card */}
             <Card>
               <CardHeader>
-                <CardTitle>Billing History</CardTitle>
-                <CardDescription>View and download past invoices</CardDescription>
+                <CardTitle>{t("billing.history.title", "Billing History")}</CardTitle>
+                <CardDescription>{t("billing.history.description", "View and download past invoices")}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="rounded-lg border">
                   <div className="grid grid-cols-4 p-4 bg-muted text-sm font-medium">
-                    <div>Date</div>
-                    <div>Amount</div>
-                    <div>Status</div>
-                    <div className="text-right">Invoice</div>
+                    <div>{t("billing.date", "Date")}</div>
+                    <div>{t("billing.amount", "Amount")}</div>
+                    <div>{t("billing.status", "Status")}</div>
+                    <div className="text-right">{t("billing.invoice", "Invoice")}</div>
                   </div>
                   <Separator />
                   {[
@@ -336,43 +338,40 @@ const ManageSubscription = () => {
             {/* FAQ Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Frequently Asked Questions</CardTitle>
-                <CardDescription>Common questions about billing and subscriptions</CardDescription>
+                <CardTitle>{t("faq.title", "Frequently Asked Questions")}</CardTitle>
+                <CardDescription>{t("faq.description", "Common questions about billing and subscriptions")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium">How can I upgrade my plan?</h3>
+                  <h3 className="font-medium">{t("faq.upgrade.title", "How can I upgrade my plan?")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    You can upgrade your plan at any time by clicking the "Change Plan" button above. The 
-                    price difference will be prorated for the remainder of your billing cycle.
+                    {t("faq.upgrade.description", "You can upgrade your plan at any time by clicking the \"Change Plan\" button above. The price difference will be prorated for the remainder of your billing cycle.")}
                   </p>
                 </div>
                 
                 <Separator />
                 
                 <div className="space-y-2">
-                  <h3 className="font-medium">When will I be charged?</h3>
+                  <h3 className="font-medium">{t("faq.charge.title", "When will I be charged?")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Your subscription will renew automatically on your billing date. For annual plans, 
-                    you'll be charged once per year on the anniversary of your signup date.
+                    {t("faq.charge.description", "Your subscription will renew automatically on your billing date. For annual plans, you'll be charged once per year on the anniversary of your signup date.")}
                   </p>
                 </div>
                 
                 <Separator />
                 
                 <div className="space-y-2">
-                  <h3 className="font-medium">How do I cancel my subscription?</h3>
+                  <h3 className="font-medium">{t("faq.cancel.title", "How do I cancel my subscription?")}</h3>
                   <p className="text-sm text-muted-foreground">
-                    You can cancel your subscription at any time. Click the "Cancel Subscription" button above
-                    or contact our support team. Note that cancelling stops automatic renewal but you'll still
-                    have access until the end of your current billing period.
+                    {t("faq.cancel.description", "You can cancel your subscription at any time. Click the \"Cancel Subscription\" button above or contact our support team. Note that cancelling stops automatic renewal but you'll still have access until the end of your current billing period.")}
                   </p>
                 </div>
                 
                 <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg flex gap-3">
                   <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                   <div>
-                    <span className="font-medium">Need help?</span> Contact our support team at{" "}
+                    <span className="font-medium">{t("faq.help.title", "Need help?")}</span>{" "}
+                    {t("faq.help.description", "Contact our support team at")}{" "}
                     <a href="mailto:support@kolabz.com" className="text-primary hover:underline">
                       support@kolabz.com
                     </a>

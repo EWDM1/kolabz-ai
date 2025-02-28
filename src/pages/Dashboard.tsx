@@ -32,6 +32,7 @@ import PromptGenerator from "@/components/PromptGenerator";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage } from "@/components/LanguageContext";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Mock saved prompts data
   const savedPrompts = [
@@ -90,7 +92,7 @@ const Dashboard = () => {
   };
 
   const handleSettings = () => {
-    navigate("/mysettings");
+    navigate("/my-settings");
   };
 
   const handleManageSubscription = () => {
@@ -176,7 +178,7 @@ const Dashboard = () => {
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/mysettings")}
+                    onClick={() => handleNavigation("/my-settings")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
