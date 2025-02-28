@@ -22,6 +22,9 @@ import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Settings from "./pages/Settings";
 import AdminSettings from "./pages/admin/AdminSettings";
+import LandingPageEdit from "./pages/admin/LandingPageEdit";
+import LandingPageEditor from "./pages/admin/LandingPageEditor";
+import LandingSEO from "./pages/admin/LandingSEO";
 
 // Reset default app CSS
 import "./App.css";
@@ -54,6 +57,11 @@ const App = () => (
               <Route path="/admin/stripe" element={<StripeSettings />} />
               <Route path="/admin/integrations" element={<IntegrationsSettings />} />
               <Route path="/admin/settings" element={<AdminSettings />} />
+              
+              {/* Landing Page Routes */}
+              <Route path="/admin/landing/edit" element={<LandingPageEdit />} />
+              <Route path="/admin/landing/editor" element={<LandingPageEditor />} />
+              <Route path="/admin/landing/seo" element={<LandingSEO />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

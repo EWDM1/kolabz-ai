@@ -17,7 +17,9 @@ import {
   ChevronLeft,
   PanelLeft,
   CreditCard,
-  Code
+  Code,
+  Pencil,
+  Search
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -275,7 +277,16 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             isCollapsed={isCollapsed}
           />
           <SidebarItem
-            icon={<FileText className="h-4 w-4" />}
+            icon={<Pencil className="h-4 w-4" />}
+            label="Visual Editor"
+            href="/admin/landing/editor"
+            isActive={path === "/admin/landing/editor"}
+            isSubItem
+            onClick={onClose}
+            isCollapsed={isCollapsed}
+          />
+          <SidebarItem
+            icon={<Search className="h-4 w-4" />}
             label="SEO Settings"
             href="/admin/landing/seo"
             isActive={path === "/admin/landing/seo"}
@@ -311,7 +322,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           />
         </SidebarGroup>
         
-        {/* Added the new External Integrations menu item */}
         <SidebarItem
           icon={<Code className="h-5 w-5" />}
           label="External Integrations"
@@ -321,7 +331,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           isCollapsed={isCollapsed}
         />
         
-        {/* Stripe Integration menu item */}
         <SidebarItem
           icon={<CreditCard className="h-5 w-5" />}
           label="Stripe Integration"
