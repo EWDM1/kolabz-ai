@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import StatsCard from "@/components/admin/StatsCard";
+import { StatsCard } from "@/components/admin/StatsCard";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
@@ -158,37 +158,45 @@ const AdminDashboard = () => {
               <StatsCard 
                 title="Total Users"
                 value="2,851"
-                change="+12.5%"
-                trend="up"
-                description="from last month"
                 icon={<Users className="h-6 w-6" />}
+                trend={{
+                  value: 12.5,
+                  isPositive: true
+                }}
+                description="from last month"
               />
               
               <StatsCard 
                 title="Active Users"
                 value="1,429"
-                change="+8.2%"
-                trend="up"
-                description="active now"
                 icon={<ArrowUpRight className="h-6 w-6" />}
+                trend={{
+                  value: 8.2,
+                  isPositive: true
+                }}
+                description="active now"
               />
               
               <StatsCard 
                 title="Total Revenue"
                 value="$24,918"
-                change="+18.3%"
-                trend="up"
-                description="from last month"
                 icon={<CreditCard className="h-6 w-6" />}
+                trend={{
+                  value: 18.3,
+                  isPositive: true
+                }}
+                description="from last month"
               />
               
               <StatsCard 
                 title="Prompt Usage"
                 value="84,291"
-                change="+24.5%"
-                trend="up"
-                description="from last month"
                 icon={<FileText className="h-6 w-6" />}
+                trend={{
+                  value: 24.5,
+                  isPositive: true
+                }}
+                description="from last month"
               />
             </div>
             
