@@ -2,11 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "@/components/ThemeProvider";
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Function to handle smooth scrolling
   const scrollToSection = (sectionId: string) => {
@@ -25,29 +27,29 @@ const Footer = () => {
 
   const footerLinks = [
     {
-      title: "Product",
+      title: t("footer.product", "Product"),
       links: [
-        { name: "Features", onClick: () => scrollToSection('features'), href: null },
-        { name: "Pricing", onClick: () => scrollToSection('pricing'), href: null },
-        { name: "Help Center", href: "/help" },
+        { name: t("nav.features", "Features"), onClick: () => scrollToSection('features'), href: null },
+        { name: t("nav.pricing", "Pricing"), onClick: () => scrollToSection('pricing'), href: null },
+        { name: t("footer.help", "Help Center"), href: "/help" },
       ],
     },
     {
-      title: "Company",
+      title: t("footer.company", "Company"),
       links: [
-        { name: "About Us", onClick: () => scrollToSection('about'), href: null },
-        { name: "Careers", href: "/careers" },
-        { name: "Blog", href: "/blog" },
-        { name: "Contact", href: "/contact" },
+        { name: t("nav.about", "About Us"), onClick: () => scrollToSection('about'), href: null },
+        { name: t("footer.careers", "Careers"), href: "/careers" },
+        { name: t("footer.blog", "Blog"), href: "/blog" },
+        { name: t("footer.contact", "Contact"), href: "/contact" },
       ],
     },
     {
-      title: "Legal",
+      title: t("footer.legal", "Legal"),
       links: [
-        { name: "Privacy Policy", href: "/privacy" },
-        { name: "Terms of Service", href: "/terms" },
-        { name: "Cookie Policy", href: "/cookies" },
-        { name: "GDPR", href: "/gdpr" },
+        { name: t("footer.privacy", "Privacy Policy"), href: "/privacy" },
+        { name: t("footer.terms", "Terms of Service"), href: "/terms" },
+        { name: t("footer.cookies", "Cookie Policy"), href: "/cookies" },
+        { name: t("footer.gdpr", "GDPR"), href: "/gdpr" },
       ],
     },
   ];
@@ -80,7 +82,7 @@ const Footer = () => {
               )}
             </button>
             <p className="text-muted-foreground mb-6 max-w-md">
-              Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.
+              {t("footer.description", "Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.")}
             </p>
             <div className="flex space-x-4">
               {socialLinks.map(({ icon: Icon, name, href }) => (
@@ -128,10 +130,10 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} Kolabz. All rights reserved.
+            {t("footer.copyright", `© ${currentYear} Kolabz. All rights reserved.`)}
           </p>
           <div className="mt-4 md:mt-0 flex items-center">
-            <span className="text-xs text-muted-foreground">Made with care for creators everywhere</span>
+            <span className="text-xs text-muted-foreground">{t("footer.tagline", "Made with care for creators everywhere")}</span>
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 // Define the supported languages
@@ -100,6 +99,17 @@ const translations: Record<Language, Record<string, string>> = {
     "about.founded": "Founded in 2024, Kolabz has helped thousands of users create better AI outputs through optimized prompts. Our platform is designed for everyone from beginners to advanced users looking to get the most out of AI models.",
     
     // Footer
+    "footer.product": "Product",
+    "footer.company": "Company",
+    "footer.legal": "Legal",
+    "footer.help": "Help Center",
+    "footer.careers": "Careers",
+    "footer.blog": "Blog",
+    "footer.contact": "Contact",
+    "footer.privacy": "Privacy Policy",
+    "footer.terms": "Terms of Service",
+    "footer.cookies": "Cookie Policy",
+    "footer.gdpr": "GDPR",
     "footer.description": "Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.",
     "footer.copyright": "© 2023 Kolabz. All rights reserved.",
     "footer.tagline": "Made with care for creators everywhere",
@@ -107,7 +117,52 @@ const translations: Record<Language, Record<string, string>> = {
     // Dashboard/Settings
     "dashboard.welcome": "Welcome back!",
     "settings.title": "Settings",
-    "settings.save": "Save Changes"
+    "settings.save": "Save Changes",
+
+    // Pricing features
+    "pricing.features.optimizations": "5 prompt optimizations",
+    "pricing.features.save": "Save up to 5 prompts",
+    "pricing.features.templates": "Access to basic templates",
+    "pricing.features.collaboration": "Team collaboration",
+    "pricing.features.unlimited_opt": "Unlimited prompt optimizations",
+    "pricing.features.unlimited_lib": "Unlimited prompt library",
+    "pricing.features.all_templates": "Access to all templates",
+    "pricing.features.export": "1-click export to any platform",
+    "pricing.features.priority": "Priority support",
+    "pricing.features.everything": "Everything in Pro",
+    "pricing.features.workspaces": "Team workspaces",
+    "pricing.features.collab_features": "Collaboration features",
+    "pricing.features.custom": "Custom templates",
+    "pricing.features.dedicated": "Dedicated support",
+    "pricing.savings.pro": "$20/year",
+    "pricing.savings.team": "$48/year",
+    "pricing.most_popular": "Most Popular",
+    "pricing.save_amount": "Save",
+
+    // Prompt Generator
+    "generator.target_model": "Target AI Model",
+    "generator.prompt_purpose": "Prompt Purpose",
+    "generator.initial_prompt": "Your Initial Prompt",
+    "generator.placeholder": "Enter your initial prompt idea here...",
+    "generator.generating": "Generating...",
+    "generator.generate": "Generate Optimized Prompt",
+    "generator.optimized": "Optimized Prompt",
+    "generator.copy": "Copy",
+    "generator.purpose.content": "Content Creation",
+    "generator.purpose.data": "Data Analysis",
+    "generator.purpose.creative": "Creative Writing",
+    "generator.purpose.technical": "Technical Documentation",
+    "generator.purpose.marketing": "Marketing",
+    "generator.output.create": "Create a comprehensive",
+    "generator.output.content": "content piece",
+    "generator.output.analysis": "analysis",
+    "generator.output.about": "about",
+    "generator.output.structure": "with the following structure",
+    "generator.output.intro": "Introduction that explains the core concepts",
+    "generator.output.detailed": "Detailed explanation with examples",
+    "generator.output.practical": "Practical applications or implications",
+    "generator.output.conclusion": "Conclusion with key takeaways",
+    "generator.output.include": "Include relevant data points and ensure information is accurate and up-to-date."
   },
   es: {
     // Header
@@ -188,6 +243,17 @@ const translations: Record<Language, Record<string, string>> = {
     "about.founded": "Fundada en 2024, Kolabz ha ayudado a miles de usuarios a crear mejores resultados de IA a través de prompts optimizados. Nuestra plataforma está diseñada para todos, desde principiantes hasta usuarios avanzados que buscan obtener el máximo provecho de los modelos de IA.",
     
     // Footer
+    "footer.product": "Producto",
+    "footer.company": "Empresa",
+    "footer.legal": "Legal",
+    "footer.help": "Centro de Ayuda",
+    "footer.careers": "Carreras",
+    "footer.blog": "Blog",
+    "footer.contact": "Contacto",
+    "footer.privacy": "Política de Privacidad",
+    "footer.terms": "Términos de Servicio",
+    "footer.cookies": "Política de Cookies",
+    "footer.gdpr": "GDPR",
     "footer.description": "Kolabz te ayuda a crear prompts perfectos para cualquier modelo de IA, mejorando tu productividad y creatividad.",
     "footer.copyright": "© 2023 Kolabz. Todos los derechos reservados.",
     "footer.tagline": "Hecho con cuidado para creadores en todas partes",
@@ -195,7 +261,52 @@ const translations: Record<Language, Record<string, string>> = {
     // Dashboard/Settings
     "dashboard.welcome": "¡Bienvenido de nuevo!",
     "settings.title": "Configuración",
-    "settings.save": "Guardar Cambios"
+    "settings.save": "Guardar Cambios",
+
+    // Pricing features
+    "pricing.features.optimizations": "5 prompt optimizations",
+    "pricing.features.save": "Guardar hasta 5 prompts",
+    "pricing.features.templates": "Acceso a plantillas básicas",
+    "pricing.features.collaboration": "Colaboración en equipo",
+    "pricing.features.unlimited_opt": "Optimizaciones de prompt ilimitadas",
+    "pricing.features.unlimited_lib": "Biblioteca de prompts ilimitada",
+    "pricing.features.all_templates": "Acceso a todas las plantillas",
+    "pricing.features.export": "Exportación con 1 clic a cualquier plataforma",
+    "pricing.features.priority": "Soporte prioritario",
+    "pricing.features.everything": "Todo en Pro",
+    "pricing.features.workspaces": "Espacios de trabajo en equipo",
+    "pricing.features.collab_features": "Funciones de colaboración",
+    "pricing.features.custom": "Plantillas personalizadas",
+    "pricing.features.dedicated": "Soporte dedicado",
+    "pricing.savings.pro": "$20/año",
+    "pricing.savings.team": "$48/año",
+    "pricing.most_popular": "Más Popular",
+    "pricing.save_amount": "Ahorra",
+
+    // Prompt Generator
+    "generator.target_model": "Modelo de IA objetivo",
+    "generator.prompt_purpose": "Propósito del prompt",
+    "generator.initial_prompt": "Tu prompt inicial",
+    "generator.placeholder": "Introduce aquí tu idea de prompt inicial...",
+    "generator.generating": "Generando...",
+    "generator.generate": "Generar prompt optimizado",
+    "generator.optimized": "Prompt optimizado",
+    "generator.copy": "Copiar",
+    "generator.purpose.content": "Creación de contenido",
+    "generator.purpose.data": "Análisis de datos",
+    "generator.purpose.creative": "Escritura creativa",
+    "generator.purpose.technical": "Documentación técnica",
+    "generator.purpose.marketing": "Marketing",
+    "generator.output.create": "Crea un",
+    "generator.output.content": "pieza de contenido",
+    "generator.output.analysis": "análisis",
+    "generator.output.about": "sobre",
+    "generator.output.structure": "con la siguiente estructura",
+    "generator.output.intro": "Introducción que explique los conceptos clave",
+    "generator.output.detailed": "Explicación detallada con ejemplos",
+    "generator.output.practical": "Aplicaciones o implicaciones prácticas",
+    "generator.output.conclusion": "Conclusión con puntos clave",
+    "generator.output.include": "Incluye puntos de datos relevantes y asegúrate de que la información sea precisa y esté actualizada."
   },
   fr: {
     // Header
@@ -276,6 +387,17 @@ const translations: Record<Language, Record<string, string>> = {
     "about.founded": "Fondée en 2024, Kolabz a aidé des milliers d'utilisateurs à créer de meilleurs résultats d'IA grâce à des prompts optimisés. Notre plateforme est conçue pour tous, des débutants aux utilisateurs avancés qui cherchent à tirer le meilleur parti des modèles d'IA.",
     
     // Footer
+    "footer.product": "Produit",
+    "footer.company": "Entreprise",
+    "footer.legal": "Juridique",
+    "footer.help": "Centre d'Aide",
+    "footer.careers": "Carrières",
+    "footer.blog": "Blog",
+    "footer.contact": "Contact",
+    "footer.privacy": "Politique de Confidentialité",
+    "footer.terms": "Conditions d'Utilisation",
+    "footer.cookies": "Politique des Cookies",
+    "footer.gdpr": "RGPD",
     "footer.description": "Kolabz vous aide à créer des prompts parfaits pour n'importe quel modèle d'IA, améliorant votre productivité et créativité.",
     "footer.copyright": "© 2023 Kolabz. Tous droits réservés.",
     "footer.tagline": "Fait avec soin pour les créateurs du monde entier",
@@ -283,7 +405,52 @@ const translations: Record<Language, Record<string, string>> = {
     // Dashboard/Settings
     "dashboard.welcome": "Bon retour parmi nous!",
     "settings.title": "Paramètres",
-    "settings.save": "Enregistrer les Modifications"
+    "settings.save": "Enregistrer les Modifications",
+
+    // Pricing features
+    "pricing.features.optimizations": "5 optimisations de prompt",
+    "pricing.features.save": "Enregistrer jusqu'à 5 prompts",
+    "pricing.features.templates": "Accès aux modèles de base",
+    "pricing.features.collaboration": "Collaboration en équipe",
+    "pricing.features.unlimited_opt": "Optimisations de prompt illimitées",
+    "pricing.features.unlimited_lib": "Bibliothèque de prompts illimitée",
+    "pricing.features.all_templates": "Accès à tous les modèles",
+    "pricing.features.export": "Exportation en 1 clic vers n'importe quelle plateforme",
+    "pricing.features.priority": "Support prioritaire",
+    "pricing.features.everything": "Tout dans Pro",
+    "pricing.features.workspaces": "Espaces de travail d'équipe",
+    "pricing.features.collab_features": "Fonctionnalités de collaboration",
+    "pricing.features.custom": "Modèles personnalisés",
+    "pricing.features.dedicated": "Support dédié",
+    "pricing.savings.pro": "20 $/an",
+    "pricing.savings.team": "48 $/an",
+    "pricing.most_popular": "Le plus populaire",
+    "pricing.save_amount": "Économiser",
+
+    // Prompt Generator
+    "generator.target_model": "Modèle d'IA cible",
+    "generator.prompt_purpose": "Objectif du prompt",
+    "generator.initial_prompt": "Votre prompt initial",
+    "generator.placeholder": "Entrez votre idée de prompt initial ici...",
+    "generator.generating": "Génération...",
+    "generator.generate": "Générer un prompt optimisé",
+    "generator.optimized": "Prompt optimisé",
+    "generator.copy": "Copier",
+    "generator.purpose.content": "Création de contenu",
+    "generator.purpose.data": "Analyse de données",
+    "generator.purpose.creative": "Écriture créative",
+    "generator.purpose.technical": "Documentation technique",
+    "generator.purpose.marketing": "Marketing",
+    "generator.output.create": "Créer un",
+    "generator.output.content": "élément de contenu",
+    "generator.output.analysis": "analyse",
+    "generator.output.about": "sur",
+    "generator.output.structure": "avec la structure suivante",
+    "generator.output.intro": "Introduction expliquant les concepts clés",
+    "generator.output.detailed": "Explication détaillée avec des exemples",
+    "generator.output.practical": "Applications ou implications pratiques",
+    "generator.output.conclusion": "Conclusion avec les points clés à retenir",
+    "generator.output.include": "Inclure les points de données pertinents et s'assurer que les informations sont exactes et à jour."
   },
   pt: {
     // Header
@@ -359,57 +526,3 @@ const translations: Record<Language, Record<string, string>> = {
     "about.mission.description": "Capacitar todos a desbloquear todo o potencial da IA através de melhores prompts e ferramentas intuitivas.",
     "about.mission.item1": "Acessibilidade",
     "about.mission.item2": "Educação",
-    "about.mission.item3": "Inovação",
-    
-    "about.founded": "Fundada em 2024, a Kolabz ajudou milhares de usuários a criar melhores resultados de IA através de prompts otimizados. Nossa plataforma é projetada para todos, desde iniciantes até usuários avançados que buscam obter o máximo dos modelos de IA.",
-    
-    // Footer
-    "footer.description": "Kolabz ajuda você a criar prompts perfeitos para qualquer modelo de IA, melhorando sua produtividade e criatividade.",
-    "footer.copyright": "© 2023 Kolabz. Todos os direitos reservados.",
-    "footer.tagline": "Feito com cuidado para criadores em todo lugar",
-    
-    // Dashboard/Settings
-    "dashboard.welcome": "Bem-vindo de volta!",
-    "settings.title": "Configurações",
-    "settings.save": "Salvar Alterações"
-  }
-};
-
-// Create the context with default values
-const LanguageContext = createContext<LanguageContextType>({
-  language: "en",
-  setLanguage: () => {},
-  languageOptions,
-  t: (key: string, defaultText?: string) => defaultText || key,
-});
-
-export const useLanguage = () => useContext(LanguageContext);
-
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
-    // Get from local storage or default to English
-    const savedLanguage = localStorage.getItem("kolabz-language");
-    return (savedLanguage as Language) || "en";
-  });
-
-  useEffect(() => {
-    // Save to local storage when language changes
-    localStorage.setItem("kolabz-language", language);
-    document.documentElement.setAttribute("lang", language);
-  }, [language]);
-
-  // Translation function
-  const t = (key: string, defaultText?: string): string => {
-    // Get the current language's translations
-    const langTranslations = translations[language] || {};
-    
-    // Return the translation if it exists, otherwise return the default text or the key itself
-    return langTranslations[key] || defaultText || key;
-  };
-
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage, languageOptions, t }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-};

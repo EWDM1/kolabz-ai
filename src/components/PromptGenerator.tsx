@@ -5,9 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage } from "@/components/LanguageContext";
 
 const PromptGenerator = () => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const [generatingPrompt, setGeneratingPrompt] = useState(false);
   const [promptGenerated, setPromptGenerated] = useState(false);
   const [initialPrompt, setInitialPrompt] = useState("");
@@ -23,7 +25,7 @@ const PromptGenerator = () => {
     // In a real app, this would make an API call to generate the prompt
     setTimeout(() => {
       setOptimizedPrompt(
-        `Create a comprehensive ${promptPurpose === "content-creation" ? "content piece" : "analysis"} about ${initialPrompt} with the following structure:\n\n1. Introduction that explains the core concepts\n2. Detailed explanation with examples\n3. Practical applications or implications\n4. Conclusion with key takeaways\n\nInclude relevant data points and ensure information is accurate and up-to-date.`
+        `${t("generator.output.create", "Create a comprehensive")} ${promptPurpose === "content-creation" ? t("generator.output.content", "content piece") : t("generator.output.analysis", "analysis")} ${t("generator.output.about", "about")} ${initialPrompt} ${t("generator.output.structure", "with the following structure")}:\n\n1. ${t("generator.output.intro", "Introduction that explains the core concepts")}\n2. ${t("generator.output.detailed", "Detailed explanation with examples")}\n3. ${t("generator.output.practical", "Practical applications or implications")}\n4. ${t("generator.output.conclusion", "Conclusion with key takeaways")}\n\n${t("generator.output.include", "Include relevant data points and ensure information is accurate and up-to-date.")}`
       );
       setGeneratingPrompt(false);
       setPromptGenerated(true);
@@ -39,7 +41,7 @@ const PromptGenerator = () => {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <Label htmlFor="targetModel">Target AI Model</Label>
+          <Label htmlFor="targetModel">{t("generator.target_model", "Target AI Model")}</Label>
           <select
             id="targetModel"
             value={targetModel}
@@ -58,7 +60,7 @@ const PromptGenerator = () => {
         </div>
 
         <div>
-          <Label htmlFor="promptPurpose">Prompt Purpose</Label>
+          <Label htmlFor="promptPurpose">{t("generator.prompt_purpose", "Prompt Purpose")}</Label>
           <select
             id="promptPurpose"
             value={promptPurpose}
@@ -69,20 +71,20 @@ const PromptGenerator = () => {
                 : 'bg-background border-input'
             }`}
           >
-            <option value="content-creation">Content Creation</option>
-            <option value="data-analysis">Data Analysis</option>
-            <option value="creative-writing">Creative Writing</option>
-            <option value="technical">Technical Documentation</option>
-            <option value="marketing">Marketing</option>
+            <option value="content-creation">{t("generator.purpose.content", "Content Creation")}</option>
+            <option value="data-analysis">{t("generator.purpose.data", "Data Analysis")}</option>
+            <option value="creative-writing">{t("generator.purpose.creative", "Creative Writing")}</option>
+            <option value="technical">{t("generator.purpose.technical", "Technical Documentation")}</option>
+            <option value="marketing">{t("generator.purpose.marketing", "Marketing")}</option>
           </select>
         </div>
       </div>
 
       <div>
-        <Label htmlFor="initialPrompt">Your Initial Prompt</Label>
+        <Label htmlFor="initialPrompt">{t("generator.initial_prompt", "Your Initial Prompt")}</Label>
         <Textarea
           id="initialPrompt"
-          placeholder="Enter your initial prompt idea here..."
+          placeholder={t("generator.placeholder", "Enter your initial prompt idea here...")}
           value={initialPrompt}
           onChange={(e) => setInitialPrompt(e.target.value)}
           className={`w-full h-32 mt-1.5 ${
@@ -98,7 +100,7 @@ const PromptGenerator = () => {
           onClick={handleGeneratePrompt} 
           disabled={!initialPrompt || generatingPrompt}
         >
-          {generatingPrompt ? "Generating..." : "Generate Optimized Prompt"}
+          {generatingPrompt ? t("generator.generating", "Generating...") : t("generator.generate", "Generate Optimized Prompt")}
         </Button>
       </div>
 
@@ -109,9 +111,9 @@ const PromptGenerator = () => {
             : 'border-gray-200 bg-gray-50'
         } p-4`}>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-semibold">Optimized Prompt</h3>
+            <h3 className="font-semibold">{t("generator.optimized", "Optimized Prompt")}</h3>
             <Button variant="outline" size="sm" onClick={handleCopyPrompt}>
-              Copy
+              {t("generator.copy", "Copy")}
             </Button>
           </div>
           <div className={`p-3 rounded-md ${
