@@ -11,10 +11,16 @@ const Index = () => {
   const [showConnectionTest, setShowConnectionTest] = useState(false);
 
   // Add a key combo to show the connection test (Cmd+Shift+S on Mac, Ctrl+Shift+S on Windows/Linux)
+  // or alternatively Alt+S/Option+S
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Check for Cmd+Shift+S on Mac or Ctrl+Shift+S on other platforms
       if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        setShowConnectionTest(prev => !prev);
+      }
+      // Alternative: Alt+S (Option+S on Mac)
+      else if (e.altKey && e.key === 's') {
         e.preventDefault();
         setShowConnectionTest(prev => !prev);
       }
