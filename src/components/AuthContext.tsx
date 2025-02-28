@@ -196,11 +196,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Check if user has admin role
-  const isAdmin = user?.app_metadata?.role === "admin" || user?.app_metadata?.role === "superadmin";
+  // Check if user is specifically the superadmin email
+  const isSuperAdmin = user?.email === "eric@ewdigitalmarketing.com" || user?.app_metadata?.role === "superadmin";
   
-  // Check if user has superadmin role
-  const isSuperAdmin = user?.app_metadata?.role === "superadmin";
+  // Check if user has admin role (includes superadmin)
+  const isAdmin = isSuperAdmin || user?.app_metadata?.role === "admin";
 
   return (
     <AuthContext.Provider
