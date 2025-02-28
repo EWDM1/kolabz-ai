@@ -57,9 +57,9 @@ export function UserTable({
       const authUsers = authError ? [] : authData.users;
       
       // Map the data to our AdminUser format
-      const formattedUsers: AdminUser[] = userData.map(user => {
+      const formattedUsers: AdminUser[] = (userData || []).map(user => {
         // Get all roles for this user
-        const userRoles = rolesData
+        const userRoles = (rolesData || [])
           .filter(r => r.user_id === user.id)
           .map(r => r.role as UserRole);
         
