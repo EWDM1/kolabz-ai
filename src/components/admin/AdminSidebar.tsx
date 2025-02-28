@@ -16,7 +16,8 @@ import {
   ChevronRight,
   ChevronLeft,
   PanelLeft,
-  CreditCard
+  CreditCard,
+  Code
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -310,7 +311,17 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           />
         </SidebarGroup>
         
-        {/* Added the new Stripe Integration menu item */}
+        {/* Added the new External Integrations menu item */}
+        <SidebarItem
+          icon={<Code className="h-5 w-5" />}
+          label="External Integrations"
+          href="/admin/integrations"
+          isActive={path === "/admin/integrations"}
+          onClick={onClose}
+          isCollapsed={isCollapsed}
+        />
+        
+        {/* Stripe Integration menu item */}
         <SidebarItem
           icon={<CreditCard className="h-5 w-5" />}
           label="Stripe Integration"

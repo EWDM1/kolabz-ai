@@ -7,8 +7,8 @@ let stripePromise: Promise<Stripe | null>;
 // Function to initialize the Stripe client
 export const getStripe = (publishableKey?: string) => {
   if (!stripePromise) {
-    const key = publishableKey || 
-      (typeof window !== 'undefined' && window.ENV?.STRIPE_PUBLISHABLE_KEY);
+    // Use provided key or try to fetch from environment
+    const key = publishableKey || process.env.STRIPE_PUBLISHABLE_KEY;
     
     if (!key) {
       console.error('Stripe publishable key is missing!');

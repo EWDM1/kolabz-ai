@@ -19,6 +19,7 @@ import UserFilter from "./pages/admin/UserFilter";
 import ManageSubscription from "./pages/ManageSubscription";
 import MyPrompts from "./pages/MyPrompts";
 import StripeSettings from "./pages/admin/StripeSettings";
+import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 
 // Reset default app CSS
 import "./App.css";
@@ -48,6 +49,7 @@ const App = () => (
               <Route path="/admin/users/edit/:id" element={<EditUser />} />
               <Route path="/admin/users/filter" element={<UserFilter />} />
               <Route path="/admin/stripe" element={<StripeSettings />} />
+              <Route path="/admin/integrations" element={<IntegrationsSettings />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>
