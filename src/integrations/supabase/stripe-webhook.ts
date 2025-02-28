@@ -5,7 +5,7 @@ import Stripe from 'stripe';
 export const stripeWebhookHandler = async (req: Request, env: any) => {
   // Initialize Stripe with the secret key
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-    apiVersion: '2023-10-16', // Specify the API version to avoid typechecking issues
+    apiVersion: '2025-02-24.acacia', // Updated to match the expected version
   });
   
   // Initialize Supabase client
