@@ -32,15 +32,16 @@ const Index = () => {
             <div className="flex items-center">
               <Link to="/" className="flex items-center">
                 <img 
-                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                  src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
                   alt="Kolabz" 
-                  className="h-8 w-auto object-contain"
+                  className="h-8 w-auto"
                 />
+                <span className="ml-2 text-xl font-bold">Kolabz</span>
               </Link>
             </div>
 
             {/* Center aligned nav */}
-            <div className="hidden w-full md:flex md:items-center md:justify-center">
+            <div className="hidden md:flex md:items-center md:justify-center">
               <nav className="flex space-x-8">
                 <Link to="/" className="text-sm font-medium hover:text-primary">
                   Home
@@ -51,6 +52,11 @@ const Index = () => {
                 <Link to="#pricing" className="text-sm font-medium hover:text-primary">
                   Pricing
                 </Link>
+                {isAuthenticated && (
+                  <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
+                    Dashboard
+                  </Link>
+                )}
               </nav>
             </div>
 
@@ -59,21 +65,33 @@ const Index = () => {
               <ThemeToggle />
               <LanguageSelector />
               
-              <div className="hidden md:flex items-center space-x-2">
-                <Button variant="ghost" asChild>
-                  <Link to="/login">Log in</Link>
+              {isAuthenticated ? (
+                <Button onClick={() => logout()} size="sm">
+                  Log out
                 </Button>
-                <Button asChild>
-                  <Link to="/signup">Sign up</Link>
-                </Button>
-              </div>
+              ) : (
+                <div className="hidden md:flex items-center space-x-2">
+                  <Button variant="ghost" asChild>
+                    <Link to="/login">Log in</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/signup">Sign up</Link>
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Mobile menu button */}
             <div className="flex md:hidden">
-              <Link to="/login" className="ml-2">
-                <Button size="sm">Log in</Button>
-              </Link>
+              {isAuthenticated ? (
+                <Button onClick={() => logout()} size="sm">
+                  Log out
+                </Button>
+              ) : (
+                <Link to="/login" className="ml-2">
+                  <Button size="sm">Log in</Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
