@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   User,
   Settings,
@@ -134,7 +134,7 @@ const MySettings = () => {
       {/* Dashboard header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
+          <button onClick={() => handleNavigation("/")} className="flex items-center">
             {theme === 'dark' ? (
               <img 
                 src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
@@ -148,7 +148,7 @@ const MySettings = () => {
                 className="h-8" 
               />
             )}
-          </Link>
+          </button>
 
           <div className="flex items-center space-x-4">
             <div className="relative w-64 hidden md:block">
