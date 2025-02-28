@@ -2,11 +2,11 @@
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Edit, Trash, CheckCircle, XCircle } from "lucide-react";
-import { User, UserRole } from "@/components/AuthContext";
+import { Search, Edit, Trash, CheckCircle, XCircle, User, Shield, Crown } from "lucide-react";
+import { User as AuthUser, UserRole } from "@/components/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface AdminUser extends User {
+export interface AdminUser extends AuthUser {
   status: "active" | "inactive";
   lastLogin?: string;
   lastActive?: string;
@@ -139,6 +139,19 @@ export function UserTable({
         return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
     }
   };
+  
+  const getRoleIcon = (role: UserRole) => {
+    switch (role) {
+      case "superadmin":
+        return <Crown className="h-4 w-4 mr-1.5" />;
+      case "admin":
+        return <Shield className="h-4 w-4 mr-1.5" />;
+      case "user":
+        return <User className="h-4 w-4 mr-1.5" />;
+      default:
+        return <User className="h-4 w-4 mr-1.5" />;
+    }
+  };
 
   if (loading) {
     return <div className="py-8 text-center">Loading users...</div>;
@@ -209,9 +222,12 @@ export function UserTable({
                     <td className="py-3 px-4">{user.name}</td>
                     <td className="py-3 px-4">{user.email}</td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role)}`}>
-                        {user.role}
-                      </span>
+                      <div className="flex items-center">
+                        {getRoleIcon(user.role)}
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role)}`}>
+                          {user.role}
+                        </span>
+                      </div>
                     </td>
                     <td className="py-3 px-4">
                       {user.status === "inactive" ? (
