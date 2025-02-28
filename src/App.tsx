@@ -35,7 +35,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="kolabz-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="kolabz-theme">
       <LanguageProvider>
         <TooltipProvider>
           <BrowserRouter>
