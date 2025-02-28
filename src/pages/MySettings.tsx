@@ -129,6 +129,10 @@ const MySettings = () => {
     navigate("/manage-subscription");
   };
 
+  const handleChangePlan = () => {
+    navigate("/change-plan");
+  };
+
   return (
     <div className="min-h-screen bg-background/95">
       {/* Dashboard header */}
@@ -595,7 +599,7 @@ const MySettings = () => {
                         <Button variant="outline" onClick={handleManageSubscription}>
                           Manage Subscription
                         </Button>
-                        <Button variant="outline">
+                        <Button variant="outline" onClick={handleChangePlan}>
                           Change Plan
                         </Button>
                       </div>
