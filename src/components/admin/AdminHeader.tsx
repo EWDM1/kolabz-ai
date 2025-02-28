@@ -1,12 +1,13 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Bell, User, LogOut, Menu, Search } from "lucide-react";
+import { Bell, User, LogOut, Menu, Search, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/components/AuthContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
   const { theme } = useTheme();
@@ -47,6 +48,7 @@ const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
             />
           </div>
 
+          <LanguageSelector />
           <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="relative">

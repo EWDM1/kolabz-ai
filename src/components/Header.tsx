@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -83,6 +84,7 @@ const Header = () => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center space-x-4">
+          <LanguageSelector />
           <ThemeToggle />
           <Button variant="ghost" size="sm" asChild>
             <Link to="/login">Log In</Link>
@@ -97,6 +99,7 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center space-x-2">
+          <LanguageSelector />
           <ThemeToggle />
           <button
             className="text-foreground p-2"
