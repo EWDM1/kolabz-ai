@@ -32,11 +32,6 @@ const PromptGenerator = () => {
     }, 1500);
   };
 
-  const handleCopyPrompt = () => {
-    navigator.clipboard.writeText(optimizedPrompt);
-    // In a real app, this would show a toast notification
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
@@ -112,8 +107,8 @@ const PromptGenerator = () => {
         } p-4`}>
           <div className="flex justify-between items-center mb-2">
             <h3 className="font-semibold">{t("generator.optimized", "Optimized Prompt")}</h3>
-            <Button variant="outline" size="sm" onClick={handleCopyPrompt}>
-              {t("generator.copy", "Copy")}
+            <Button variant="outline" size="sm">
+              {t("generator.refine", "Refine")}
             </Button>
           </div>
           <div className={`p-3 rounded-md ${
