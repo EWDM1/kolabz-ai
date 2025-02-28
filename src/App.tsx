@@ -18,6 +18,7 @@ import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
 import UserFilter from "./pages/admin/UserFilter";
 import ManageSubscription from "./pages/ManageSubscription";
+import ChangePlan from "./pages/ChangePlan";
 import MyPrompts from "./pages/MyPrompts";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
@@ -48,6 +49,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/my-prompts" element={<MyPrompts />} />
                 <Route path="/manage-subscription" element={<ManageSubscription />} />
+                <Route path="/change-plan" element={<ChangePlan />} />
                 <Route path="/settings" element={<Settings />} />
                 
                 {/* Admin Routes */}
