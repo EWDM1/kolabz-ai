@@ -43,13 +43,13 @@ const App = () => (
               <Toaster />
               <Sonner />
               <Routes>
-                {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                
                 {/* Landing page visible to all */}
                 <Route path="/" element={<Index />} />
                 <Route path="/index" element={<Index />} />
+                
+                {/* Public Routes - login/signup positioned after main pages */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
                 
                 {/* Protected User Routes - all other routes require authentication */}
                 <Route path="/dashboard" element={
