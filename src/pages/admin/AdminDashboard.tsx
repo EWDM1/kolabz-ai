@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -126,12 +126,12 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   
   // Check the sidebar collapsed state from localStorage
-  useState(() => {
+  useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
       setSidebarCollapsed(savedState === "true");
     }
-  });
+  }, []);
   
   return (
     <div className="flex min-h-screen bg-background">
@@ -140,7 +140,6 @@ const AdminDashboard = () => {
       <div className={cn(
         "flex-1 transition-all duration-300 ease-in-out w-full",
         sidebarCollapsed ? "md:ml-16" : "md:ml-64",
-        "px-4 md:px-6 lg:px-8"
       )}>
         <Banner
           id="welcome-banner"
@@ -151,7 +150,7 @@ const AdminDashboard = () => {
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto py-6">
+        <main className="flex-1 overflow-y-auto py-6 px-4 md:px-6 lg:px-8">
           <div className="grid gap-4 lg:gap-8">
             {/* Stats row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
