@@ -23,6 +23,7 @@ interface AuthContextType {
   isAdmin: boolean;
   isSuperAdmin: boolean;
   register: (email: string, password: string, name: string, role?: UserRole) => Promise<boolean>;
+  updateUserRole: (userId: string, newRole: UserRole) => Promise<boolean>;
 }
 
 // Mock users database
@@ -71,13 +72,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           hasChanges = true;
           return {...user, role: "user"};
         }
-        // Ensure eric@ewdigitalmarketing.com is always a superadmin
-        if (user.email.toLowerCase() === "eric@ewdigitalmarketing.com") {
-          if (user.role !== "superadmin") {
-            hasChanges = true;
-            return {...user, role: "superadmin"};
-          }
-        }
         return user;
       });
       
@@ -93,11 +87,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Convert "customer" role to "user" if needed
       if (parsedUser.role === "customer") {
         parsedUser.role = "user";
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
-      }
-      // Ensure eric@ewdigitalmarketing.com is always a superadmin
-      if (parsedUser.email.toLowerCase() === "eric@ewdigitalmarketing.com" && parsedUser.role !== "superadmin") {
-        parsedUser.role = "superadmin";
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
       }
       setUser(parsedUser);
@@ -122,11 +111,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Convert "customer" role to "user" if needed
           if (userWithoutPassword.role === "customer") {
             userWithoutPassword.role = "user";
-          }
-          
-          // Ensure eric@ewdigitalmarketing.com is always a superadmin
-          if (userWithoutPassword.email.toLowerCase() === "eric@ewdigitalmarketing.com") {
-            userWithoutPassword.role = "superadmin";
           }
           
           setUser(userWithoutPassword);
@@ -183,11 +167,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      // Ensure eric@ewdigitalmarketing.com is always a superadmin
-      if (email.toLowerCase() === "eric@ewdigitalmarketing.com") {
-        role = "superadmin";
-      }
-
       // Create new user
       const newUser = {
         id: Date.now().toString(),
@@ -223,6 +202,59 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateUserRole = async (userId: string, newRole: UserRole): Promise<boolean> => {
+    try {
+      // Get users from localStorage
+      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+      
+      if (storedUsers) {
+        const users = JSON.parse(storedUsers);
+        
+        // Find the user by ID
+        const userIndex = users.findIndex((u: any) => u.id === userId);
+        
+        if (userIndex === -1) {
+          toast({
+            variant: "destructive",
+            title: "Update failed",
+            description: "User not found",
+          });
+          return false;
+        }
+        
+        // Update the user's role
+        users[userIndex].role = newRole;
+        
+        // If this is the currently logged in user, update their session too
+        if (user && user.id === userId) {
+          const updatedUser = { ...user, role: newRole };
+          setUser(updatedUser);
+          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
+        }
+        
+        // Save updated users back to localStorage
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        
+        toast({
+          title: "Role updated",
+          description: `User role has been updated to ${newRole}`,
+        });
+        
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error("Update role error:", error);
+      toast({
+        variant: "destructive",
+        title: "Update error",
+        description: "An unexpected error occurred",
+      });
+      return false;
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem(CURRENT_USER_KEY);
@@ -236,8 +268,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Computed property to check if user is admin or superadmin
   const isAdminUser = user?.role === "admin" || user?.role === "superadmin";
   
-  // Special check for eric@ewdigitalmarketing.com to always be superadmin
-  const isSuperAdminUser = user?.role === "superadmin" || user?.email.toLowerCase() === "eric@ewdigitalmarketing.com";
+  // Check if user is a superadmin
+  const isSuperAdminUser = user?.role === "superadmin";
 
   return (
     <AuthContext.Provider
@@ -249,6 +281,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAdmin: isAdminUser,
         isSuperAdmin: isSuperAdminUser,
         register,
+        updateUserRole,
       }}
     >
       {children}
