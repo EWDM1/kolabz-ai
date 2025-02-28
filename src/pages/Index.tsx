@@ -51,7 +51,7 @@ const Index = () => {
                   />
                 ) : (
                   <img 
-                    src="/lovable-uploads/57ae204a-def5-4ab7-ab03-2c4bcbd27557.png" 
+                    src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
                     alt="Kolabz" 
                     className="h-8 w-auto"
                   />
