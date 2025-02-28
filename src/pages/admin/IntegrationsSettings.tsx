@@ -18,7 +18,7 @@ import {
   Tag,
   FileText,
   Pencil,
-  X
+  X // Add X icon import
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -847,25 +847,47 @@ const IntegrationsSettings = () => {
                               rows={2}
                             />
                             <p className="text-xs text-muted-foreground">
-                              While meta keywords have diminished SEO value, they can still be useful for internal categorization.
+                              While meta keywords have diminished SEO value, they can still be useful for 
+                              internal site search and content organization.
                             </p>
                           </div>
                           
                           <div className="space-y-2">
                             <Label htmlFor="canonical-url">
                               <span className="flex items-center gap-2">
-                                <Globe className="h-4 w-4" />
+                                <Link className="h-4 w-4" />
                                 Canonical URL
                               </span>
                             </Label>
                             <Input
                               id="canonical-url"
-                              placeholder="https://example.com/page"
+                              placeholder="https://example.com/your-page"
                               value={canonicalUrl}
                               onChange={(e) => setCanonicalUrl(e.target.value)}
                             />
                             <p className="text-xs text-muted-foreground">
-                              URL that represents the primary version of this page to prevent duplicate content issues.
+                              Helps prevent duplicate content issues by specifying the preferred URL for this content.
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="robots-content">Robots Content</Label>
+                            <Select 
+                              value={robotsContent}
+                              onValueChange={setRobotsContent}
+                            >
+                              <SelectTrigger id="robots-content">
+                                <SelectValue placeholder="Select robots content" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="index, follow">index, follow (default)</SelectItem>
+                                <SelectItem value="noindex, follow">noindex, follow</SelectItem>
+                                <SelectItem value="index, nofollow">index, nofollow</SelectItem>
+                                <SelectItem value="noindex, nofollow">noindex, nofollow</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-muted-foreground">
+                              Controls how search engines interact with this page.
                             </p>
                           </div>
                         </div>
@@ -874,32 +896,36 @@ const IntegrationsSettings = () => {
                       {/* Social Media Tab */}
                       <TabsContent value="social" className="space-y-4 pt-4">
                         <div className="space-y-4">
-                          <div className="border-b pb-2 mb-4">
-                            <h3 className="font-medium text-base">Open Graph (Facebook/LinkedIn)</h3>
-                            <p className="text-xs text-muted-foreground">
-                              How your content appears when shared on Facebook, LinkedIn, and other platforms.
-                            </p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Facebook className="h-5 w-5 text-blue-600" />
+                            <h3 className="font-medium">Open Graph (Facebook, LinkedIn)</h3>
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="og-title">OG Title (defaults to Meta Title if empty)</Label>
+                            <Label htmlFor="og-title">OG Title</Label>
                             <Input
                               id="og-title"
-                              placeholder="Title for social media"
+                              placeholder="Title for social sharing"
                               value={ogTitle}
                               onChange={(e) => setOgTitle(e.target.value)}
                             />
+                            <p className="text-xs text-muted-foreground">
+                              If left empty, your meta title will be used.
+                            </p>
                           </div>
                           
                           <div className="space-y-2">
                             <Label htmlFor="og-description">OG Description</Label>
                             <Textarea
                               id="og-description"
-                              placeholder="Description for social media"
+                              placeholder="Description for social sharing"
                               value={ogDescription}
                               onChange={(e) => setOgDescription(e.target.value)}
                               rows={2}
                             />
+                            <p className="text-xs text-muted-foreground">
+                              If left empty, your meta description will be used.
+                            </p>
                           </div>
                           
                           <div className="space-y-2">
@@ -911,15 +937,22 @@ const IntegrationsSettings = () => {
                               onChange={(e) => setOgImage(e.target.value)}
                             />
                             <p className="text-xs text-muted-foreground">
-                              Recommended size: 1200×630 pixels for optimal display
+                              Recommended size: 1200 × 630 pixels (minimum 600 × 315).
                             </p>
                           </div>
                           
-                          <div className="border-b pb-2 mb-4 mt-6">
-                            <h3 className="font-medium text-base">Twitter Card</h3>
-                            <p className="text-xs text-muted-foreground">
-                              Control how your content appears when shared on Twitter.
-                            </p>
+                          <Separator className="my-4" />
+                          
+                          <div className="flex items-center gap-2 mb-2">
+                            <svg
+                              className="h-5 w-5 text-blue-500"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z" />
+                            </svg>
+                            <h3 className="font-medium">Twitter Card</h3>
                           </div>
                           
                           <div className="space-y-2">
@@ -932,22 +965,25 @@ const IntegrationsSettings = () => {
                                 <SelectValue placeholder="Select card type" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="summary">Summary (small image)</SelectItem>
-                                <SelectItem value="summary_large_image">Summary with Large Image</SelectItem>
-                                <SelectItem value="app">App (for mobile apps)</SelectItem>
-                                <SelectItem value="player">Player (for videos)</SelectItem>
+                                <SelectItem value="summary">Summary</SelectItem>
+                                <SelectItem value="summary_large_image">Summary Large Image</SelectItem>
+                                <SelectItem value="app">App</SelectItem>
+                                <SelectItem value="player">Player</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="twitter-title">Twitter Title (defaults to OG Title if empty)</Label>
+                            <Label htmlFor="twitter-title">Twitter Title</Label>
                             <Input
                               id="twitter-title"
                               placeholder="Title for Twitter"
                               value={twitterTitle}
                               onChange={(e) => setTwitterTitle(e.target.value)}
                             />
+                            <p className="text-xs text-muted-foreground">
+                              If left empty, OG title or meta title will be used.
+                            </p>
                           </div>
                           
                           <div className="space-y-2">
@@ -962,13 +998,16 @@ const IntegrationsSettings = () => {
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="twitter-image">Twitter Image URL (defaults to OG Image if empty)</Label>
+                            <Label htmlFor="twitter-image">Twitter Image URL</Label>
                             <Input
                               id="twitter-image"
-                              placeholder="https://example.com/twitter-image.jpg"
+                              placeholder="https://example.com/image.jpg"
                               value={twitterImage}
                               onChange={(e) => setTwitterImage(e.target.value)}
                             />
+                            <p className="text-xs text-muted-foreground">
+                              If left empty, OG image will be used if available.
+                            </p>
                           </div>
                         </div>
                       </TabsContent>
@@ -977,51 +1016,76 @@ const IntegrationsSettings = () => {
                       <TabsContent value="advanced" className="space-y-4 pt-4">
                         <div className="space-y-4">
                           <div className="space-y-2">
-                            <Label htmlFor="robots">
-                              <span className="flex items-center gap-2">
-                                <Code className="h-4 w-4" />
-                                Robots Meta Tag
-                              </span>
-                            </Label>
-                            <Select
-                              value={robotsContent}
-                              onValueChange={setRobotsContent}
+                            <Label>Preview HTML Metadata</Label>
+                            <div className="bg-muted font-mono text-xs p-4 rounded-md overflow-auto max-h-[300px] border">
+                              <pre>{`<!-- Basic Meta Tags -->
+<title>${metaTitle || 'Your Website Title'}</title>
+<meta name="description" content="${metaDescription || 'Your website description'}">
+<meta name="keywords" content="${keywords || 'keyword1, keyword2, keyword3'}">
+${canonicalUrl ? `<link rel="canonical" href="${canonicalUrl}">` : '<!-- No canonical URL set -->'}
+<meta name="robots" content="${robotsContent}">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="${ogTitle || metaTitle || 'Your Website Title'}">
+<meta property="og:description" content="${ogDescription || metaDescription || 'Your website description'}">
+${ogImage ? `<meta property="og:image" content="${ogImage}">` : '<!-- No OG image set -->'}
+
+<!-- Twitter -->
+<meta name="twitter:card" content="${twitterCard}">
+<meta name="twitter:title" content="${twitterTitle || ogTitle || metaTitle || 'Your Website Title'}">
+<meta name="twitter:description" content="${twitterDescription || ogDescription || metaDescription || 'Your website description'}">
+${twitterImage || ogImage ? `<meta name="twitter:image" content="${twitterImage || ogImage}">` : '<!-- No Twitter image set -->'}`}</pre>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="mt-2"
+                              onClick={() => copyToClipboard(document.querySelector('.font-mono pre')?.textContent || "")}
                             >
-                              <SelectTrigger id="robots">
-                                <SelectValue placeholder="Select robots instructions" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="index, follow">index, follow (Default/Recommended)</SelectItem>
-                                <SelectItem value="noindex, follow">noindex, follow (Hide from search engines)</SelectItem>
-                                <SelectItem value="index, nofollow">index, nofollow (Don't follow links)</SelectItem>
-                                <SelectItem value="noindex, nofollow">noindex, nofollow (Hide completely)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <p className="text-xs text-muted-foreground">
-                              Controls how search engines interact with your page
-                            </p>
+                              <Copy className="h-4 w-4 mr-2" />
+                              Copy HTML
+                            </Button>
                           </div>
                           
                           <div className="space-y-2">
-                            <Label htmlFor="meta-preview">Metadata Preview (JSON)</Label>
-                            <div className="relative">
-                              <Textarea
-                                id="meta-preview"
-                                value={getMetadataPreview()}
-                                readOnly
-                                rows={8}
-                                className="font-mono text-xs resize-none"
-                              />
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                className="absolute top-2 right-2"
-                                onClick={() => copyToClipboard(getMetadataPreview())}
-                              >
-                                <Copy className="h-3 w-3 mr-1" />
-                                Copy
-                              </Button>
+                            <Label>Metadata as JSON</Label>
+                            <div className="bg-muted font-mono text-xs p-4 rounded-md overflow-auto max-h-[300px] border">
+                              <pre>{getMetadataPreview()}</pre>
                             </div>
+                          </div>
+                          
+                          <div className="space-y-2 pt-4">
+                            <div className="flex items-center justify-between">
+                              <Label htmlFor="structured-data">Structured Data (JSON-LD)</Label>
+                              <a 
+                                href="https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                              >
+                                <Button variant="ghost" size="sm" className="h-8 text-xs gap-1">
+                                  <Info className="h-3 w-3" />
+                                  Learn more
+                                </Button>
+                              </a>
+                            </div>
+                            <Textarea
+                              id="structured-data"
+                              rows={8}
+                              className="font-mono text-xs"
+                              placeholder={`{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Your Company Name",
+  "url": "https://www.example.com",
+  "logo": "https://www.example.com/images/logo.png",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+1-401-555-1212",
+    "contactType": "customer service"
+  }
+}`}
+                            />
                             <p className="text-xs text-muted-foreground">
                               JSON-LD structured data helps search engines understand your content better
                               and can enable rich snippets in search results.

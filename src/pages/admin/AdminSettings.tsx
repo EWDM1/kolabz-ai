@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Settings, 
@@ -622,9 +623,9 @@ const AdminSettings = () => {
                       <div className="bg-muted p-3 rounded-md">
                         <div className="text-sm font-medium mb-1">Available Variables:</div>
                         <div className="text-xs text-muted-foreground grid grid-cols-2 md:grid-cols-3 gap-2">
-                          <div><code>{'{{user_name}}'}</code> - User's name</div>
-                          <div><code>{'{{company_name}}'}</code> - Company name</div>
-                          <div><code>{'{{login_url}}'}</code> - Login URL</div>
+                          <div><code>{{user_name}}</code> - User's name</div>
+                          <div><code>{{company_name}}</code> - Company name</div>
+                          <div><code>{{login_url}}</code> - Login URL</div>
                         </div>
                       </div>
                     </TabsContent>

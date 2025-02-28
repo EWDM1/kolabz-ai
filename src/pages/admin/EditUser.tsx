@@ -18,7 +18,7 @@ const EditUser = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, isSuperAdmin } = useAuth();
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
@@ -76,18 +76,6 @@ const EditUser = () => {
       // setUserData(mockUsers.find(user => user.id === id) || initialUserData);
     }
   }, [id, location.state]);
-
-  // Check if admin has permissions to edit this user (non-super admins can only edit users)
-  useEffect(() => {
-    if (!isSuperAdmin && userData.role !== "user") {
-      toast({
-        variant: "destructive",
-        title: "Permission denied",
-        description: "You can only edit users with the 'User' role.",
-      });
-      navigate("/admin/users");
-    }
-  }, [userData, isSuperAdmin, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -206,22 +194,12 @@ const EditUser = () => {
                         name="role"
                         value={userData.role}
                         onChange={handleChange}
-                        disabled={!isSuperAdmin && userData.role !== "user"}
                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
+                        <option value="admin">Admin</option>
                         <option value="user">User</option>
-                        {isSuperAdmin && (
-                          <>
-                            <option value="admin">Admin</option>
-                            <option value="superadmin">Super Admin</option>
-                          </>
-                        )}
+                        <option value="customer">Customer</option>
                       </select>
-                      {!isSuperAdmin && userData.role !== "user" && (
-                        <p className="text-xs text-amber-500 mt-1">
-                          Only Super Admins can change roles other than "User"
-                        </p>
-                      )}
                     </div>
                     
                     <div className="space-y-2">
