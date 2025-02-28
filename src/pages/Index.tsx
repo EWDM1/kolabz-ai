@@ -28,15 +28,19 @@ const Index = () => {
       <header className="border-b">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            {/* Center aligned nav */}
-            <div className="hidden w-full md:flex md:items-center md:justify-center">
-              <Link to="/" className="mr-8 flex items-center">
+            {/* Left-aligned logo */}
+            <div className="flex items-center">
+              <Link to="/" className="flex items-center">
                 <img 
                   src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
                   alt="Kolabz" 
                   className="h-10 w-auto"
                 />
               </Link>
+            </div>
+
+            {/* Center aligned nav */}
+            <div className="hidden w-full md:flex md:items-center md:justify-center">
               <nav className="flex space-x-8">
                 <Link to="/" className="text-sm font-medium hover:text-primary">
                   Home
@@ -48,17 +52,6 @@ const Index = () => {
                   Pricing
                 </Link>
               </nav>
-            </div>
-
-            {/* Mobile logo - left aligned */}
-            <div className="flex md:hidden">
-              <Link to="/" className="flex items-center">
-                <img 
-                  src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-                  alt="Kolabz" 
-                  className="h-8 w-auto"
-                />
-              </Link>
             </div>
 
             {/* Right side controls */}
