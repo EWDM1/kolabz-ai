@@ -51,71 +51,157 @@ const Index = () => {
         <Pricing />
         
         {/* About Us Section */}
-        <section id="about" className="py-20 bg-muted/30">
+        <section id="about" className="py-20 md:py-32 bg-gradient-to-b from-background/95 to-background">
           <div className="container px-4 mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">About Kolabz</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-sm text-primary font-medium mb-4">
+                <span className="w-2 h-2 rounded-full bg-primary mr-2"></span>
+                About Us
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
+                Our Vision for AI Prompt Engineering
+              </h2>
+              <p className="text-muted-foreground text-lg mb-10">
                 We're on a mission to help creators, developers, and businesses harness the power of AI through better prompts.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Users className="h-6 w-6 text-primary" />
+            <div className="grid md:grid-cols-4 gap-8">
+              <div className="rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-all-200">
+                <div className="p-6 md:p-8 bg-card">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                      <Users className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Our Team</h3>
-                    <p className="text-muted-foreground">
-                      Founded by AI enthusiasts and prompt engineering experts with a passion for making AI more accessible.
-                    </p>
+                    <h3 className="text-xl font-display font-bold">Our Team</h3>
                   </div>
-                </CardContent>
-              </Card>
+                  <p className="text-muted-foreground mt-4">
+                    Founded by AI enthusiasts and prompt engineering experts with a passion for making AI more accessible.
+                  </p>
+                  <ul className="space-y-4 mt-8">
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Industry experts</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>AI researchers</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Prompt engineers</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
               
-              <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Award className="h-6 w-6 text-primary" />
+              <div className="rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-all-200">
+                <div className="p-6 md:p-8 bg-card">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                      <Award className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Our Expertise</h3>
-                    <p className="text-muted-foreground">
-                      Specialized in prompt engineering, AI model optimization, and creating user-friendly AI tools.
-                    </p>
+                    <h3 className="text-xl font-display font-bold">Our Expertise</h3>
                   </div>
-                </CardContent>
-              </Card>
+                  <p className="text-muted-foreground mt-4">
+                    Specialized in prompt engineering, AI model optimization, and creating user-friendly AI tools.
+                  </p>
+                  <ul className="space-y-4 mt-8">
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Prompt optimization</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Model fine-tuning</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>AI workflow design</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
               
-              <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Heart className="h-6 w-6 text-primary" />
+              <div className="rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-all-200">
+                <div className="p-6 md:p-8 bg-card">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                      <Heart className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Our Values</h3>
-                    <p className="text-muted-foreground">
-                      We believe in democratizing AI, transparency, and creating tools that respect privacy and ethics.
-                    </p>
+                    <h3 className="text-xl font-display font-bold">Our Values</h3>
                   </div>
-                </CardContent>
-              </Card>
+                  <p className="text-muted-foreground mt-4">
+                    We believe in democratizing AI, transparency, and creating tools that respect privacy and ethics.
+                  </p>
+                  <ul className="space-y-4 mt-8">
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Ethical AI</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Transparency</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Privacy-first</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
               
-              <Card className="border-none shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardContent className="pt-6">
-                  <div className="flex flex-col items-center text-center">
-                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                      <Bookmark className="h-6 w-6 text-primary" />
+              <div className="rounded-xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-all-200">
+                <div className="p-6 md:p-8 bg-card">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+                      <Bookmark className="h-5 w-5 text-primary" />
                     </div>
-                    <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
-                    <p className="text-muted-foreground">
-                      To empower everyone to unlock the full potential of AI through better prompts and intuitive tools.
-                    </p>
+                    <h3 className="text-xl font-display font-bold">Our Mission</h3>
                   </div>
-                </CardContent>
-              </Card>
+                  <p className="text-muted-foreground mt-4">
+                    To empower everyone to unlock the full potential of AI through better prompts and intuitive tools.
+                  </p>
+                  <ul className="space-y-4 mt-8">
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Accessibility</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Education</span>
+                    </li>
+                    <li className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
+                        <span className="h-1.5 w-1.5 rounded-full bg-primary"></span>
+                      </div>
+                      <span>Innovation</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
             
             <div className="mt-16 text-center">
