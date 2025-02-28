@@ -21,3 +21,6 @@ export function ThemeToggle() {
     </Button>
   );
 }
+
+// Export the useTheme hook to make it easier to access elsewhere
+export { useTheme };
