@@ -202,8 +202,8 @@ const AdminSettings = () => {
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="space-y-6 max-w-7xl mx-auto">
+        <main className="flex-1 overflow-y-auto py-6 px-4 md:px-6 lg:px-8">
+          <div className="grid gap-4 lg:gap-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold">Admin Settings</h1>
@@ -215,7 +215,7 @@ const AdminSettings = () => {
             
             <Tabs defaultValue="general" className="space-y-6">
               <div className="bg-background sticky top-16 z-20 pb-4 pt-1">
-                <TabsList className="bg-background border w-full overflow-x-auto flex flex-nowrap justify-start md:justify-center">
+                <TabsList className="bg-background border flex flex-nowrap overflow-x-auto md:flex-wrap">
                   <TabsTrigger value="general" className="data-[state=active]:bg-primary/10 flex-shrink-0">
                     <Globe className="h-4 w-4 mr-2" />
                     <span>General</span>
