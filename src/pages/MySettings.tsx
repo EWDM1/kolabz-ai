@@ -133,6 +133,10 @@ const MySettings = () => {
     navigate("/change-plan");
   };
 
+  const handleUpdatePaymentMethod = () => {
+    navigate("/manage-subscription");
+  };
+
   return (
     <div className="min-h-screen bg-background/95">
       {/* Dashboard header */}
@@ -614,7 +618,7 @@ const MySettings = () => {
                           <p className="text-xs text-muted-foreground">Expires 12/25</p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="mt-2">
+                      <Button variant="outline" size="sm" className="mt-2" onClick={handleUpdatePaymentMethod}>
                         Update Payment Method
                       </Button>
                     </div>
