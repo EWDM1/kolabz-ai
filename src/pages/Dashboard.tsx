@@ -90,12 +90,7 @@ const Dashboard = () => {
   };
 
   const handleSettings = () => {
-    toast({
-      title: "Settings",
-      description: "Opening settings page",
-    });
-    // In a real app, this would navigate to a settings page
-    handleNavigation("settings");
+    navigate("/mysettings");
   };
 
   const handleManageSubscription = () => {
@@ -181,7 +176,7 @@ const Dashboard = () => {
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/settings")}
+                    onClick={() => handleNavigation("/mysettings")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
