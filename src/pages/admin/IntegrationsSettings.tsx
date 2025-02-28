@@ -1058,10 +1058,16 @@ ${twitterImage || ogImage ? `<meta name="twitter:image" content="${twitterImage 
                           <div className="space-y-2 pt-4">
                             <div className="flex items-center justify-between">
                               <Label htmlFor="structured-data">Structured Data (JSON-LD)</Label>
-                              <Button variant="ghost" size="sm" className="h-8 text-xs gap-1">
-                                <Info className="h-3 w-3" />
-                                Learn more
-                              </Button>
+                              <a 
+                                href="https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                              >
+                                <Button variant="ghost" size="sm" className="h-8 text-xs gap-1">
+                                  <Info className="h-3 w-3" />
+                                  Learn more
+                                </Button>
+                              </a>
                             </div>
                             <Textarea
                               id="structured-data"
