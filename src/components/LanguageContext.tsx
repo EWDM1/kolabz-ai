@@ -68,6 +68,37 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.cta.subscribe": "Subscribe Now",
     "pricing.disclaimer": "All plans include a 7-day free trial. No credit card required to start. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.",
     
+    // About
+    "about.title": "About Us",
+    "about.vision": "Our Vision for AI Prompt Engineering",
+    "about.description": "We're on a mission to help creators, developers, and businesses harness the power of AI through better prompts.",
+    
+    "about.team.title": "Our Team",
+    "about.team.description": "Founded by AI enthusiasts and prompt engineering experts with a passion for making AI more accessible.",
+    "about.team.item1": "Industry experts",
+    "about.team.item2": "AI researchers",
+    "about.team.item3": "Prompt engineers",
+    
+    "about.expertise.title": "Our Expertise",
+    "about.expertise.description": "Specialized in prompt engineering, AI model optimization, and creating user-friendly AI tools.",
+    "about.expertise.item1": "Prompt optimization",
+    "about.expertise.item2": "Model fine-tuning",
+    "about.expertise.item3": "AI workflow design",
+    
+    "about.values.title": "Our Values",
+    "about.values.description": "We believe in democratizing AI, transparency, and creating tools that respect privacy and ethics.",
+    "about.values.item1": "Ethical AI",
+    "about.values.item2": "Transparency",
+    "about.values.item3": "Privacy-first",
+    
+    "about.mission.title": "Our Mission",
+    "about.mission.description": "To empower everyone to unlock the full potential of AI through better prompts and intuitive tools.",
+    "about.mission.item1": "Accessibility",
+    "about.mission.item2": "Education",
+    "about.mission.item3": "Innovation",
+    
+    "about.founded": "Founded in 2024, Kolabz has helped thousands of users create better AI outputs through optimized prompts. Our platform is designed for everyone from beginners to advanced users looking to get the most out of AI models.",
+    
     // Footer
     "footer.description": "Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.",
     "footer.copyright": "© 2023 Kolabz. All rights reserved.",
@@ -124,6 +155,37 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.cta.trial": "Iniciar Prueba Gratuita",
     "pricing.cta.subscribe": "Suscribirse Ahora",
     "pricing.disclaimer": "Todos los planes incluyen una prueba gratuita de 7 días. No se requiere tarjeta de crédito para comenzar. Cancela en cualquier momento. Si no estás satisfecho, contáctanos dentro de los 30 días para un reembolso completo.",
+    
+    // About
+    "about.title": "Sobre Nosotros",
+    "about.vision": "Nuestra Visión para la Ingeniería de Prompts de IA",
+    "about.description": "Estamos en una misión para ayudar a creadores, desarrolladores y empresas a aprovechar el poder de la IA a través de mejores prompts.",
+    
+    "about.team.title": "Nuestro Equipo",
+    "about.team.description": "Fundado por entusiastas de la IA y expertos en ingeniería de prompts con pasión por hacer la IA más accesible.",
+    "about.team.item1": "Expertos de la industria",
+    "about.team.item2": "Investigadores de IA",
+    "about.team.item3": "Ingenieros de prompts",
+    
+    "about.expertise.title": "Nuestra Experiencia",
+    "about.expertise.description": "Especializados en ingeniería de prompts, optimización de modelos de IA y creación de herramientas de IA fáciles de usar.",
+    "about.expertise.item1": "Optimización de prompts",
+    "about.expertise.item2": "Ajuste de modelos",
+    "about.expertise.item3": "Diseño de flujos de trabajo de IA",
+    
+    "about.values.title": "Nuestros Valores",
+    "about.values.description": "Creemos en democratizar la IA, la transparencia y la creación de herramientas que respeten la privacidad y la ética.",
+    "about.values.item1": "IA Ética",
+    "about.values.item2": "Transparencia",
+    "about.values.item3": "Privacidad primero",
+    
+    "about.mission.title": "Nuestra Misión",
+    "about.mission.description": "Capacitar a todos para desbloquear todo el potencial de la IA a través de mejores prompts y herramientas intuitivas.",
+    "about.mission.item1": "Accesibilidad",
+    "about.mission.item2": "Educación",
+    "about.mission.item3": "Innovación",
+    
+    "about.founded": "Fundada en 2024, Kolabz ha ayudado a miles de usuarios a crear mejores resultados de IA a través de prompts optimizados. Nuestra plataforma está diseñada para todos, desde principiantes hasta usuarios avanzados que buscan obtener el máximo provecho de los modelos de IA.",
     
     // Footer
     "footer.description": "Kolabz te ayuda a crear prompts perfectos para cualquier modelo de IA, mejorando tu productividad y creatividad.",
@@ -182,6 +244,37 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.cta.subscribe": "S'abonner Maintenant",
     "pricing.disclaimer": "Tous les plans incluent un essai gratuit de 7 jours. Aucune carte de crédit requise pour commencer. Annulez à tout moment. Si vous n'êtes pas satisfait, contactez-nous dans les 30 jours pour un remboursement complet.",
     
+    // About
+    "about.title": "À Propos de Nous",
+    "about.vision": "Notre Vision pour l'Ingénierie de Prompts IA",
+    "about.description": "Notre mission est d'aider les créateurs, les développeurs et les entreprises à exploiter la puissance de l'IA grâce à de meilleurs prompts.",
+    
+    "about.team.title": "Notre Équipe",
+    "about.team.description": "Fondée par des passionnés d'IA et des experts en ingénierie de prompts avec une passion pour rendre l'IA plus accessible.",
+    "about.team.item1": "Experts de l'industrie",
+    "about.team.item2": "Chercheurs en IA",
+    "about.team.item3": "Ingénieurs de prompts",
+    
+    "about.expertise.title": "Notre Expertise",
+    "about.expertise.description": "Spécialisés dans l'ingénierie de prompts, l'optimisation de modèles d'IA et la création d'outils d'IA conviviaux.",
+    "about.expertise.item1": "Optimisation de prompts",
+    "about.expertise.item2": "Ajustement de modèles",
+    "about.expertise.item3": "Conception de flux de travail IA",
+    
+    "about.values.title": "Nos Valeurs",
+    "about.values.description": "Nous croyons en la démocratisation de l'IA, la transparence et la création d'outils qui respectent la confidentialité et l'éthique.",
+    "about.values.item1": "IA Éthique",
+    "about.values.item2": "Transparence",
+    "about.values.item3": "Priorité à la confidentialité",
+    
+    "about.mission.title": "Notre Mission",
+    "about.mission.description": "Permettre à chacun de libérer tout le potentiel de l'IA grâce à de meilleurs prompts et des outils intuitifs.",
+    "about.mission.item1": "Accessibilité",
+    "about.mission.item2": "Éducation",
+    "about.mission.item3": "Innovation",
+    
+    "about.founded": "Fondée en 2024, Kolabz a aidé des milliers d'utilisateurs à créer de meilleurs résultats d'IA grâce à des prompts optimisés. Notre plateforme est conçue pour tous, des débutants aux utilisateurs avancés qui cherchent à tirer le meilleur parti des modèles d'IA.",
+    
     // Footer
     "footer.description": "Kolabz vous aide à créer des prompts parfaits pour n'importe quel modèle d'IA, améliorant votre productivité et créativité.",
     "footer.copyright": "© 2023 Kolabz. Tous droits réservés.",
@@ -238,6 +331,37 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.cta.trial": "Iniciar Teste Gratuito",
     "pricing.cta.subscribe": "Assinar Agora",
     "pricing.disclaimer": "Todos os planos incluem um teste gratuito de 7 dias. Não é necessário cartão de crédito para começar. Cancele a qualquer momento. Se não estiver satisfeito, entre em contato conosco em 30 dias para um reembolso total.",
+    
+    // About
+    "about.title": "Sobre Nós",
+    "about.vision": "Nossa Visão para Engenharia de Prompts de IA",
+    "about.description": "Estamos em uma missão para ajudar criadores, desenvolvedores e empresas a aproveitar o poder da IA através de melhores prompts.",
+    
+    "about.team.title": "Nossa Equipe",
+    "about.team.description": "Fundada por entusiastas de IA e especialistas em engenharia de prompts com paixão por tornar a IA mais acessível.",
+    "about.team.item1": "Especialistas da indústria",
+    "about.team.item2": "Pesquisadores de IA",
+    "about.team.item3": "Engenheiros de prompts",
+    
+    "about.expertise.title": "Nossa Expertise",
+    "about.expertise.description": "Especializados em engenharia de prompts, otimização de modelos de IA e criação de ferramentas de IA fáceis de usar.",
+    "about.expertise.item1": "Otimização de prompts",
+    "about.expertise.item2": "Ajuste de modelos",
+    "about.expertise.item3": "Design de fluxo de trabalho de IA",
+    
+    "about.values.title": "Nossos Valores",
+    "about.values.description": "Acreditamos na democratização da IA, transparência e criação de ferramentas que respeitam a privacidade e a ética.",
+    "about.values.item1": "IA Ética",
+    "about.values.item2": "Transparência",
+    "about.values.item3": "Privacidade em primeiro lugar",
+    
+    "about.mission.title": "Nossa Missão",
+    "about.mission.description": "Capacitar todos a desbloquear todo o potencial da IA através de melhores prompts e ferramentas intuitivas.",
+    "about.mission.item1": "Acessibilidade",
+    "about.mission.item2": "Educação",
+    "about.mission.item3": "Inovação",
+    
+    "about.founded": "Fundada em 2024, a Kolabz ajudou milhares de usuários a criar melhores resultados de IA através de prompts otimizados. Nossa plataforma é projetada para todos, desde iniciantes até usuários avançados que buscam obter o máximo dos modelos de IA.",
     
     // Footer
     "footer.description": "Kolabz ajuda você a criar prompts perfeitos para qualquer modelo de IA, melhorando sua produtividade e criatividade.",
