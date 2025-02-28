@@ -1,11 +1,12 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthContext";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   mode: "login" | "signup";
@@ -13,12 +14,25 @@ interface AuthFormProps {
 
 const AuthForm = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate();
-  const { login, register, isLoading } = useAuth();
+  const location = useLocation();
+  const { login, register, isLoading, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  
+  // Get the redirect path from location state or default to dashboard
+  const from = location.state?.from?.pathname || "/dashboard";
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,17 +49,39 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
         if (success) {
-          navigate("/dashboard");
+          toast({
+            title: "Login successful",
+            description: "Welcome back! You're now logged in.",
+          });
+          navigate(from, { replace: true });
         }
       } else {
+        // Check for valid input first
+        if (!formData.name || formData.name.length < 2) {
+          toast({
+            variant: "destructive",
+            title: "Invalid name",
+            description: "Please enter a valid name (at least 2 characters).",
+          });
+          return;
+        }
+        
         const success = await register(formData.email, formData.password, formData.name);
         if (success) {
-          // Navigate to dashboard after successful signup
-          navigate("/dashboard");
+          toast({
+            title: "Account created",
+            description: "Your account has been created successfully.",
+          });
+          navigate(from, { replace: true });
         }
       }
     } catch (error) {
       console.error("Authentication error:", error);
+      toast({
+        variant: "destructive",
+        title: "Authentication error",
+        description: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
@@ -72,6 +108,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
               value={formData.name}
               onChange={handleChange}
               disabled={isLoading}
+              minLength={2}
             />
           </div>
         )}
@@ -107,6 +144,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
             value={formData.password}
             onChange={handleChange}
             disabled={isLoading}
+            minLength={6}
           />
         </div>
 

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -44,12 +44,14 @@ const App = () => (
               <Sonner />
               <Routes>
                 {/* Public Routes */}
-                <Route path="/" element={<Index />} />
-                <Route path="/index" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 
-                {/* Protected User Routes */}
+                {/* Landing page visible to all */}
+                <Route path="/" element={<Index />} />
+                <Route path="/index" element={<Index />} />
+                
+                {/* Protected User Routes - all other routes require authentication */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
                     <Dashboard />

@@ -59,6 +59,11 @@ const Header = () => {
               <Link to="#pricing" className="text-sm font-medium hover:text-primary">
                 Pricing
               </Link>
+              {isAuthenticated && (
+                <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
+                  Dashboard
+                </Link>
+              )}
             </nav>
           </div>
 
@@ -78,6 +83,9 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                    {user?.email}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard">Dashboard</Link>
