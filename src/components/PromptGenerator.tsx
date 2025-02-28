@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageContext";
-import { CheckCircle, Info, Copy, Check } from "lucide-react";
+import { CheckCircle, Info, Copy, Check, Edit } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const PromptGenerator = () => {
@@ -26,6 +26,7 @@ const PromptGenerator = () => {
   const [customContext, setCustomContext] = useState("");
   const [customTask, setCustomTask] = useState("");
   const [copied, setCopied] = useState(false);
+  const [refining, setRefining] = useState(false);
 
   const handleGeneratePrompt = () => {
     if (!initialPrompt) return;
@@ -71,6 +72,32 @@ const PromptGenerator = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleRefinePrompt = () => {
+    setRefining(true);
+    
+    // Set the optimized prompt as the new initial prompt for editing
+    setInitialPrompt(optimizedPrompt);
+    
+    // Reset the prompt generated state
+    setPromptGenerated(false);
+    
+    // Scroll back to the prompt input area
+    setTimeout(() => {
+      const promptInputElement = document.getElementById("initialPrompt");
+      if (promptInputElement) {
+        promptInputElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        promptInputElement.focus();
+      }
+      
+      toast({
+        title: t("generator.refine_start", "Ready to refine"),
+        description: t("generator.refine_description", "Edit your prompt and generate again to refine it"),
+      });
+      
+      setRefining(false);
+    }, 500);
   };
 
   const getRolePrefix = () => {
@@ -554,9 +581,6 @@ const PromptGenerator = () => {
               <CheckCircle className="h-4 w-4 text-green-500" />
               <h3 className="font-semibold">{t("generator.optimized", "Optimized Prompt")}</h3>
             </div>
-            <Button variant="outline" size="sm">
-              {t("generator.refine", "Refine")}
-            </Button>
           </div>
           <div className={`p-3 rounded-md ${
             theme === 'dark'
@@ -578,15 +602,27 @@ const PromptGenerator = () => {
                 <li>• {t("generator.tips.iterate", "Iterate and refine for best results")}</li>
               </ul>
             </div>
-            <Button 
-              onClick={copyToClipboard} 
-              variant="secondary" 
-              size="sm"
-              className="flex items-center gap-1.5"
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied ? t("generator.copied", "Copied!") : t("generator.copy", "Copy")}
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={handleRefinePrompt} 
+                variant="outline" 
+                size="sm"
+                className="flex items-center gap-1.5"
+                disabled={refining}
+              >
+                <Edit className="h-4 w-4" />
+                {t("generator.refine", "Refine")}
+              </Button>
+              <Button 
+                onClick={copyToClipboard} 
+                variant="secondary" 
+                size="sm"
+                className="flex items-center gap-1.5"
+              >
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? t("generator.copied", "Copied!") : t("generator.copy", "Copy")}
+              </Button>
+            </div>
           </div>
         </div>
       )}
