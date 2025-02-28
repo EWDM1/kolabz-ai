@@ -10,19 +10,19 @@ import { LanguageProvider } from "@/components/LanguageContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import UserDashboard from "./pages/user-dashboard/UserDashboard";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
 import UserFilter from "./pages/admin/UserFilter";
-import ManageSubscription from "./pages/ManageSubscription";
-import ChangePlan from "./pages/ChangePlan";
-import MyPrompts from "./pages/MyPrompts";
+import UserSubscription from "./pages/user-dashboard/UserSubscription";
+import UserChangePlan from "./pages/user-dashboard/UserChangePlan";
+import UserPrompts from "./pages/user-dashboard/UserPrompts";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
-import Settings from "./pages/Settings";
+import UserSettings from "./pages/user-dashboard/UserSettings";
 import AdminSettings from "./pages/admin/AdminSettings";
 import LandingPageEdit from "./pages/admin/LandingPageEdit";
 import LandingPageEditor from "./pages/admin/LandingPageEditor";
@@ -46,11 +46,13 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/my-prompts" element={<MyPrompts />} />
-                <Route path="/manage-subscription" element={<ManageSubscription />} />
-                <Route path="/change-plan" element={<ChangePlan />} />
-                <Route path="/settings" element={<Settings />} />
+                
+                {/* User Dashboard Routes */}
+                <Route path="/user-dashboard" element={<UserDashboard />} />
+                <Route path="/user-prompts" element={<UserPrompts />} />
+                <Route path="/user-subscription" element={<UserSubscription />} />
+                <Route path="/user-change-plan" element={<UserChangePlan />} />
+                <Route path="/user-settings" element={<UserSettings />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin" element={<AdminDashboard />} />
@@ -75,6 +77,7 @@ const App = () => (
                 <Route path="/admin/blog/categories" element={<NotFound />} />
                 <Route path="/admin/blog/tags" element={<NotFound />} />
                 
+                {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
