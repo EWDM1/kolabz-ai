@@ -1,4 +1,4 @@
-<lov-code>
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
@@ -18,7 +18,7 @@ import {
   Tag,
   FileText,
   Pencil,
-  X // Add X icon import
+  X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -847,4 +847,289 @@ const IntegrationsSettings = () => {
                               rows={2}
                             />
                             <p className="text-xs text-muted-foreground">
-                              While meta keywords have diminished SEO value, they can still be useful for 
+                              While meta keywords have diminished SEO value, they can still be useful for internal categorization.
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="canonical-url">
+                              <span className="flex items-center gap-2">
+                                <Globe className="h-4 w-4" />
+                                Canonical URL
+                              </span>
+                            </Label>
+                            <Input
+                              id="canonical-url"
+                              placeholder="https://example.com/page"
+                              value={canonicalUrl}
+                              onChange={(e) => setCanonicalUrl(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              URL that represents the primary version of this page to prevent duplicate content issues.
+                            </p>
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      {/* Social Media Tab */}
+                      <TabsContent value="social" className="space-y-4 pt-4">
+                        <div className="space-y-4">
+                          <div className="border-b pb-2 mb-4">
+                            <h3 className="font-medium text-base">Open Graph (Facebook/LinkedIn)</h3>
+                            <p className="text-xs text-muted-foreground">
+                              How your content appears when shared on Facebook, LinkedIn, and other platforms.
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="og-title">OG Title (defaults to Meta Title if empty)</Label>
+                            <Input
+                              id="og-title"
+                              placeholder="Title for social media"
+                              value={ogTitle}
+                              onChange={(e) => setOgTitle(e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="og-description">OG Description</Label>
+                            <Textarea
+                              id="og-description"
+                              placeholder="Description for social media"
+                              value={ogDescription}
+                              onChange={(e) => setOgDescription(e.target.value)}
+                              rows={2}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="og-image">OG Image URL</Label>
+                            <Input
+                              id="og-image"
+                              placeholder="https://example.com/image.jpg"
+                              value={ogImage}
+                              onChange={(e) => setOgImage(e.target.value)}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Recommended size: 1200×630 pixels for optimal display
+                            </p>
+                          </div>
+                          
+                          <div className="border-b pb-2 mb-4 mt-6">
+                            <h3 className="font-medium text-base">Twitter Card</h3>
+                            <p className="text-xs text-muted-foreground">
+                              Control how your content appears when shared on Twitter.
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="twitter-card">Card Type</Label>
+                            <Select 
+                              value={twitterCard}
+                              onValueChange={setTwitterCard}
+                            >
+                              <SelectTrigger id="twitter-card">
+                                <SelectValue placeholder="Select card type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="summary">Summary (small image)</SelectItem>
+                                <SelectItem value="summary_large_image">Summary with Large Image</SelectItem>
+                                <SelectItem value="app">App (for mobile apps)</SelectItem>
+                                <SelectItem value="player">Player (for videos)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="twitter-title">Twitter Title (defaults to OG Title if empty)</Label>
+                            <Input
+                              id="twitter-title"
+                              placeholder="Title for Twitter"
+                              value={twitterTitle}
+                              onChange={(e) => setTwitterTitle(e.target.value)}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="twitter-description">Twitter Description</Label>
+                            <Textarea
+                              id="twitter-description"
+                              placeholder="Description for Twitter"
+                              value={twitterDescription}
+                              onChange={(e) => setTwitterDescription(e.target.value)}
+                              rows={2}
+                            />
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="twitter-image">Twitter Image URL (defaults to OG Image if empty)</Label>
+                            <Input
+                              id="twitter-image"
+                              placeholder="https://example.com/twitter-image.jpg"
+                              value={twitterImage}
+                              onChange={(e) => setTwitterImage(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </TabsContent>
+                      
+                      {/* Advanced Tab */}
+                      <TabsContent value="advanced" className="space-y-4 pt-4">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="robots">
+                              <span className="flex items-center gap-2">
+                                <Code className="h-4 w-4" />
+                                Robots Meta Tag
+                              </span>
+                            </Label>
+                            <Select
+                              value={robotsContent}
+                              onValueChange={setRobotsContent}
+                            >
+                              <SelectTrigger id="robots">
+                                <SelectValue placeholder="Select robots instructions" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="index, follow">index, follow (Default/Recommended)</SelectItem>
+                                <SelectItem value="noindex, follow">noindex, follow (Hide from search engines)</SelectItem>
+                                <SelectItem value="index, nofollow">index, nofollow (Don't follow links)</SelectItem>
+                                <SelectItem value="noindex, nofollow">noindex, nofollow (Hide completely)</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <p className="text-xs text-muted-foreground">
+                              Controls how search engines interact with your page
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label htmlFor="meta-preview">Metadata Preview (JSON)</Label>
+                            <div className="relative">
+                              <Textarea
+                                id="meta-preview"
+                                value={getMetadataPreview()}
+                                readOnly
+                                rows={8}
+                                className="font-mono text-xs resize-none"
+                              />
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="absolute top-2 right-2"
+                                onClick={() => copyToClipboard(getMetadataPreview())}
+                              >
+                                <Copy className="h-3 w-3 mr-1" />
+                                Copy
+                              </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              JSON-LD structured data helps search engines understand your content better
+                              and can enable rich snippets in search results.
+                            </p>
+                          </div>
+                        </div>
+                      </TabsContent>
+                    </Tabs>
+                  </CardContent>
+                  
+                  <CardFooter className="flex justify-between border-t pt-6">
+                    <a 
+                      href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-sm text-muted-foreground hover:underline inline-flex items-center gap-1"
+                    >
+                      <Info className="h-4 w-4" />
+                      Google's SEO Starter Guide
+                    </a>
+                    <Button 
+                      onClick={handleSaveSEO} 
+                      disabled={loading}
+                    >
+                      {loading ? "Saving..." : "Save SEO Settings"}
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                {/* SEO Tools Card */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SEO Tools & Resources</CardTitle>
+                    <CardDescription>
+                      Helpful tools for optimizing your website's search visibility
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg viewBox="0 0 24 24" className="h-5 w-5 text-red-600" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.59 5.59l-4.59 4.58 4.59 4.59-1.41 1.41-4.59-4.58-4.59 4.58-1.41-1.41 4.59-4.59-4.59-4.58 1.41-1.41 4.59 4.58 4.59-4.58 1.41 1.41z"/>
+                          </svg>
+                          <h3 className="font-medium">Google Search Console</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Monitor and optimize your site's presence in Google Search results.
+                        </p>
+                        <a 
+                          href="https://search.google.com/search-console/about" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-block"
+                        >
+                          <Button variant="outline" size="sm">Visit Google Search Console</Button>
+                        </a>
+                      </div>
+                      
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg viewBox="0 0 24 24" className="h-5 w-5 text-green-600" fill="currentColor">
+                            <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4v3z"/>
+                          </svg>
+                          <h3 className="font-medium">XML Sitemap</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Generate and submit a sitemap to help search engines crawl your website.
+                        </p>
+                        <Button variant="outline" size="sm">Generate Sitemap</Button>
+                      </div>
+                      
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg viewBox="0 0 24 24" className="h-5 w-5 text-blue-600" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                          </svg>
+                          <h3 className="font-medium">Keyword Research</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Discover keywords to target based on search volume and competition.
+                        </p>
+                        <Button variant="outline" size="sm">Keyword Tool</Button>
+                      </div>
+                      
+                      <div className="border rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg viewBox="0 0 24 24" className="h-5 w-5 text-amber-600" fill="currentColor">
+                            <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+                          </svg>
+                          <h3 className="font-medium">SEO Audit</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-3">
+                          Run a comprehensive analysis of your website's SEO performance.
+                        </p>
+                        <Button variant="outline" size="sm">Run Audit</Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default IntegrationsSettings;
