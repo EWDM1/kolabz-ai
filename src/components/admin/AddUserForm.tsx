@@ -5,10 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserRole, useAuth } from "@/components/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const AddUserForm = () => {
   const { register, isSuperAdmin } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,6 +18,7 @@ const AddUserForm = () => {
     confirmPassword: "",
     role: "user" as UserRole,
   });
+  const [formError, setFormError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -24,27 +26,42 @@ const AddUserForm = () => {
       ...prev,
       [name]: value,
     }));
+    setFormError(""); // Clear error when input changes
+  };
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      setFormError("Name is required");
+      return false;
+    }
+    
+    if (!formData.email.trim()) {
+      setFormError("Email is required");
+      return false;
+    }
+    
+    if (!formData.password.trim()) {
+      setFormError("Password is required");
+      return false;
+    }
+    
+    if (formData.password.length < 6) {
+      setFormError("Password must be at least 6 characters");
+      return false;
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      setFormError("Passwords don't match");
+      return false;
+    }
+    
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    if (!formData.name || !formData.email || !formData.password) {
-      toast({
-        variant: "destructive",
-        title: "Required fields missing",
-        description: "Please fill in all required fields",
-      });
-      return;
-    }
-    
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Passwords don't match",
-        description: "Please make sure both passwords match",
-      });
+    if (!validateForm()) {
       return;
     }
     
@@ -75,11 +92,7 @@ const AddUserForm = () => {
       }
     } catch (error) {
       console.error("Error adding user:", error);
-      toast({
-        variant: "destructive",
-        title: "Failed to add user",
-        description: "There was an error creating the user account",
-      });
+      setFormError("Failed to add user. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -95,6 +108,12 @@ const AddUserForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {formError && (
+            <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+              {formError}
+            </div>
+          )}
+          
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>

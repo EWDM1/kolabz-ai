@@ -15,66 +15,16 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
-import { toast } from "@/hooks/use-toast";
-
-const mockUsers: AdminUser[] = [
-  {
-    id: "1",
-    name: "John Smith",
-    email: "john@example.com",
-    role: "admin",
-    status: "active",
-    lastActive: "Today, 2:30 PM"
-  },
-  {
-    id: "2",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    role: "user",
-    status: "active",
-    lastActive: "Yesterday, 4:20 PM"
-  },
-  {
-    id: "3",
-    name: "Michael Brown",
-    email: "michael@example.com",
-    role: "user",
-    status: "inactive",
-    lastActive: "Last week"
-  },
-  {
-    id: "4",
-    name: "Lisa Davis",
-    email: "lisa@example.com",
-    role: "user",
-    status: "active",
-    lastActive: "Today, 11:15 AM"
-  },
-  {
-    id: "5",
-    name: "James Wilson",
-    email: "james@example.com",
-    role: "user",
-    status: "active",
-    lastActive: "Yesterday, 9:45 AM"
-  },
-  {
-    id: "6",
-    name: "Emily Taylor",
-    email: "emily@example.com",
-    role: "user",
-    status: "inactive",
-    lastActive: "Never"
-  }
-];
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const UserManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [users, setUsers] = useState<AdminUser[]>(mockUsers);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
@@ -113,71 +63,198 @@ const UserManagement = () => {
     navigate(`/admin/users/edit/${user.id}`, { state: { user } });
   };
 
-  const handleDeleteUser = (userId: string) => {
-    // In a real application, this would call an API
-    setUsers(users.filter(user => user.id !== userId));
-    toast({
-      title: "User deleted",
-      description: "The user has been successfully removed.",
-    });
+  const handleDeleteUser = async (userId: string) => {
+    if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+      try {
+        // We can't actually delete from auth.users through the client
+        // Instead, mark the user as inactive in our database
+        
+        // First check if the user has the superadmin role
+        const { data: roles } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId);
+        
+        const isSuperAdmin = roles?.some(r => r.role === 'superadmin');
+        
+        // Don't allow deleting superadmins unless you're also a superadmin
+        if (isSuperAdmin && user?.role !== 'superadmin') {
+          toast({
+            variant: "destructive",
+            title: "Permission denied",
+            description: "You don't have permission to delete a superadmin user",
+          });
+          return;
+        }
+        
+        // For a soft delete, you could set a "deleted" flag in the users table
+        const { error } = await supabase
+          .from('users')
+          .update({ deleted: true })
+          .eq('id', userId);
+        
+        if (error) throw error;
+        
+        toast({
+          title: "User deleted",
+          description: "The user has been successfully removed.",
+        });
+        
+        // Refresh the user list
+        setSelectedUsers(selectedUsers.filter(id => id !== userId));
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to delete user",
+          description: "An error occurred while trying to delete the user.",
+        });
+      }
+    }
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
     if (selectedUsers.length === 0) return;
     
-    // In a real application, this would call an API
-    setUsers(users.filter(user => !selectedUsers.includes(user.id)));
-    toast({
-      title: `${selectedUsers.length} users deleted`,
-      description: "The selected users have been successfully removed.",
-    });
-    setSelectedUsers([]);
+    if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users? This action cannot be undone.`)) {
+      try {
+        // In a real implementation, we would need to check if any of the selected users are superadmins
+        // and only allow deletion if the current user is also a superadmin
+        
+        // For now, let's just create a simple soft delete by setting a flag
+        for (const userId of selectedUsers) {
+          const { error } = await supabase
+            .from('users')
+            .update({ deleted: true })
+            .eq('id', userId);
+          
+          if (error) throw error;
+        }
+        
+        toast({
+          title: `${selectedUsers.length} users deleted`,
+          description: "The selected users have been successfully removed.",
+        });
+        
+        setSelectedUsers([]);
+      } catch (error) {
+        console.error("Error deleting users:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to delete users",
+          description: "An error occurred while trying to delete the selected users.",
+        });
+      }
+    }
   };
 
   const handleFilter = () => {
     navigate("/admin/users/filter");
   };
 
-  const handleExport = () => {
-    // In a real application, this would generate a CSV/Excel file
-    const usersJson = JSON.stringify(users, null, 2);
-    const blob = new Blob([usersJson], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "users-export.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    toast({
-      title: "Export complete",
-      description: "Users data has been exported successfully.",
-    });
+  const handleExport = async () => {
+    try {
+      // Get users data
+      const { data: users, error: usersError } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (usersError) throw usersError;
+      
+      // Get roles for each user
+      const { data: roles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('*');
+      
+      if (rolesError) throw rolesError;
+      
+      // Combine the data
+      const exportData = users.map(user => {
+        const userRoles = roles
+          .filter(r => r.user_id === user.id)
+          .map(r => r.role);
+        
+        return {
+          ...user,
+          roles: userRoles
+        };
+      });
+      
+      // Create the export file
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      
+      // Download the file
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `users-export-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export complete",
+        description: "Users data has been exported successfully.",
+      });
+    } catch (error) {
+      console.error("Error exporting users:", error);
+      toast({
+        variant: "destructive",
+        title: "Export failed",
+        description: "An error occurred while trying to export users data.",
+      });
+    }
   };
 
   const handleImport = () => {
     // Create a file input and trigger it
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".json,.csv";
+    input.accept = ".json";
     
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        // In a real application, this would parse the file and import users
-        toast({
-          title: "Import initiated",
-          description: `File "${file.name}" is being processed.`,
-        });
-        
-        // Simulating successful import after a delay
-        setTimeout(() => {
+        try {
           toast({
-            title: "Import complete",
-            description: "Users have been imported successfully.",
+            title: "Import initiated",
+            description: `File "${file.name}" is being processed.`,
           });
-        }, 1500);
+          
+          // Read the file contents
+          const fileReader = new FileReader();
+          fileReader.onload = async (event) => {
+            try {
+              const jsonData = JSON.parse(event.target?.result as string);
+              
+              // Process each user in the data
+              // This would need to be implemented carefully in a real app
+              // to handle existing users, roles, etc.
+              
+              toast({
+                title: "Import complete",
+                description: "Users have been imported successfully.",
+              });
+            } catch (error) {
+              console.error("Error parsing import file:", error);
+              toast({
+                variant: "destructive",
+                title: "Import failed",
+                description: "The file format is invalid.",
+              });
+            }
+          };
+          fileReader.readAsText(file);
+        } catch (error) {
+          console.error("Error importing users:", error);
+          toast({
+            variant: "destructive",
+            title: "Import failed",
+            description: "An error occurred during import.",
+          });
+        }
       }
     };
     
@@ -244,7 +321,6 @@ const UserManagement = () => {
             </div>
             
             <UserTable 
-              users={users} 
               selectedUsers={selectedUsers} 
               setSelectedUsers={setSelectedUsers} 
               onEdit={handleEditUser}

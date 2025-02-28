@@ -2,6 +2,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 
 // User roles
 export type UserRole = "superadmin" | "admin" | "user";
@@ -26,110 +28,131 @@ interface AuthContextType {
   updateUserRole: (userId: string, newRole: UserRole) => Promise<boolean>;
 }
 
-// Mock users database
-const USERS_STORAGE_KEY = 'kolabz-users';
-const CURRENT_USER_KEY = 'kolabz-current-user';
-
-// Initial admin user
-const initialAdmin = {
-  id: "1",
-  email: "eric@ewdigitalmarketing.com",
-  name: "Eric",
-  role: "superadmin" as UserRole,
-  password: "Boludosteam1982!!"
-};
-
 // Create the auth context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Initialize users in localStorage if they don't exist
-  useEffect(() => {
-    const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
-    if (!storedUsers) {
-      // Store initial admin without exposing password in user object
-      const initialUsers = [
-        {
-          id: initialAdmin.id,
-          email: initialAdmin.email,
-          name: initialAdmin.name,
-          role: initialAdmin.role,
-          password: initialAdmin.password
-        }
-      ];
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(initialUsers));
-    } else {
-      // Convert any existing "customer" roles to "user"
-      const users = JSON.parse(storedUsers);
-      let hasChanges = false;
-      
-      const updatedUsers = users.map((user: any) => {
-        if (user.role === "customer") {
-          hasChanges = true;
-          return {...user, role: "user"};
-        }
-        return user;
-      });
-      
-      if (hasChanges) {
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
-      }
+  // Function to fetch user roles from the database
+  const fetchUserRoles = async (userId: string): Promise<UserRole[]> => {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId);
+    
+    if (error) {
+      console.error("Error fetching user roles:", error);
+      return ['user']; // Default to user role if error
     }
+    
+    return data?.map(item => item.role as UserRole) || ['user'];
+  };
 
-    // Check if user is already logged in
-    const currentUser = localStorage.getItem(CURRENT_USER_KEY);
-    if (currentUser) {
-      const parsedUser = JSON.parse(currentUser);
-      // Convert "customer" role to "user" if needed
-      if (parsedUser.role === "customer") {
-        parsedUser.role = "user";
-        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
-      }
-      setUser(parsedUser);
+  // Function to fetch user profile data
+  const fetchUserProfile = async (userId: string): Promise<{ name: string } | null> => {
+    const { data, error } = await supabase
+      .from('users')
+      .select('name')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error("Error fetching user profile:", error);
+      return null;
     }
+    
+    return data;
+  };
+
+  // Function to determine the highest role from a list of roles
+  const getHighestRole = (roles: UserRole[]): UserRole => {
+    if (roles.includes('superadmin')) return 'superadmin';
+    if (roles.includes('admin')) return 'admin';
+    return 'user';
+  };
+
+  // Initialize user session from Supabase
+  useEffect(() => {
+    const initializeUser = async () => {
+      // Get the current user session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        await updateUserState(session.user);
+      }
+      
+      // Listen for auth changes
+      const { data: { subscription } } = await supabase.auth.onAuthStateChange(
+        async (_event, session) => {
+          if (session?.user) {
+            await updateUserState(session.user);
+          } else {
+            setUser(null);
+          }
+        }
+      );
+      
+      setLoading(false);
+      
+      // Cleanup subscription on unmount
+      return () => {
+        subscription.unsubscribe();
+      };
+    };
+    
+    initializeUser();
   }, []);
+
+  // Update user state with data from Supabase
+  const updateUserState = async (authUser: SupabaseUser) => {
+    try {
+      // Fetch user roles
+      const roles = await fetchUserRoles(authUser.id);
+      const highestRole = getHighestRole(roles);
+      
+      // Fetch user profile
+      const profile = await fetchUserProfile(authUser.id);
+      
+      // Set user state
+      setUser({
+        id: authUser.id,
+        email: authUser.email || '',
+        name: profile?.name || 'User',
+        role: highestRole
+      });
+    } catch (error) {
+      console.error("Error updating user state:", error);
+      setUser(null);
+    }
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Get users from localStorage
-      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
       
-      if (storedUsers) {
-        const users = JSON.parse(storedUsers);
-        const matchedUser = users.find(
-          (u: any) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-        );
-
-        if (matchedUser) {
-          // Remove password before storing in state
-          const { password, ...userWithoutPassword } = matchedUser;
-          
-          // Convert "customer" role to "user" if needed
-          if (userWithoutPassword.role === "customer") {
-            userWithoutPassword.role = "user";
-          }
-          
-          setUser(userWithoutPassword);
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
-          
-          toast({
-            title: "Login successful",
-            description: `Welcome back, ${matchedUser.name}!`,
-          });
-          
-          return true;
-        }
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: error.message,
+        });
+        return false;
       }
       
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description: "Invalid email or password",
-      });
+      if (data.user) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
+        return true;
+      }
       
       return false;
     } catch (error) {
@@ -147,49 +170,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string, 
     password: string, 
     name: string, 
-    role: UserRole = "user"  // Default role is now "user"
+    role: UserRole = "user"
   ): Promise<boolean> => {
     try {
-      // Get users from localStorage
-      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
-      let users = [];
+      // Check if the current user is admin/superadmin (for creating users with specific roles)
+      const isAdminCreating = user && (user.role === 'admin' || user.role === 'superadmin');
       
-      if (storedUsers) {
-        users = JSON.parse(storedUsers);
-        // Check if email already exists
-        if (users.some((u: any) => u.email.toLowerCase() === email.toLowerCase())) {
-          toast({
-            variant: "destructive",
-            title: "Registration failed",
-            description: "Email already exists",
-          });
-          return false;
-        }
-      }
-
-      // Create new user
-      const newUser = {
-        id: Date.now().toString(),
+      // Register the user in Supabase Auth
+      const { data, error } = await supabase.auth.signUp({
         email,
-        name,
-        role,
         password,
-      };
-
-      // Add user to users array
-      users.push(newUser);
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-
-      // Automatically log in the new user if not an admin-created account
-      const { password: _, ...userWithoutPassword } = newUser;
-      setUser(userWithoutPassword);
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
-
+        options: {
+          data: {
+            name: name
+          }
+        }
+      });
+      
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Registration failed",
+          description: error.message,
+        });
+        return false;
+      }
+      
+      // If an admin is creating a user with a specific role and it's different from the default 'user'
+      if (isAdminCreating && role !== 'user' && data.user) {
+        // The trigger will create the user and the 'user' role, now we need to add the additional role
+        if (role === 'admin' || role === 'superadmin') {
+          // Note: We let the trigger handle the basic user role
+          const { error: roleError } = await supabase
+            .from('user_roles')
+            .insert({ user_id: data.user.id, role: role });
+          
+          if (roleError) {
+            console.error("Error setting user role:", roleError);
+            // Don't fail the registration, just log the error
+          }
+        }
+        
+        toast({
+          title: "User created successfully",
+          description: `${name} has been registered as a ${role}`,
+        });
+        
+        return true;
+      }
+      
+      // Normal user registration success message
       toast({
         title: "Registration successful",
         description: `Welcome, ${name}!`,
       });
-
+      
       return true;
     } catch (error) {
       console.error("Registration error:", error);
@@ -204,46 +239,55 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUserRole = async (userId: string, newRole: UserRole): Promise<boolean> => {
     try {
-      // Get users from localStorage
-      const storedUsers = localStorage.getItem(USERS_STORAGE_KEY);
+      // First, check if the user already has this role
+      const { data: existingRoles, error: fetchError } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
       
-      if (storedUsers) {
-        const users = JSON.parse(storedUsers);
+      if (fetchError) {
+        console.error("Error checking existing roles:", fetchError);
+        toast({
+          variant: "destructive",
+          title: "Update failed",
+          description: "Could not check existing roles",
+        });
+        return false;
+      }
+      
+      const userHasRole = existingRoles?.some(r => r.role === newRole);
+      
+      if (!userHasRole) {
+        // Add the new role
+        const { error: insertError } = await supabase
+          .from('user_roles')
+          .insert({ user_id: userId, role: newRole });
         
-        // Find the user by ID
-        const userIndex = users.findIndex((u: any) => u.id === userId);
-        
-        if (userIndex === -1) {
+        if (insertError) {
+          console.error("Error adding role:", insertError);
           toast({
             variant: "destructive",
             title: "Update failed",
-            description: "User not found",
+            description: "Could not add the new role",
           });
           return false;
         }
-        
-        // Update the user's role
-        users[userIndex].role = newRole;
-        
-        // If this is the currently logged in user, update their session too
-        if (user && user.id === userId) {
-          const updatedUser = { ...user, role: newRole };
-          setUser(updatedUser);
-          localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
-        }
-        
-        // Save updated users back to localStorage
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-        
-        toast({
-          title: "Role updated",
-          description: `User role has been updated to ${newRole}`,
-        });
-        
-        return true;
       }
       
-      return false;
+      // If this is the current user, refresh their state
+      if (user && user.id === userId) {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          await updateUserState(authUser);
+        }
+      }
+      
+      toast({
+        title: "Role updated",
+        description: `User role has been updated to ${newRole}`,
+      });
+      
+      return true;
     } catch (error) {
       console.error("Update role error:", error);
       toast({
@@ -255,9 +299,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      console.error("Logout error:", error);
+      toast({
+        variant: "destructive",
+        title: "Logout error",
+        description: error.message,
+      });
+      return;
+    }
+    
     setUser(null);
-    localStorage.removeItem(CURRENT_USER_KEY);
     toast({
       title: "Logged out",
       description: "You have been successfully logged out",
@@ -270,6 +325,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   
   // Check if user is a superadmin
   const isSuperAdminUser = user?.role === "superadmin";
+
+  if (loading) {
+    return <div>Loading authentication...</div>;
+  }
 
   return (
     <AuthContext.Provider

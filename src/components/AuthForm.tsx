@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   mode: "login" | "signup";
@@ -12,13 +13,15 @@ interface AuthFormProps {
 
 const AuthForm = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate();
-  const { login, register } = useAuth();
+  const { login, register, isAdmin } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
+  const [formError, setFormError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,18 +29,48 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       ...prev,
       [name]: value,
     }));
+    setFormError(""); // Clear error when input changes
+  };
+
+  const validateForm = () => {
+    if (mode === "signup" && !formData.name.trim()) {
+      setFormError("Name is required");
+      return false;
+    }
+    
+    if (!formData.email.trim()) {
+      setFormError("Email is required");
+      return false;
+    }
+    
+    if (!formData.password.trim()) {
+      setFormError("Password is required");
+      return false;
+    }
+    
+    if (mode === "signup" && formData.password.length < 6) {
+      setFormError("Password must be at least 6 characters");
+      return false;
+    }
+    
+    return true;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
         if (success) {
-          // Check if user is admin and redirect accordingly
-          navigate("/admin");
+          // Navigate based on user role
+          navigate(isAdmin ? "/admin" : "/dashboard");
         }
       } else {
         const success = await register(formData.email, formData.password, formData.name);
@@ -47,6 +80,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       }
     } catch (error) {
       console.error("Authentication error:", error);
+      setFormError("Authentication failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +98,12 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
+        {formError && (
+          <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
+            {formError}
+          </div>
+        )}
+        
         {mode === "signup" && (
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
