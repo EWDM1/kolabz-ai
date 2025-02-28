@@ -196,10 +196,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Check if user has superadmin role
-  const isSuperAdmin = user?.app_metadata?.role === "superadmin";
-  
-  // Check if user has admin role (includes superadmin)
+  // Check roles using metadata from Supabase
+  const checkUserRole = () => {
+    if (!user) return false;
+    return user.app_metadata?.role === "superadmin";
+  };
+
+  // Calculate role statuses
+  const isSuperAdmin = checkUserRole();
   const isAdmin = isSuperAdmin || user?.app_metadata?.role === "admin";
 
   return (
