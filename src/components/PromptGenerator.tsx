@@ -81,14 +81,53 @@ const PromptGenerator = () => {
       case "gpt4":
         context = t("generator.context.gpt4", "You are GPT-4, an advanced AI language model capable of detailed analysis and creative content generation.");
         break;
+      case "gpt4o":
+        context = t("generator.context.gpt4o", "You are GPT-4o, an advanced multimodal AI model capable of understanding both text and images with high accuracy.");
+        break;
       case "gpt35":
         context = t("generator.context.gpt35", "You are GPT-3.5, an AI language model that excels at providing concise and relevant information.");
         break;
-      case "claude":
-        context = t("generator.context.claude", "You are Claude, an AI assistant with Constitutional AI that focuses on helpful, harmless, and honest responses.");
+      case "claude3":
+        context = t("generator.context.claude3", "You are Claude 3, an AI assistant with advanced reasoning and ethical guardrails.");
+        break;
+      case "claude3opus":
+        context = t("generator.context.claude3opus", "You are Claude 3 Opus, Anthropic's most sophisticated AI model with exceptional reasoning abilities.");
+        break;
+      case "claude3sonnet":
+        context = t("generator.context.claude3sonnet", "You are Claude 3 Sonnet, a balanced AI assistant with strong capabilities and faster response times.");
+        break;
+      case "claude3haiku":
+        context = t("generator.context.claude3haiku", "You are Claude 3 Haiku, a streamlined AI optimized for quick responses and practical tasks.");
+        break;
+      case "claude2":
+        context = t("generator.context.claude", "You are Claude 2, an AI assistant with Constitutional AI that focuses on helpful, harmless, and honest responses.");
         break;
       case "gemini":
         context = t("generator.context.gemini", "You are Gemini, a multimodal AI model with strong reasoning capabilities.");
+        break;
+      case "geminiultra":
+        context = t("generator.context.geminiultra", "You are Gemini Ultra, Google's most capable AI model with expert-level understanding across many domains.");
+        break;
+      case "geminipro":
+        context = t("generator.context.geminipro", "You are Gemini Pro, a versatile model balanced for various tasks requiring reasoning and language understanding.");
+        break;
+      case "llama3":
+        context = t("generator.context.llama3", "You are Llama 3, Meta's state-of-the-art open-source model designed for helpful and safe instruction-following.");
+        break;
+      case "llama370b":
+        context = t("generator.context.llama370b", "You are Llama 3 70B, Meta's most capable open-source model with advanced reasoning and language capabilities.");
+        break;
+      case "llama38b":
+        context = t("generator.context.llama38b", "You are Llama 3 8B, Meta's compact yet powerful open-source model designed for efficiency.");
+        break;
+      case "mistral7b":
+        context = t("generator.context.mistral7b", "You are Mistral 7B, a compact but powerful open-source language model.");
+        break;
+      case "mistral":
+        context = t("generator.context.mistral", "You are Mistral Large, a state-of-the-art model with excellent reasoning abilities and factual accuracy.");
+        break;
+      case "deepseek":
+        context = t("generator.context.deepseek", "You are DeepSeek, a powerful language model with particular strength in code generation and mathematics.");
         break;
       default:
         context = t("generator.context.default", "You are an advanced AI assistant.");
@@ -260,10 +299,36 @@ const PromptGenerator = () => {
                 : 'bg-background border-input'
             }`}
           >
-            <option value="gpt4">GPT-4</option>
-            <option value="gpt35">GPT-3.5</option>
-            <option value="claude">Claude</option>
-            <option value="gemini">Gemini</option>
+            <optgroup label="OpenAI">
+              <option value="gpt4">GPT-4</option>
+              <option value="gpt4o">GPT-4o</option>
+              <option value="gpt35">GPT-3.5</option>
+            </optgroup>
+            <optgroup label="Anthropic">
+              <option value="claude3opus">Claude 3 Opus</option>
+              <option value="claude3sonnet">Claude 3 Sonnet</option>
+              <option value="claude3haiku">Claude 3 Haiku</option>
+              <option value="claude2">Claude 2</option>
+            </optgroup>
+            <optgroup label="Google">
+              <option value="geminiultra">Gemini Ultra</option>
+              <option value="geminipro">Gemini Pro</option>
+              <option value="gemini">Gemini</option>
+            </optgroup>
+            <optgroup label="Meta">
+              <option value="llama370b">Llama 3 (70B)</option>
+              <option value="llama38b">Llama 3 (8B)</option>
+              <option value="llama3">Llama 3</option>
+            </optgroup>
+            <optgroup label="Mistral AI">
+              <option value="mistral">Mistral Large</option>
+              <option value="mistral7b">Mistral 7B</option>
+            </optgroup>
+            <optgroup label="Others">
+              <option value="deepseek">DeepSeek</option>
+              <option value="cohere">Cohere Command</option>
+              <option value="falcon">Falcon</option>
+            </optgroup>
           </select>
         </div>
 
