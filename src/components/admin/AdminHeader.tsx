@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/components/AuthContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
   const { theme } = useTheme();
@@ -47,6 +48,7 @@ const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
             />
           </div>
 
+          <LanguageSelector />
           <ThemeToggle />
 
           <Button variant="ghost" size="icon" className="relative">
