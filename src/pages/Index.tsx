@@ -34,7 +34,7 @@ const Index = () => {
                 <img 
                   src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
                   alt="Kolabz" 
-                  className="h-10 w-auto"
+                  className="h-8 w-auto object-contain"
                 />
               </Link>
             </div>
