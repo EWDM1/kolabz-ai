@@ -1,7 +1,11 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
+  LayoutDashboard,
+  ListChecks,
+  Settings as SettingsIcon,
+  LogOut,
   User, 
   Bell, 
   Shield, 
@@ -15,8 +19,6 @@ import {
   Info,
   Check,
   X,
-  Settings as SettingsIcon,
-  ChevronLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,10 +34,6 @@ import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import AdminHeader from "@/components/admin/AdminHeader";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -44,14 +42,10 @@ const Settings = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // State for admin sidebar
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  
   // Form state for profile settings
   const [profileForm, setProfileForm] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
+    name: user?.name || "John Doe",
+    email: user?.email || "john@example.com",
     bio: "",
     phoneNumber: "",
     location: "",
@@ -88,14 +82,6 @@ const Settings = () => {
     allowCookies: true,
     showProfilePublicly: true,
     storeHistory: true,
-  });
-  
-  // Admin-specific settings
-  const [adminSettings, setAdminSettings] = useState({
-    enableBetaFeatures: false,
-    debugMode: false,
-    maintenanceMode: false,
-    restrictRegistrations: false,
   });
   
   // Loading state
@@ -144,14 +130,6 @@ const Settings = () => {
     setPrivacySettings((prev) => ({
       ...prev,
       [key]: !prev[key as keyof typeof privacySettings],
-    }));
-  };
-  
-  // Handle admin settings toggle
-  const handleAdminToggle = (key: string) => {
-    setAdminSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key as keyof typeof adminSettings],
     }));
   };
   
@@ -262,20 +240,6 @@ const Settings = () => {
     }, 800);
   };
   
-  // Save admin settings
-  const handleSaveAdminSettings = () => {
-    setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Admin settings saved",
-        description: "System settings have been updated.",
-      });
-      setLoading(false);
-    }, 800);
-  };
-  
   // Delete account
   const handleDeleteAccount = () => {
     const confirmed = window.confirm(
@@ -316,237 +280,21 @@ const Settings = () => {
     }
   }, [user]);
 
-  // Check the sidebar collapsed state from localStorage (for admin view)
-  useEffect(() => {
-    const savedState = localStorage.getItem("adminSidebarCollapsed");
-    if (savedState !== null) {
-      setSidebarCollapsed(savedState === "true");
-    }
-  }, []);
-
-  // Get the correct header text based on the language
-  const getSettingsTitle = () => {
-    if (language === 'es') return 'Configuración de la cuenta';
-    if (language === 'fr') return 'Paramètres du compte';
-    if (language === 'pt') return 'Configurações da conta';
-    return 'Account Settings';
+  const handleLogout = () => {
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out",
+    });
+    navigate("/login");
   };
 
-  const getSettingsDescription = () => {
-    if (language === 'es') return 'Administre sus preferencias y perfil';
-    if (language === 'fr') return 'Gérez vos préférences et votre profil';
-    if (language === 'pt') return 'Gerencie suas preferências e perfil';
-    return 'Manage your account preferences and profile';
+  const handleManageSubscription = () => {
+    navigate("/manage-subscription");
   };
-  
-  return (
-    <div className="min-h-screen bg-background">
-      {isAdmin ? (
-        <div className="flex min-h-screen">
-          <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-          
-          <div className={cn(
-            "flex-1 transition-all duration-300 ease-in-out w-full",
-            sidebarCollapsed ? "md:ml-16" : "md:ml-64"
-          )}>
-            <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-            
-            <main className="container mx-auto px-4 py-8">
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold flex items-center gap-2">
-                  <SettingsIcon className="h-8 w-8 text-primary" />
-                  {getSettingsTitle()}
-                </h1>
-                <p className="text-muted-foreground">
-                  {getSettingsDescription()}
-                </p>
-              </div>
-              
-              <SettingsContent 
-                profileForm={profileForm}
-                passwords={passwords}
-                notificationPrefs={notificationPrefs}
-                appearance={appearance}
-                privacySettings={privacySettings}
-                adminSettings={adminSettings}
-                isAdmin={isAdmin}
-                loading={loading}
-                onProfileChange={handleProfileChange}
-                onPasswordChange={handlePasswordChange}
-                onNotificationToggle={handleNotificationToggle}
-                onAppearanceChange={handleAppearanceChange}
-                onPrivacyToggle={handlePrivacyToggle}
-                onAdminToggle={handleAdminToggle}
-                onSaveProfile={handleSaveProfile}
-                onSavePassword={handleSavePassword}
-                onSaveNotifications={handleSaveNotifications}
-                onSaveAppearance={handleSaveAppearance}
-                onSavePrivacy={handleSavePrivacy}
-                onSaveAdminSettings={handleSaveAdminSettings}
-                onDeleteAccount={handleDeleteAccount}
-                resetNotificationPreferences={resetNotificationPreferences}
-                language={language}
-              />
-            </main>
-          </div>
-        </div>
-      ) : (
-        <div className="min-h-screen bg-background">
-          {/* Regular user header */}
-          <header className="sticky top-0 z-40 w-full bg-background border-b border-border">
-            <div className="container px-4 mx-auto">
-              <div className="flex h-16 items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Link to="/dashboard" className="inline-flex items-center text-muted-foreground hover:text-foreground">
-                    <ChevronLeft className="h-4 w-4 mr-1" />
-                    <span>{language === 'es' ? 'Volver al panel' : 
-                           language === 'fr' ? 'Retour au tableau de bord' : 
-                           language === 'pt' ? 'Voltar ao painel' : 
-                           'Back to Dashboard'}</span>
-                  </Link>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <LanguageSelector />
-                  <ThemeToggle />
-                  <div className="text-sm text-muted-foreground ml-2">
-                    {user?.name}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </header>
-          
-          <div className="container px-4 mx-auto py-8">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                <SettingsIcon className="h-8 w-8 text-primary" />
-                {getSettingsTitle()}
-              </h1>
-              <p className="text-muted-foreground">
-                {getSettingsDescription()}
-              </p>
-            </div>
-            
-            <SettingsContent 
-              profileForm={profileForm}
-              passwords={passwords}
-              notificationPrefs={notificationPrefs}
-              appearance={appearance}
-              privacySettings={privacySettings}
-              adminSettings={adminSettings}
-              isAdmin={isAdmin}
-              loading={loading}
-              onProfileChange={handleProfileChange}
-              onPasswordChange={handlePasswordChange}
-              onNotificationToggle={handleNotificationToggle}
-              onAppearanceChange={handleAppearanceChange}
-              onPrivacyToggle={handlePrivacyToggle}
-              onAdminToggle={handleAdminToggle}
-              onSaveProfile={handleSaveProfile}
-              onSavePassword={handleSavePassword}
-              onSaveNotifications={handleSaveNotifications}
-              onSaveAppearance={handleSaveAppearance}
-              onSavePrivacy={handleSavePrivacy}
-              onSaveAdminSettings={handleSaveAdminSettings}
-              onDeleteAccount={handleDeleteAccount}
-              resetNotificationPreferences={resetNotificationPreferences}
-              language={language}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
-// Settings content component to avoid duplication
-interface SettingsContentProps {
-  profileForm: {
-    name: string;
-    email: string;
-    bio: string;
-    phoneNumber: string;
-    location: string;
-  };
-  passwords: {
-    current: string;
-    new: string;
-    confirm: string;
-  };
-  notificationPrefs: {
-    emailUpdates: boolean;
-    productNews: boolean;
-    securityAlerts: boolean;
-    marketingEmails: boolean;
-    featuredPrompts: boolean;
-  };
-  appearance: {
-    theme: string;
-    compactMode: boolean;
-    highContrast: boolean;
-    reducedMotion: boolean;
-    fontSize: string;
-  };
-  privacySettings: {
-    shareUsage: boolean;
-    allowCookies: boolean;
-    showProfilePublicly: boolean;
-    storeHistory: boolean;
-  };
-  adminSettings: {
-    enableBetaFeatures: boolean;
-    debugMode: boolean;
-    maintenanceMode: boolean;
-    restrictRegistrations: boolean;
-  };
-  isAdmin: boolean;
-  loading: boolean;
-  language: string;
-  onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-  onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onNotificationToggle: (key: string) => void;
-  onAppearanceChange: (key: string, value: any) => void;
-  onPrivacyToggle: (key: string) => void;
-  onAdminToggle: (key: string) => void;
-  onSaveProfile: () => void;
-  onSavePassword: () => void;
-  onSaveNotifications: () => void;
-  onSaveAppearance: () => void;
-  onSavePrivacy: () => void;
-  onSaveAdminSettings: () => void;
-  onDeleteAccount: () => void;
-  resetNotificationPreferences: () => void;
-}
-
-const SettingsContent = ({
-  profileForm,
-  passwords,
-  notificationPrefs,
-  appearance,
-  privacySettings,
-  adminSettings,
-  isAdmin,
-  loading,
-  language,
-  onProfileChange,
-  onPasswordChange,
-  onNotificationToggle,
-  onAppearanceChange,
-  onPrivacyToggle,
-  onAdminToggle,
-  onSaveProfile,
-  onSavePassword,
-  onSaveNotifications,
-  onSaveAppearance,
-  onSavePrivacy,
-  onSaveAdminSettings,
-  onDeleteAccount,
-  resetNotificationPreferences,
-}: SettingsContentProps) => {
-  // Translation helpers
-  const getTabLabel = (key: string) => {
-    const labels: Record<string, Record<string, string>> = {
+  // Get the appropriate language string
+  const getTranslation = (key: string, lang: string = language) => {
+    const translations: Record<string, Record<string, string>> = {
       profile: {
         en: 'Profile',
         es: 'Perfil',
@@ -571,19 +319,6 @@ const SettingsContent = ({
         fr: 'Confidentialité',
         pt: 'Privacidade'
       },
-      admin: {
-        en: 'Admin',
-        es: 'Admin',
-        fr: 'Admin',
-        pt: 'Admin'
-      }
-    };
-    
-    return labels[key]?.[language] || labels[key]?.['en'] || key;
-  };
-  
-  const getButtonLabel = (key: string) => {
-    const labels: Record<string, Record<string, string>> = {
       save: {
         en: 'Save changes',
         es: 'Guardar cambios',
@@ -604,721 +339,706 @@ const SettingsContent = ({
       }
     };
     
-    return labels[key]?.[language] || labels[key]?.['en'] || key;
+    return translations[key]?.[lang] || translations[key]?.['en'] || key;
   };
-
+  
   return (
-    <Tabs defaultValue="profile" className="space-y-6">
-      <TabsList className="grid grid-cols-2 md:grid-cols-5 md:w-auto w-full">
-        <TabsTrigger value="profile" className="flex items-center gap-2">
-          <User className="h-4 w-4" />
-          <span className="hidden md:inline">{getTabLabel('profile')}</span>
-        </TabsTrigger>
-        <TabsTrigger value="notifications" className="flex items-center gap-2">
-          <Bell className="h-4 w-4" />
-          <span className="hidden md:inline">{getTabLabel('notifications')}</span>
-        </TabsTrigger>
-        <TabsTrigger value="appearance" className="flex items-center gap-2">
-          <Moon className="h-4 w-4" />
-          <span className="hidden md:inline">{getTabLabel('appearance')}</span>
-        </TabsTrigger>
-        <TabsTrigger value="privacy" className="flex items-center gap-2">
-          <Lock className="h-4 w-4" />
-          <span className="hidden md:inline">{getTabLabel('privacy')}</span>
-        </TabsTrigger>
-        {isAdmin && (
-          <TabsTrigger value="admin" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            <span className="hidden md:inline">{getTabLabel('admin')}</span>
-          </TabsTrigger>
-        )}
-      </TabsList>
-      
-      {/* Profile Tab */}
-      <TabsContent value="profile" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile Information</CardTitle>
-            <CardDescription>
-              Update your personal information and public profile
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-1">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={profileForm.name}
-                onChange={onProfileChange}
-                placeholder="Your full name"
-              />
+    <div className="min-h-screen bg-[#080c16] text-white">
+      {/* Dashboard header */}
+      <header className="border-b border-gray-800 bg-[#0a101e]">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link to="/" className="flex items-center">
+            <img 
+              src="/lovable-uploads/df8a7871-32f3-4d83-826c-be5a1d06f2f1.png" 
+              alt="Kolabz Logo" 
+              className="h-8" 
+            />
+          </Link>
+
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center gap-2">
+              <ThemeToggle />
+              <LanguageSelector />
             </div>
-            
-            <div className="space-y-1">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={profileForm.email}
-                onChange={onProfileChange}
-                placeholder="your.email@example.com"
-              />
-            </div>
-            
-            <div className="space-y-1">
-              <Label htmlFor="bio">Bio</Label>
-              <Textarea
-                id="bio"
-                name="bio"
-                value={profileForm.bio}
-                onChange={onProfileChange}
-                placeholder="Tell us a little about yourself"
-                rows={4}
-              />
-              <p className="text-xs text-muted-foreground">
-                Brief description for your profile. Will be shown publicly.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="phoneNumber">Phone Number (Optional)</Label>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={profileForm.phoneNumber}
-                  onChange={onProfileChange}
-                  placeholder="+1 (555) 123-4567"
-                />
-              </div>
-              
-              <div className="space-y-1">
-                <Label htmlFor="location">Location (Optional)</Label>
-                <Input
-                  id="location"
-                  name="location"
-                  value={profileForm.location}
-                  onChange={onProfileChange}
-                  placeholder="City, Country"
-                />
+
+            <div className="flex items-center space-x-2 cursor-pointer">
+              <span className="text-sm font-medium hidden md:inline-block text-gray-300">
+                John Doe
+              </span>
+              <div className="h-8 w-8 rounded-full bg-gray-700 text-gray-200 flex items-center justify-center">
+                <User className="h-4 w-4" />
               </div>
             </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline">{getButtonLabel('cancel')}</Button>
-            <Button onClick={onSaveProfile} disabled={loading}>
-              {loading ? "Saving..." : getButtonLabel('save')}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Password</CardTitle>
-            <CardDescription>
-              Update your password to keep your account secure
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-1">
-              <Label htmlFor="current">Current Password</Label>
-              <Input
-                id="current"
-                name="current"
-                type="password"
-                value={passwords.current}
-                onChange={onPasswordChange}
-                placeholder="••••••••"
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <Label htmlFor="new">New Password</Label>
-                <Input
-                  id="new"
-                  name="new"
-                  type="password"
-                  value={passwords.new}
-                  onChange={onPasswordChange}
-                  placeholder="••••••••"
-                />
-              </div>
-              
-              <div className="space-y-1">
-                <Label htmlFor="confirm">Confirm New Password</Label>
-                <Input
-                  id="confirm"
-                  name="confirm"
-                  type="password"
-                  value={passwords.confirm}
-                  onChange={onPasswordChange}
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-            
-            <div className="bg-muted/50 p-3 rounded-md text-sm">
-              <p className="font-medium mb-2">Password requirements:</p>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  Minimum 8 characters long
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  At least one uppercase letter
-                </li>
-                <li className="flex items-center">
-                  <Check className="h-3 w-3 mr-2 text-green-500" />
-                  At least one number or special character
-                </li>
-              </ul>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="ghost" className="text-muted-foreground">
-              Forgot password?
-            </Button>
-            <Button onClick={onSavePassword} disabled={loading}>
-              {loading ? "Updating..." : "Update password"}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-destructive">Danger Zone</CardTitle>
-            <CardDescription>
-              Permanently delete your account and all associated data
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
-              Once you delete your account, there is no going back. Please be certain.
-            </p>
-            <Button 
-              variant="destructive" 
-              onClick={onDeleteAccount}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : "Delete my account"}
-            </Button>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      {/* Notifications Tab */}
-      <TabsContent value="notifications" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Email Notifications</CardTitle>
-            <CardDescription>
-              Configure what emails you receive from us
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="emailUpdates">Product Updates</Label>
-                <p className="text-sm text-muted-foreground">
-                  Receive emails about new features and improvements
-                </p>
-              </div>
-              <Switch
-                id="emailUpdates"
-                checked={notificationPrefs.emailUpdates}
-                onCheckedChange={() => onNotificationToggle("emailUpdates")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="productNews">Product News</Label>
-                <p className="text-sm text-muted-foreground">
-                  Tips on using our products and new releases
-                </p>
-              </div>
-              <Switch
-                id="productNews"
-                checked={notificationPrefs.productNews}
-                onCheckedChange={() => onNotificationToggle("productNews")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="securityAlerts">Security Alerts</Label>
-                <p className="text-sm text-muted-foreground">
-                  Important notifications about your account security
-                </p>
-              </div>
-              <Switch
-                id="securityAlerts"
-                checked={notificationPrefs.securityAlerts}
-                onCheckedChange={() => onNotificationToggle("securityAlerts")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="marketingEmails">Marketing Emails</Label>
-                <p className="text-sm text-muted-foreground">
-                  Promotions, discounts, and newsletter content
-                </p>
-              </div>
-              <Switch
-                id="marketingEmails"
-                checked={notificationPrefs.marketingEmails}
-                onCheckedChange={() => onNotificationToggle("marketingEmails")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="featuredPrompts">Featured Prompts</Label>
-                <p className="text-sm text-muted-foreground">
-                  Weekly curated content showcasing effective prompts
-                </p>
-              </div>
-              <Switch
-                id="featuredPrompts"
-                checked={notificationPrefs.featuredPrompts}
-                onCheckedChange={() => onNotificationToggle("featuredPrompts")}
-              />
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={resetNotificationPreferences}
-            >
-              {getButtonLabel('reset')}
-            </Button>
-            <Button onClick={onSaveNotifications} disabled={loading}>
-              {loading ? "Saving..." : getButtonLabel('save')}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Push Notifications</CardTitle>
-            <CardDescription>
-              Configure mobile and browser notifications
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Web Push Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Enable or disable in-browser notifications
-                </p>
-              </div>
-              <Button variant="outline" size="sm">
-                <Bell className="mr-2 h-4 w-4" />
-                Configure permissions
-              </Button>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Mobile App Notifications</Label>
-                <p className="text-sm text-muted-foreground">
-                  Manage notifications in our mobile apps
-                </p>
-              </div>
-              <div className="flex items-center">
-                <Smartphone className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">Configure in app</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      {/* Appearance Tab */}
-      <TabsContent value="appearance" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Theme and Display</CardTitle>
-            <CardDescription>
-              Customize how Kolabz looks and feels
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label>Theme</Label>
-              <div className="grid grid-cols-3 gap-4">
-                <Button
-                  variant={appearance.theme === "light" ? "default" : "outline"}
-                  className="justify-start"
-                  onClick={() => onAppearanceChange("theme", "light")}
-                >
-                  <Sun className="h-4 w-4 mr-2" />
-                  Light
-                </Button>
-                <Button
-                  variant={appearance.theme === "dark" ? "default" : "outline"}
-                  className="justify-start"
-                  onClick={() => onAppearanceChange("theme", "dark")}
-                >
-                  <Moon className="h-4 w-4 mr-2" />
-                  Dark
-                </Button>
-                <Button
-                  variant={appearance.theme === "system" ? "default" : "outline"}
-                  className="justify-start"
-                  onClick={() => onAppearanceChange("theme", "system")}
-                >
-                  <Globe className="h-4 w-4 mr-2" />
-                  System
-                </Button>
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="compactMode">Compact Mode</Label>
-                <p className="text-sm text-muted-foreground">
-                  Reduce spacing and show more content at once
-                </p>
-              </div>
-              <Switch
-                id="compactMode"
-                checked={appearance.compactMode}
-                onCheckedChange={(checked) => onAppearanceChange("compactMode", checked)}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="highContrast">High Contrast</Label>
-                <p className="text-sm text-muted-foreground">
-                  Increase contrast for better readability
-                </p>
-              </div>
-              <Switch
-                id="highContrast"
-                checked={appearance.highContrast}
-                onCheckedChange={(checked) => onAppearanceChange("highContrast", checked)}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="reducedMotion">Reduced Motion</Label>
-                <p className="text-sm text-muted-foreground">
-                  Minimize animation and motion effects
-                </p>
-              </div>
-              <Switch
-                id="reducedMotion"
-                checked={appearance.reducedMotion}
-                onCheckedChange={(checked) => onAppearanceChange("reducedMotion", checked)}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="space-y-2">
-              <Label>Font Size</Label>
-              <div className="grid grid-cols-3 gap-2">
-                <Button
-                  variant={appearance.fontSize === "small" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => onAppearanceChange("fontSize", "small")}
-                >
-                  Small
-                </Button>
-                <Button
-                  variant={appearance.fontSize === "normal" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => onAppearanceChange("fontSize", "normal")}
-                >
-                  Medium
-                </Button>
-                <Button
-                  variant={appearance.fontSize === "large" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => onAppearanceChange("fontSize", "large")}
-                >
-                  Large
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline">{getButtonLabel('reset')}</Button>
-            <Button onClick={onSaveAppearance} disabled={loading}>
-              {loading ? "Saving..." : getButtonLabel('save')}
-            </Button>
-          </CardFooter>
-        </Card>
-      </TabsContent>
-      
-      {/* Privacy Tab */}
-      <TabsContent value="privacy" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Privacy Settings</CardTitle>
-            <CardDescription>
-              Control your data and how your information is used
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="shareUsage">Share Usage Data</Label>
-                <p className="text-sm text-muted-foreground">
-                  Help improve our products by sharing anonymous usage data
-                </p>
-              </div>
-              <Switch
-                id="shareUsage"
-                checked={privacySettings.shareUsage}
-                onCheckedChange={() => onPrivacyToggle("shareUsage")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="allowCookies">Allow Cookies</Label>
-                <p className="text-sm text-muted-foreground">
-                  We use cookies to enhance your browsing experience
-                </p>
-              </div>
-              <Switch
-                id="allowCookies"
-                checked={privacySettings.allowCookies}
-                onCheckedChange={() => onPrivacyToggle("allowCookies")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="showProfilePublicly">Show Profile Publicly</Label>
-                <p className="text-sm text-muted-foreground">
-                  Allow other users to see your profile information
-                </p>
-              </div>
-              <Switch
-                id="showProfilePublicly"
-                checked={privacySettings.showProfilePublicly}
-                onCheckedChange={() => onPrivacyToggle("showProfilePublicly")}
-              />
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="storeHistory">Store Prompt History</Label>
-                <p className="text-sm text-muted-foreground">
-                  Save your prompt history for future reference
-                </p>
-              </div>
-              <Switch
-                id="storeHistory"
-                checked={privacySettings.storeHistory}
-                onCheckedChange={() => onPrivacyToggle("storeHistory")}
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button 
-              className="w-full" 
-              onClick={onSavePrivacy} 
-              disabled={loading}
-            >
-              {loading ? "Saving..." : getButtonLabel('save')}
-            </Button>
-          </CardFooter>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Data</CardTitle>
-            <CardDescription>
-              Export or delete your personal data
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-muted/50 p-4 rounded-md">
-              <div className="flex items-start space-x-2">
-                <Info className="h-5 w-5 text-blue-500 mt-1 flex-shrink-0" />
-                <div className="text-sm">
-                  <p className="font-medium">About your data</p>
-                  <p className="text-muted-foreground mt-1">
-                    You can download a copy of all the data we have stored for your account, including
-                    your profile information, prompt history, and saved content.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Button variant="outline" className="w-full">
-                Download my data
-              </Button>
-              <Button 
-                variant="destructive" 
-                className="w-full"
-                onClick={onDeleteAccount}
+          </div>
+        </div>
+      </header>
+
+      <div className="flex h-[calc(100vh-57px)]">
+        {/* Sidebar */}
+        <div className="w-64 min-h-full bg-[#0a101e] border-r border-gray-800 flex-shrink-0 hidden md:block">
+          <div className="py-6 px-4">
+            <nav className="space-y-1">
+              <Link
+                to="/dashboard"
+                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full"
               >
-                Delete all my data
+                <LayoutDashboard className="h-5 w-5" />
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                to="/my-prompts"
+                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full"
+              >
+                <ListChecks className="h-5 w-5" />
+                <span>My Prompts</span>
+              </Link>
+              <Link
+                to="/settings"
+                className="flex items-center space-x-3 px-3 py-2 rounded-md bg-[#1a2235] text-blue-400 font-medium w-full"
+              >
+                <SettingsIcon className="h-5 w-5" />
+                <span>Settings</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-3 px-3 py-2 rounded-md text-gray-300 hover:bg-[#131c2e] w-full text-left"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Logout</span>
+              </button>
+            </nav>
+          </div>
+
+          <div className="px-4 pt-6 pb-8 border-t border-gray-800">
+            <h4 className="text-xs uppercase tracking-wider text-gray-500 font-medium mb-3">
+              SUBSCRIPTION
+            </h4>
+            <div className="bg-[#131c2e] rounded-md p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Pro Plan</span>
+                <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">
+                  Active
+                </span>
+              </div>
+              <div className="text-xs text-gray-400 mb-3">
+                Next billing on Aug 12, 2023
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full text-xs bg-[#1a2235] border-gray-700 text-gray-300 hover:bg-[#252e3f]" 
+                onClick={handleManageSubscription}
+              >
+                Manage Subscription
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
-      
-      {/* Admin Tab (Only for admins) */}
-      {isAdmin && (
-        <TabsContent value="admin" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>System Settings</CardTitle>
-              <CardDescription>
-                Manage global system settings and configurations
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="enableBetaFeatures">Enable Beta Features</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Allow all users to access beta and unreleased features
-                  </p>
-                </div>
-                <Switch
-                  id="enableBetaFeatures"
-                  checked={adminSettings.enableBetaFeatures}
-                  onCheckedChange={() => onAdminToggle("enableBetaFeatures")}
-                />
-              </div>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 overflow-auto bg-[#080c16]">
+          <div className="container mx-auto p-6">
+            <Tabs defaultValue="profile" className="space-y-6">
+              <TabsList className="grid grid-cols-4 bg-[#131c2e]">
+                <TabsTrigger 
+                  value="profile" 
+                  className="flex items-center gap-2 data-[state=active]:bg-[#1a2235] data-[state=active]:text-blue-400"
+                >
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:inline">{getTranslation('profile')}</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="notifications" 
+                  className="flex items-center gap-2 data-[state=active]:bg-[#1a2235] data-[state=active]:text-blue-400"
+                >
+                  <Bell className="h-4 w-4" />
+                  <span className="hidden md:inline">{getTranslation('notifications')}</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="appearance" 
+                  className="flex items-center gap-2 data-[state=active]:bg-[#1a2235] data-[state=active]:text-blue-400"
+                >
+                  <Moon className="h-4 w-4" />
+                  <span className="hidden md:inline">{getTranslation('appearance')}</span>
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="privacy" 
+                  className="flex items-center gap-2 data-[state=active]:bg-[#1a2235] data-[state=active]:text-blue-400"
+                >
+                  <Lock className="h-4 w-4" />
+                  <span className="hidden md:inline">{getTranslation('privacy')}</span>
+                </TabsTrigger>
+              </TabsList>
               
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="debugMode">Debug Mode</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Enable detailed error logging and debugging tools
-                  </p>
-                </div>
-                <Switch
-                  id="debugMode"
-                  checked={adminSettings.debugMode}
-                  onCheckedChange={() => onAdminToggle("debugMode")}
-                />
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="maintenanceMode" className="text-amber-500 font-medium">Maintenance Mode</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Put the site in maintenance mode (only admins can access)
-                  </p>
-                </div>
-                <Switch
-                  id="maintenanceMode"
-                  checked={adminSettings.maintenanceMode}
-                  onCheckedChange={() => onAdminToggle("maintenanceMode")}
-                />
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="restrictRegistrations">Restrict Registrations</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Limit new user registrations (invitation only)
-                  </p>
-                </div>
-                <Switch
-                  id="restrictRegistrations"
-                  checked={adminSettings.restrictRegistrations}
-                  onCheckedChange={() => onAdminToggle("restrictRegistrations")}
-                />
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">{getButtonLabel('reset')}</Button>
-              <Button onClick={onSaveAdminSettings} disabled={loading}>
-                {loading ? "Saving..." : getButtonLabel('save')}
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Admin Actions</CardTitle>
-              <CardDescription>
-                Perform global system maintenance tasks
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Manage Subscriptions
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Send Mass Email
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <User className="mr-2 h-4 w-4" />
-                  User Management
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Shield className="mr-2 h-4 w-4" />
-                  Security Logs
-                </Button>
-              </div>
-              
-              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700/30 p-4 rounded-md mt-4">
-                <div className="flex items-start space-x-2">
-                  <Info className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
-                  <div className="text-sm">
-                    <p className="font-medium text-amber-800 dark:text-amber-300">Critical Actions</p>
-                    <p className="text-amber-700 dark:text-amber-400/80 mt-1">
-                      Some administrative actions can affect all users and site functionality.
-                      Use these tools with caution.
+              {/* Profile Tab */}
+              <TabsContent value="profile" className="space-y-6">
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Profile Information</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Update your personal information and public profile
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-1">
+                      <Label htmlFor="name" className="text-gray-300">Full Name</Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={profileForm.name}
+                        onChange={handleProfileChange}
+                        placeholder="Your full name"
+                        className="bg-[#131c2e] border-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label htmlFor="email" className="text-gray-300">Email Address</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={profileForm.email}
+                        onChange={handleProfileChange}
+                        placeholder="your.email@example.com"
+                        className="bg-[#131c2e] border-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label htmlFor="bio" className="text-gray-300">Bio</Label>
+                      <Textarea
+                        id="bio"
+                        name="bio"
+                        value={profileForm.bio}
+                        onChange={handleProfileChange}
+                        placeholder="Tell us a little about yourself"
+                        rows={4}
+                        className="bg-[#131c2e] border-gray-700 text-white"
+                      />
+                      <p className="text-xs text-gray-400">
+                        Brief description for your profile. Will be shown publicly.
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <Label htmlFor="phoneNumber" className="text-gray-300">Phone Number (Optional)</Label>
+                        <Input
+                          id="phoneNumber"
+                          name="phoneNumber"
+                          value={profileForm.phoneNumber}
+                          onChange={handleProfileChange}
+                          placeholder="+1 (555) 123-4567"
+                          className="bg-[#131c2e] border-gray-700 text-white"
+                        />
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <Label htmlFor="location" className="text-gray-300">Location (Optional)</Label>
+                        <Input
+                          id="location"
+                          name="location"
+                          value={profileForm.location}
+                          onChange={handleProfileChange}
+                          placeholder="City, Country"
+                          className="bg-[#131c2e] border-gray-700 text-white"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      className="bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"
+                    >
+                      {getTranslation('cancel')}
+                    </Button>
+                    <Button 
+                      onClick={handleSaveProfile} 
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {loading ? "Saving..." : getTranslation('save')}
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Password</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Update your password to keep your account secure
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-1">
+                      <Label htmlFor="current" className="text-gray-300">Current Password</Label>
+                      <Input
+                        id="current"
+                        name="current"
+                        type="password"
+                        value={passwords.current}
+                        onChange={handlePasswordChange}
+                        placeholder="••••••••"
+                        className="bg-[#131c2e] border-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <Label htmlFor="new" className="text-gray-300">New Password</Label>
+                        <Input
+                          id="new"
+                          name="new"
+                          type="password"
+                          value={passwords.new}
+                          onChange={handlePasswordChange}
+                          placeholder="••••••••"
+                          className="bg-[#131c2e] border-gray-700 text-white"
+                        />
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <Label htmlFor="confirm" className="text-gray-300">Confirm New Password</Label>
+                        <Input
+                          id="confirm"
+                          name="confirm"
+                          type="password"
+                          value={passwords.confirm}
+                          onChange={handlePasswordChange}
+                          placeholder="••••••••"
+                          className="bg-[#131c2e] border-gray-700 text-white"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#131c2e] p-4 rounded-md text-sm">
+                      <p className="font-medium mb-2 text-gray-300">Password requirements:</p>
+                      <ul className="space-y-1 text-xs text-gray-400">
+                        <li className="flex items-center">
+                          <Check className="h-3 w-3 mr-2 text-green-500" />
+                          Minimum 8 characters long
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-3 w-3 mr-2 text-green-500" />
+                          At least one uppercase letter
+                        </li>
+                        <li className="flex items-center">
+                          <Check className="h-3 w-3 mr-2 text-green-500" />
+                          At least one number or special character
+                        </li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="ghost" 
+                      className="text-gray-400 hover:text-gray-300 hover:bg-[#1a2235]"
+                    >
+                      Forgot password?
+                    </Button>
+                    <Button 
+                      onClick={handleSavePassword} 
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {loading ? "Updating..." : "Update password"}
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-red-400">Danger Zone</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Permanently delete your account and all associated data
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Once you delete your account, there is no going back. Please be certain.
                     </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      )}
-    </Tabs>
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleDeleteAccount}
+                      disabled={loading}
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                    >
+                      {loading ? "Processing..." : "Delete my account"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              {/* Notifications Tab */}
+              <TabsContent value="notifications" className="space-y-6">
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Email Notifications</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Configure what emails you receive from us
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="emailUpdates" className="text-gray-300">Product Updates</Label>
+                        <p className="text-sm text-gray-400">
+                          Receive emails about new features and improvements
+                        </p>
+                      </div>
+                      <Switch
+                        id="emailUpdates"
+                        checked={notificationPrefs.emailUpdates}
+                        onCheckedChange={() => handleNotificationToggle("emailUpdates")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="productNews" className="text-gray-300">Product News</Label>
+                        <p className="text-sm text-gray-400">
+                          Tips on using our products and new releases
+                        </p>
+                      </div>
+                      <Switch
+                        id="productNews"
+                        checked={notificationPrefs.productNews}
+                        onCheckedChange={() => handleNotificationToggle("productNews")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="securityAlerts" className="text-gray-300">Security Alerts</Label>
+                        <p className="text-sm text-gray-400">
+                          Important notifications about your account security
+                        </p>
+                      </div>
+                      <Switch
+                        id="securityAlerts"
+                        checked={notificationPrefs.securityAlerts}
+                        onCheckedChange={() => handleNotificationToggle("securityAlerts")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="marketingEmails" className="text-gray-300">Marketing Emails</Label>
+                        <p className="text-sm text-gray-400">
+                          Promotions, discounts, and newsletter content
+                        </p>
+                      </div>
+                      <Switch
+                        id="marketingEmails"
+                        checked={notificationPrefs.marketingEmails}
+                        onCheckedChange={() => handleNotificationToggle("marketingEmails")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="featuredPrompts" className="text-gray-300">Featured Prompts</Label>
+                        <p className="text-sm text-gray-400">
+                          Weekly curated content showcasing effective prompts
+                        </p>
+                      </div>
+                      <Switch
+                        id="featuredPrompts"
+                        checked={notificationPrefs.featuredPrompts}
+                        onCheckedChange={() => handleNotificationToggle("featuredPrompts")}
+                      />
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      onClick={resetNotificationPreferences}
+                      className="bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"
+                    >
+                      {getTranslation('reset')}
+                    </Button>
+                    <Button 
+                      onClick={handleSaveNotifications} 
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {loading ? "Saving..." : getTranslation('save')}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              {/* Appearance Tab */}
+              <TabsContent value="appearance" className="space-y-6">
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Theme and Display</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Customize how Kolabz looks and feels
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-gray-300">Theme</Label>
+                      <div className="grid grid-cols-3 gap-4">
+                        <Button
+                          variant={appearance.theme === "light" ? "default" : "outline"}
+                          className={appearance.theme === "light" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white justify-start" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235] justify-start"}
+                          onClick={() => handleAppearanceChange("theme", "light")}
+                        >
+                          <Sun className="h-4 w-4 mr-2" />
+                          Light
+                        </Button>
+                        <Button
+                          variant={appearance.theme === "dark" ? "default" : "outline"}
+                          className={appearance.theme === "dark" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white justify-start" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235] justify-start"}
+                          onClick={() => handleAppearanceChange("theme", "dark")}
+                        >
+                          <Moon className="h-4 w-4 mr-2" />
+                          Dark
+                        </Button>
+                        <Button
+                          variant={appearance.theme === "system" ? "default" : "outline"}
+                          className={appearance.theme === "system" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white justify-start" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235] justify-start"}
+                          onClick={() => handleAppearanceChange("theme", "system")}
+                        >
+                          <Globe className="h-4 w-4 mr-2" />
+                          System
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="compactMode" className="text-gray-300">Compact Mode</Label>
+                        <p className="text-sm text-gray-400">
+                          Reduce spacing and show more content at once
+                        </p>
+                      </div>
+                      <Switch
+                        id="compactMode"
+                        checked={appearance.compactMode}
+                        onCheckedChange={(checked) => handleAppearanceChange("compactMode", checked)}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="reducedMotion" className="text-gray-300">Reduced Motion</Label>
+                        <p className="text-sm text-gray-400">
+                          Minimize animation and motion effects
+                        </p>
+                      </div>
+                      <Switch
+                        id="reducedMotion"
+                        checked={appearance.reducedMotion}
+                        onCheckedChange={(checked) => handleAppearanceChange("reducedMotion", checked)}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="space-y-2">
+                      <Label className="text-gray-300">Font Size</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <Button
+                          variant={appearance.fontSize === "small" ? "default" : "outline"}
+                          size="sm"
+                          className={appearance.fontSize === "small" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"}
+                          onClick={() => handleAppearanceChange("fontSize", "small")}
+                        >
+                          Small
+                        </Button>
+                        <Button
+                          variant={appearance.fontSize === "normal" ? "default" : "outline"}
+                          size="sm"
+                          className={appearance.fontSize === "normal" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"}
+                          onClick={() => handleAppearanceChange("fontSize", "normal")}
+                        >
+                          Medium
+                        </Button>
+                        <Button
+                          variant={appearance.fontSize === "large" ? "default" : "outline"}
+                          size="sm"
+                          className={appearance.fontSize === "large" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                            : "bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"}
+                          onClick={() => handleAppearanceChange("fontSize", "large")}
+                        >
+                          Large
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button 
+                      variant="outline"
+                      className="bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"
+                    >
+                      {getTranslation('reset')}
+                    </Button>
+                    <Button 
+                      onClick={handleSaveAppearance} 
+                      disabled={loading}
+                      className="bg-blue-600 hover:bg-blue-700"
+                    >
+                      {loading ? "Saving..." : getTranslation('save')}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </TabsContent>
+              
+              {/* Privacy Tab */}
+              <TabsContent value="privacy" className="space-y-6">
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Privacy Settings</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Control your data and how your information is used
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="shareUsage" className="text-gray-300">Share Usage Data</Label>
+                        <p className="text-sm text-gray-400">
+                          Help improve our products by sharing anonymous usage data
+                        </p>
+                      </div>
+                      <Switch
+                        id="shareUsage"
+                        checked={privacySettings.shareUsage}
+                        onCheckedChange={() => handlePrivacyToggle("shareUsage")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="allowCookies" className="text-gray-300">Allow Cookies</Label>
+                        <p className="text-sm text-gray-400">
+                          We use cookies to enhance your browsing experience
+                        </p>
+                      </div>
+                      <Switch
+                        id="allowCookies"
+                        checked={privacySettings.allowCookies}
+                        onCheckedChange={() => handlePrivacyToggle("allowCookies")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="showProfilePublicly" className="text-gray-300">Show Profile Publicly</Label>
+                        <p className="text-sm text-gray-400">
+                          Allow other users to see your profile information
+                        </p>
+                      </div>
+                      <Switch
+                        id="showProfilePublicly"
+                        checked={privacySettings.showProfilePublicly}
+                        onCheckedChange={() => handlePrivacyToggle("showProfilePublicly")}
+                      />
+                    </div>
+                    
+                    <Separator className="bg-gray-800" />
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="storeHistory" className="text-gray-300">Store Prompt History</Label>
+                        <p className="text-sm text-gray-400">
+                          Save your prompt history for future reference
+                        </p>
+                      </div>
+                      <Switch
+                        id="storeHistory"
+                        checked={privacySettings.storeHistory}
+                        onCheckedChange={() => handlePrivacyToggle("storeHistory")}
+                      />
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      className="w-full bg-blue-600 hover:bg-blue-700" 
+                      onClick={handleSavePrivacy} 
+                      disabled={loading}
+                    >
+                      {loading ? "Saving..." : getTranslation('save')}
+                    </Button>
+                  </CardFooter>
+                </Card>
+                
+                <Card className="bg-[#0a101e] border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Your Data</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Export or delete your personal data
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="bg-[#131c2e] p-4 rounded-md">
+                      <div className="flex items-start space-x-2">
+                        <Info className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
+                        <div className="text-sm">
+                          <p className="font-medium text-gray-300">About your data</p>
+                          <p className="text-gray-400 mt-1">
+                            You can download a copy of all the data we have stored for your account, including
+                            your profile information, prompt history, and saved content.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Button 
+                        variant="outline"
+                        className="w-full bg-[#131c2e] border-gray-700 text-gray-300 hover:bg-[#1a2235]"
+                      >
+                        Download my data
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        className="w-full bg-red-600 hover:bg-red-700 text-white"
+                        onClick={handleDeleteAccount}
+                      >
+                        Delete all my data
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
