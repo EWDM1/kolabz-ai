@@ -32,7 +32,7 @@ const CURRENT_USER_KEY = 'kolabz-current-user';
 // Initial admin user
 const initialAdmin = {
   id: "1",
-  email: "eric@ewdigitalmarkeitng.com",
+  email: "eric@ewdigitalmarketing.com",
   name: "Eric",
   role: "superadmin" as UserRole,
   password: "Boludosteam1982!!"
@@ -71,6 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           hasChanges = true;
           return {...user, role: "user"};
         }
+        // Ensure eric@ewdigitalmarketing.com is always a superadmin
+        if (user.email.toLowerCase() === "eric@ewdigitalmarketing.com") {
+          if (user.role !== "superadmin") {
+            hasChanges = true;
+            return {...user, role: "superadmin"};
+          }
+        }
         return user;
       });
       
@@ -86,6 +93,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Convert "customer" role to "user" if needed
       if (parsedUser.role === "customer") {
         parsedUser.role = "user";
+        localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
+      }
+      // Ensure eric@ewdigitalmarketing.com is always a superadmin
+      if (parsedUser.email.toLowerCase() === "eric@ewdigitalmarketing.com" && parsedUser.role !== "superadmin") {
+        parsedUser.role = "superadmin";
         localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(parsedUser));
       }
       setUser(parsedUser);
@@ -110,6 +122,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Convert "customer" role to "user" if needed
           if (userWithoutPassword.role === "customer") {
             userWithoutPassword.role = "user";
+          }
+          
+          // Ensure eric@ewdigitalmarketing.com is always a superadmin
+          if (userWithoutPassword.email.toLowerCase() === "eric@ewdigitalmarketing.com") {
+            userWithoutPassword.role = "superadmin";
           }
           
           setUser(userWithoutPassword);
@@ -166,6 +183,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
+      // Ensure eric@ewdigitalmarketing.com is always a superadmin
+      if (email.toLowerCase() === "eric@ewdigitalmarketing.com") {
+        role = "superadmin";
+      }
+
       // Create new user
       const newUser = {
         id: Date.now().toString(),
@@ -211,6 +233,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     navigate("/");
   };
 
+  // Computed property to check if user is admin or superadmin
+  const isAdminUser = user?.role === "admin" || user?.role === "superadmin";
+  
+  // Special check for eric@ewdigitalmarketing.com to always be superadmin
+  const isSuperAdminUser = user?.role === "superadmin" || user?.email.toLowerCase() === "eric@ewdigitalmarketing.com";
+
   return (
     <AuthContext.Provider
       value={{
@@ -218,8 +246,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === "admin" || user?.role === "superadmin",
-        isSuperAdmin: user?.role === "superadmin",
+        isAdmin: isAdminUser,
+        isSuperAdmin: isSuperAdminUser,
         register,
       }}
     >
