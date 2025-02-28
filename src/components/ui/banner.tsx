@@ -33,6 +33,20 @@ export function Banner({
 }: BannerProps): React.ReactElement {
   const [open, setOpen] = useState(true);
   const globalKey = id ? `banner-${id}` : undefined;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Check if we're in an admin page
+  const isAdminPage = typeof window !== 'undefined' && window.location.pathname.includes('/admin');
+
+  // Get sidebar collapsed state for admin pages
+  useEffect(() => {
+    if (isAdminPage) {
+      const savedState = localStorage.getItem("adminSidebarCollapsed");
+      if (savedState !== null) {
+        setSidebarCollapsed(savedState === "true");
+      }
+    }
+  }, [isAdminPage]);
 
   useEffect(() => {
     if (globalKey) setOpen(localStorage.getItem(globalKey) !== 'true');
@@ -49,9 +63,10 @@ export function Banner({
       {...props}
       style={{ height: open ? height : '0' }}
       className={cn(
-        'sticky top-0 z-40 flex flex-row items-center justify-center bg-secondary px-4 text-center text-sm font-medium transition-all duration-300',
+        'sticky top-0 z-40 flex flex-row items-center justify-center bg-secondary px-4 text-center text-sm font-medium transition-all duration-300 w-full',
         variant === 'rainbow' && 'bg-background',
         !open && 'hidden',
+        isAdminPage && 'left-0',
         props.className,
       )}
     >

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -30,6 +29,7 @@ import { useAuth } from "@/components/AuthContext";
 import { useTheme } from "@/components/ThemeProvider";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { cn } from "@/lib/utils";
 
 const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -39,6 +39,7 @@ const Settings = () => {
   
   // State for admin sidebar
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   
   // Form state for profile settings
   const [profileForm, setProfileForm] = useState({
@@ -307,6 +308,14 @@ const Settings = () => {
       }));
     }
   }, [user]);
+
+  // Check the sidebar collapsed state from localStorage (for admin view)
+  useEffect(() => {
+    const savedState = localStorage.getItem("adminSidebarCollapsed");
+    if (savedState !== null) {
+      setSidebarCollapsed(savedState === "true");
+    }
+  }, []);
   
   return (
     <div className="min-h-screen bg-background">
@@ -314,7 +323,10 @@ const Settings = () => {
         <div className="flex min-h-screen">
           <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
           
-          <div className="flex-1 transition-all duration-300 ease-in-out">
+          <div className={cn(
+            "flex-1 transition-all duration-300 ease-in-out w-full",
+            sidebarCollapsed ? "md:ml-16" : "md:ml-64"
+          )}>
             <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
             
             <main className="container mx-auto px-4 py-8">

@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, AlertCircle, ExternalLink, CreditCard, KeyRound, Box, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { cn } from "@/lib/utils";
 
 const StripeSettings = () => {
   const { toast } = useToast();
@@ -72,20 +74,21 @@ const StripeSettings = () => {
   };
   
   // Check the sidebar collapsed state from localStorage
-  useState(() => {
+  useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
       setSidebarCollapsed(savedState === "true");
     }
-  });
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
-      <div className={`flex-1 transition-all duration-300 ease-in-out w-full ${
+      <div className={cn(
+        "flex-1 transition-all duration-300 ease-in-out w-full",
         sidebarCollapsed ? "md:ml-16" : "md:ml-64"
-      }`}>
+      )}>
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
         <main className="container mx-auto px-4 py-8">
