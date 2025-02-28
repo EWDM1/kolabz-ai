@@ -45,7 +45,7 @@ const Index = () => {
               <Link to="/" className="flex items-center">
                 {theme === "light" ? (
                   <img 
-                    src="/lovable-uploads/1e5270d2-ba65-45db-bad2-3e937abd3201.png" 
+                    src="/lovable-uploads/69364710-57d5-42d2-b6ca-740993198589.png" 
                     alt="Kolabz" 
                     className="h-8 w-auto"
                   />
