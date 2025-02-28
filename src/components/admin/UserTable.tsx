@@ -41,7 +41,7 @@ export function UserTable({
       // First get all users from the users table
       const { data: userData, error: userError } = await supabase
         .from('users')
-        .select('id, email, name');
+        .select('id, email, name, deleted');
       
       if (userError) throw userError;
       
@@ -89,12 +89,16 @@ export function UserTable({
           }
         }
         
+        // Determine user status - either from the deleted flag or from auth user data
+        const isDeleted = user.deleted === true;
+        const isDisabled = authUser?.user_metadata?.disabled === true;
+        
         return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: highestRole,
-          status: authUser?.banned ? "inactive" : "active",
+          status: isDeleted || isDisabled ? "inactive" : "active",
           lastActive
         };
       });

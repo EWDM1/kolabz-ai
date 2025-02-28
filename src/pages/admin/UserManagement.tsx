@@ -90,7 +90,10 @@ const UserManagement = () => {
         // For a soft delete, you could set a "deleted" flag in the users table
         const { error } = await supabase
           .from('users')
-          .update({ deleted: true })
+          .update({
+            deleted: true,
+            updated_at: new Date().toISOString()
+          })
           .eq('id', userId);
         
         if (error) throw error;
@@ -125,7 +128,10 @@ const UserManagement = () => {
         for (const userId of selectedUsers) {
           const { error } = await supabase
             .from('users')
-            .update({ deleted: true })
+            .update({
+              deleted: true,
+              updated_at: new Date().toISOString()
+            })
             .eq('id', userId);
           
           if (error) throw error;
