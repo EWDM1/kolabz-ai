@@ -19,16 +19,40 @@ const frTranslations = {
   // Features
   "features.title": "Conçu pour l'excellence en ingénierie de prompts",
   "features.description": "Kolabz combine un design intuitif avec des fonctionnalités puissantes pour vous aider à générer des prompts qui obtiennent des résultats exceptionnels de n'importe quel modèle d'IA.",
-  "features.guided.title": "Raffinement Guidé de Prompts",
-  "features.guided.description": "Assistance étape par étape pour créer le prompt parfait pour n'importe quel modèle d'IA, avec des suggestions contextuelles basées sur vos objectifs.",
-  "features.multi.title": "Optimisation Multi-LLM",
-  "features.multi.description": "Adaptez vos prompts spécifiquement pour GPT-4, Claude, Gemini, et plus avec des améliorations spécifiques à chaque modèle.",
-  "features.instant.title": "Amélioration Instantanée",
-  "features.instant.description": "Transformez des idées vagues en prompts structurés et détaillés qui génèrent des réponses d'IA significativement meilleures.",
-  "features.save.title": "Sauvegarder et Réutiliser",
-  "features.save.description": "Construisez une bibliothèque personnelle de vos meilleurs prompts, organisés par catégorie et objectif pour un accès rapide.",
+  
+  // Feature Cards
+  "features.cards.refinement.title": "Raffinement Guidé de Prompts",
+  "features.cards.refinement.description": "Assistance étape par étape pour créer le prompt parfait pour n'importe quel modèle d'IA, avec des suggestions contextuelles basées sur vos objectifs.",
+  "features.cards.optimization.title": "Optimisation Multi-LLM",
+  "features.cards.optimization.description": "Adaptez vos prompts spécifiquement pour GPT-4, Claude, Gemini, et plus avec des améliorations spécifiques à chaque modèle.",
+  "features.cards.improvement.title": "Amélioration Instantanée",
+  "features.cards.improvement.description": "Transformez des idées vagues en prompts structurés et détaillés qui génèrent des réponses d'IA significativement meilleures.",
+  "features.cards.reuse.title": "Sauvegarder et Réutiliser",
+  "features.cards.reuse.description": "Construisez une bibliothèque personnelle de vos meilleurs prompts, organisés par catégorie et objectif pour un accès rapide.",
+  
   "features.science.title": "La science du prompting efficace",
   "features.science.description": "Notre plateforme est construite sur une recherche approfondie sur ce qui rend les réponses d'IA les plus utiles. Nous avons distillé ces connaissances dans un système intuitif que tout le monde peut utiliser.",
+  "features.science.item1": "Recommandations de sensibilité contextuelle",
+  "features.science.item2": "Optimisation du ton et du style",
+  "features.science.item3": "Formatage spécifique au modèle",
+  "features.science.item4": "Calibration du niveau de détail",
+  "features.science.item5": "Améliorations de la clarté des objectifs",
+  
+  // Features UI
+  "features.ui.model": "Modèle d'IA cible",
+  "features.ui.purpose": "Objectif du prompt",
+  "features.ui.content": "Création de contenu",
+  "features.ui.problem": "Résolution de problèmes",
+  "features.ui.creative": "Écriture créative",
+  "features.ui.data": "Analyse de données",
+  "features.ui.tone": "Ton",
+  "features.ui.tone_prof": "Professionnel", 
+  "features.ui.tone_friend": "Amical", 
+  "features.ui.tone_acad": "Académique",
+  "features.ui.detail": "Niveau de détail",
+  "features.ui.basic": "Basique",
+  "features.ui.detailed": "Détaillé",
+  "features.ui.expert": "Expert",
   
   // Pricing
   "pricing.title": "Tarification simple et transparente",

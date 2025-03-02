@@ -19,16 +19,40 @@ const enTranslations = {
   // Features
   "features.title": "Designed for prompt engineering excellence",
   "features.description": "Kolabz combines intuitive design with powerful functionality to help you generate prompts that get exceptional results from any AI model.",
-  "features.guided.title": "Guided Prompt Refinement",
-  "features.guided.description": "Step-by-step assistance to craft the perfect prompt for any AI model, with contextual suggestions based on your goals.",
-  "features.multi.title": "Multi-LLM Optimization",
-  "features.multi.description": "Tailor your prompts specifically for GPT-4, Claude, Gemini, and more with model-specific enhancements.",
-  "features.instant.title": "Instant Improvement",
-  "features.instant.description": "Transform vague ideas into structured, detailed prompts that yield significantly better AI responses.",
-  "features.save.title": "Save & Reuse",
-  "features.save.description": "Build a personal library of your best prompts, organized by category and purpose for quick access.",
+  
+  // Feature Cards
+  "features.cards.refinement.title": "Guided Prompt Refinement",
+  "features.cards.refinement.description": "Step-by-step assistance to craft the perfect prompt for any AI model, with contextual suggestions based on your goals.",
+  "features.cards.optimization.title": "Multi-LLM Optimization",
+  "features.cards.optimization.description": "Tailor your prompts specifically for GPT-4, Claude, Gemini, and more with model-specific enhancements.",
+  "features.cards.improvement.title": "Instant Improvement",
+  "features.cards.improvement.description": "Transform vague ideas into structured, detailed prompts that yield significantly better AI responses.",
+  "features.cards.reuse.title": "Save & Reuse",
+  "features.cards.reuse.description": "Build a personal library of your best prompts, organized by category and purpose for quick access.",
+  
   "features.science.title": "The science of effective prompting",
   "features.science.description": "Our platform is built on extensive research into what makes AI responses most useful. We've distilled these insights into an intuitive system that anyone can use.",
+  "features.science.item1": "Contextual awareness recommendations",
+  "features.science.item2": "Tone and style optimization",
+  "features.science.item3": "Model-specific formatting",
+  "features.science.item4": "Detail level calibration",
+  "features.science.item5": "Objective clarity enhancements",
+  
+  // Features UI
+  "features.ui.model": "Target AI Model",
+  "features.ui.purpose": "Prompt Purpose",
+  "features.ui.content": "Content Creation",
+  "features.ui.problem": "Problem Solving",
+  "features.ui.creative": "Creative Writing",
+  "features.ui.data": "Data Analysis",
+  "features.ui.tone": "Tone",
+  "features.ui.tone_prof": "Professional", 
+  "features.ui.tone_friend": "Friendly", 
+  "features.ui.tone_acad": "Academic",
+  "features.ui.detail": "Detail Level",
+  "features.ui.basic": "Basic",
+  "features.ui.detailed": "Detailed",
+  "features.ui.expert": "Expert",
   
   // Pricing
   "pricing.title": "Simple, transparent pricing",

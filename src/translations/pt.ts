@@ -19,16 +19,40 @@ const ptTranslations = {
   // Features
   "features.title": "Projetado para excelência em engenharia de prompts",
   "features.description": "Kolabz combina design intuitivo com funcionalidade poderosa para ajudá-lo a gerar prompts que obtêm resultados excepcionais de qualquer modelo de IA.",
-  "features.guided.title": "Refinamento Guiado de Prompts",
-  "features.guided.description": "Assistência passo a passo para criar o prompt perfeito para qualquer modelo de IA, com sugestões contextuais baseadas em seus objetivos.",
-  "features.multi.title": "Otimização Multi-LLM",
-  "features.multi.description": "Adapte seus prompts especificamente para GPT-4, Claude, Gemini e mais, com melhorias específicas para cada modelo.",
-  "features.instant.title": "Melhoria Instantânea",
-  "features.instant.description": "Transforme ideias vagas em prompts estruturados e detalhados que geram respostas de IA significativamente melhores.",
-  "features.save.title": "Salvar e Reutilizar",
-  "features.save.description": "Construa uma biblioteca pessoal dos seus melhores prompts, organizados por categoria e propósito para acesso rápido.",
+  
+  // Feature Cards
+  "features.cards.refinement.title": "Refinamento Guiado de Prompts",
+  "features.cards.refinement.description": "Assistência passo a passo para criar o prompt perfeito para qualquer modelo de IA, com sugestões contextuais baseadas em seus objetivos.",
+  "features.cards.optimization.title": "Otimização Multi-LLM",
+  "features.cards.optimization.description": "Adapte seus prompts especificamente para GPT-4, Claude, Gemini e mais, com melhorias específicas para cada modelo.",
+  "features.cards.improvement.title": "Melhoria Instantânea",
+  "features.cards.improvement.description": "Transforme ideias vagas em prompts estruturados e detalhados que geram respostas de IA significativamente melhores.",
+  "features.cards.reuse.title": "Salvar e Reutilizar",
+  "features.cards.reuse.description": "Construa uma biblioteca pessoal dos seus melhores prompts, organizados por categoria e propósito para acesso rápido.",
+  
   "features.science.title": "A ciência do prompting efetivo",
   "features.science.description": "Nossa plataforma é construída em extensa pesquisa sobre o que torna as respostas de IA mais úteis. Destilamos esses insights em um sistema intuitivo que qualquer pessoa pode usar.",
+  "features.science.item1": "Recomendações de consciência contextual",
+  "features.science.item2": "Otimização de tom e estilo",
+  "features.science.item3": "Formatação específica para modelos",
+  "features.science.item4": "Calibração de nível de detalhe",
+  "features.science.item5": "Melhorias de clareza de objetivos",
+  
+  // Features UI
+  "features.ui.model": "Modelo de IA alvo",
+  "features.ui.purpose": "Propósito do prompt",
+  "features.ui.content": "Criação de conteúdo",
+  "features.ui.problem": "Resolução de problemas",
+  "features.ui.creative": "Escrita criativa",
+  "features.ui.data": "Análise de dados",
+  "features.ui.tone": "Tom",
+  "features.ui.tone_prof": "Profissional", 
+  "features.ui.tone_friend": "Amigável", 
+  "features.ui.tone_acad": "Acadêmico",
+  "features.ui.detail": "Nível de detalhe",
+  "features.ui.basic": "Básico",
+  "features.ui.detailed": "Detalhado",
+  "features.ui.expert": "Especialista",
   
   // Pricing
   "pricing.title": "Preços simples e transparentes",
