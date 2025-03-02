@@ -45,7 +45,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>(() => {
     // Get from local storage or default to English
     const savedLanguage = localStorage.getItem("kolabz-language");
-    return (savedLanguage as Language) || "en";
+    // Validate that the saved language is one of our supported languages
+    return (languageOptions.some(option => option.value === savedLanguage) 
+      ? savedLanguage as Language 
+      : "en"); // Always default to English if invalid or no saved language
   });
 
   useEffect(() => {
@@ -59,8 +62,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // Get the current language's translations
     const langTranslations = translations[language] || {};
     
-    // Return the translation if it exists, otherwise return the default text or the key itself
-    return langTranslations[key] || defaultText || key;
+    // If translation exists in the current language, use it
+    if (langTranslations[key]) {
+      return langTranslations[key];
+    }
+    
+    // If not found in current language but we're not in English, try English as fallback
+    if (language !== "en" && translations.en[key]) {
+      return translations.en[key];
+    }
+    
+    // Return the provided default text or the key itself as last resort
+    return defaultText || key;
   };
 
   return (
