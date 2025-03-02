@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
@@ -8,6 +8,7 @@ import { useLanguage } from "@/components/LanguageContext";
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const plans = [
     {
@@ -22,7 +23,7 @@ const Pricing = () => {
         { text: t("pricing.features.priority", "Priority support"), included: false },
       ],
       ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
-      ctaLink: "/signup?plan=pro",
+      id: "pro",
       highlighted: true,
       savings: t("pricing.savings.pro", "$20/year"),
     },
@@ -38,11 +39,20 @@ const Pricing = () => {
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
       ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
-      ctaLink: "/signup?plan=team",
+      id: "team",
       highlighted: false,
       savings: t("pricing.savings.team", "$48/year"),
     },
   ];
+
+  const handlePlanSelection = (planId: string) => {
+    navigate("/checkout", { 
+      state: { 
+        planId: planId,
+        isAnnual: isAnnual
+      } 
+    });
+  };
 
   return (
     <section id="pricing" className="py-20 md:py-32 bg-gradient-to-b from-background/95 to-background">
@@ -118,9 +128,9 @@ const Pricing = () => {
                     plan.highlighted ? "bg-primary hover:bg-primary/90" : ""
                   }`}
                   variant={plan.highlighted ? "default" : "outline"}
-                  asChild
+                  onClick={() => handlePlanSelection(plan.id)}
                 >
-                  <Link to={plan.ctaLink}>{plan.ctaText}</Link>
+                  {plan.ctaText}
                 </Button>
                 <ul className="space-y-4">
                   {plan.features.map((feature, fIndex) => (

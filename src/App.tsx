@@ -29,6 +29,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import LandingPageEdit from "./pages/admin/LandingPageEdit";
 import LandingPageEditor from "./pages/admin/LandingPageEditor";
 import LandingSEO from "./pages/admin/LandingSEO";
+import Checkout from "./pages/Checkout";
 
 // Reset default app CSS
 import "./App.css";
@@ -50,6 +51,7 @@ const App = () => (
                   <Route path="/index" element={<Index />} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
+                  <Route path="/checkout" element={<Checkout />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-prompts" element={<MyPrompts />} />
                   <Route path="/manage-subscription" element={<ManageSubscription />} />
