@@ -56,19 +56,16 @@ const enTranslations = {
   
   // Pricing
   "pricing.title": "Simple, transparent pricing",
-  "pricing.description": "Choose the plan that's right for you. All plans include a 7-day free trial. No credit card required to start.",
+  "pricing.description": "Choose the plan that's right for you. All plans include a 7-day free trial.",
   "pricing.toggle.monthly": "Monthly",
   "pricing.toggle.annual": "Annual",
   "pricing.save": "Save 16%",
-  "pricing.free.name": "Free Trial",
-  "pricing.free.description": "Test drive Kolabz with limited features",
   "pricing.pro.name": "Pro",
   "pricing.pro.description": "Perfect for individual creators and professionals",
   "pricing.team.name": "Team",
   "pricing.team.description": "Ideal for teams and businesses",
-  "pricing.cta.trial": "Start Free Trial",
   "pricing.cta.subscribe": "Subscribe Now",
-  "pricing.disclaimer": "All plans include a 7-day free trial. No credit card required to start. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.",
+  "pricing.disclaimer": "All plans include a 7-day free trial. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.",
   
   // About
   "about.title": "About Us",

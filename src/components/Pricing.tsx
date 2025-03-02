@@ -11,20 +11,6 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: t("pricing.free.name", "Free Trial"),
-      price: { monthly: "$0", annual: "$0" },
-      description: t("pricing.free.description", "Test drive Kolabz with limited features"),
-      features: [
-        { text: t("pricing.features.optimizations", "5 prompt optimizations"), included: true },
-        { text: t("pricing.features.save", "Save up to 5 prompts"), included: true },
-        { text: t("pricing.features.templates", "Access to basic templates"), included: true },
-        { text: t("pricing.features.collaboration", "Team collaboration"), included: false },
-      ],
-      ctaText: t("pricing.cta.trial", "Start Free Trial"),
-      ctaLink: "/signup",
-      highlighted: false,
-    },
-    {
       name: t("pricing.pro.name", "Pro"),
       price: { monthly: "$10", annual: "$100" },
       description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
@@ -70,7 +56,7 @@ const Pricing = () => {
             {t("pricing.title", "Simple, transparent pricing")}
           </h2>
           <p className="text-muted-foreground text-lg mb-10">
-            {t("pricing.description", "Choose the plan that's right for you. All plans include a 7-day free trial. No credit card required to start.")}
+            {t("pricing.description", "Choose the plan that's right for you. All plans include a 7-day free trial.")}
           </p>
 
           {/* Billing Toggle */}
@@ -94,7 +80,7 @@ const Pricing = () => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8">
           {plans.map((plan, index) => (
             <div
               key={index}
@@ -159,7 +145,7 @@ const Pricing = () => {
 
         <div className="mt-16 text-center">
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
-            {t("pricing.disclaimer", "All plans include a 7-day free trial. No credit card required to start. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.")}
+            {t("pricing.disclaimer", "All plans include a 7-day free trial. Cancel anytime. If you're not satisfied, contact us within 30 days for a full refund.")}
           </p>
         </div>
       </div>
