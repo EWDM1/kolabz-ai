@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -93,7 +92,7 @@ const ChangePlan = () => {
       if (result.success) {
         toast({
           title: "Plan updated",
-          description: `You have successfully switched to the ${selectedPlan === 'free' ? 'Free' : selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
+          description: `You have successfully switched to the ${selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
         });
         
         // Navigate back to subscription management
@@ -112,18 +111,6 @@ const ChangePlan = () => {
   };
 
   const planDetails = [
-    {
-      id: "free",
-      name: t("pricing.free.name", "Free Trial"),
-      price: { monthly: "$0", annual: "$0" },
-      description: t("pricing.free.description", "Test drive Kolabz with limited features"),
-      features: [
-        { text: t("pricing.features.optimizations", "5 prompt optimizations"), included: true },
-        { text: t("pricing.features.save", "Save up to 5 prompts"), included: true },
-        { text: t("pricing.features.templates", "Access to basic templates"), included: true },
-        { text: t("pricing.features.collaboration", "Team collaboration"), included: false },
-      ],
-    },
     {
       id: "pro",
       name: t("pricing.pro.name", "Pro"),
@@ -156,7 +143,6 @@ const ChangePlan = () => {
 
   return (
     <div className="min-h-screen bg-background/95">
-      {/* Dashboard header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -195,7 +181,6 @@ const ChangePlan = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
-          {/* Sidebar */}
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
             <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
               <div className="p-4">
@@ -258,7 +243,6 @@ const ChangePlan = () => {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
             <div className="flex items-center justify-between mb-6">
               <Button variant="ghost" size="sm" onClick={() => navigate("/manage-subscription")} className="gap-1">
@@ -266,7 +250,6 @@ const ChangePlan = () => {
                 Back to Subscription
               </Button>
               
-              {/* Test mode toggle - only visible to admins */}
               {canAccessTestMode && (
                 <Button 
                   variant="outline" 
@@ -283,7 +266,6 @@ const ChangePlan = () => {
             <h1 className="text-2xl font-bold mb-2">Change Plan</h1>
             <p className="text-muted-foreground mb-6">Compare plans and select the option that's right for you</p>
             
-            {/* Test mode banner - only visible when test mode is active AND user is admin */}
             {testMode && canAccessTestMode && (
               <div className="bg-orange-100 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300 p-4 rounded-lg mb-6 flex items-start gap-3">
                 <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
@@ -296,7 +278,6 @@ const ChangePlan = () => {
               </div>
             )}
             
-            {/* Billing Toggle */}
             <div className="flex items-center justify-start space-x-4 mb-8">
               <span className={`text-sm ${!isAnnual ? "text-foreground font-medium" : "text-muted-foreground"}`}>
                 {t("pricing.toggle.monthly", "Monthly")}
@@ -316,8 +297,7 @@ const ChangePlan = () => {
               </span>
             </div>
             
-            {/* Plan cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {planDetails.map((plan) => (
                 <Card 
                   key={plan.id}
@@ -382,15 +362,12 @@ const ChangePlan = () => {
               ))}
             </div>
             
-            {/* Confirm change button */}
             <div className="mt-8 p-6 bg-card border border-border rounded-lg">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                   <h3 className="text-lg font-medium">Confirm your plan change</h3>
                   <p className="text-muted-foreground">
-                    {selectedPlan === "free" ? (
-                      "You're downgrading to the Free plan. Some features will no longer be available."
-                    ) : selectedPlan === "pro" ? (
+                    {selectedPlan === "pro" ? (
                       "You're selecting the Pro plan, perfect for individual use and small projects."
                     ) : (
                       "You're upgrading to the Team plan with all premium features included."
@@ -398,7 +375,7 @@ const ChangePlan = () => {
                   </p>
                   <div className="flex items-center mt-2 text-sm text-muted-foreground">
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Your card ending in 4242 will be {selectedPlan === "free" ? "not charged" : "charged"} on Aug 12, 2023
+                    Your card ending in 4242 will be charged on Aug 12, 2023
                   </div>
                 </div>
                 <Button 
@@ -419,7 +396,6 @@ const ChangePlan = () => {
               </div>
             </div>
             
-            {/* FAQ section */}
             <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg">
               <h3 className="font-medium">Questions about changing plans?</h3>
               <p className="text-sm mt-1">

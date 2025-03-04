@@ -60,8 +60,6 @@ const ptTranslations = {
   "pricing.toggle.monthly": "Mensal",
   "pricing.toggle.annual": "Anual",
   "pricing.save": "Economize 16%",
-  "pricing.free.name": "Teste Gratuito",
-  "pricing.free.description": "Experimente o Kolabz com recursos limitados",
   "pricing.pro.name": "Pro",
   "pricing.pro.description": "Perfeito para criadores e profissionais individuais",
   "pricing.team.name": "Equipe",
