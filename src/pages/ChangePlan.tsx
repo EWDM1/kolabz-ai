@@ -36,6 +36,7 @@ import {
 import { 
   changeSubscriptionPlan 
 } from "@/integrations/stripe/stripeService";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const ChangePlan = () => {
   const { toast } = useToast();
@@ -48,11 +49,9 @@ const ChangePlan = () => {
   const { isAdmin, isSuperAdmin } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
   
-  // Admin check for test mode visibility
   const canAccessTestMode = isAdmin || isSuperAdmin;
 
   useEffect(() => {
-    // Log test mode status on component mount
     console.log("Stripe test mode is", testMode ? "enabled" : "disabled");
   }, [testMode]);
 
@@ -86,7 +85,6 @@ const ChangePlan = () => {
     setLoading(true);
     
     try {
-      // Call the Stripe service to change the plan
       const result = await changeSubscriptionPlan(selectedPlan, isAnnual);
       
       if (result.success) {
@@ -95,7 +93,6 @@ const ChangePlan = () => {
           description: `You have successfully switched to the ${selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
         });
         
-        // Navigate back to subscription management
         navigate("/manage-subscription");
       }
     } catch (error) {
@@ -162,6 +159,7 @@ const ChangePlan = () => {
           </Link>
 
           <div className="flex items-center space-x-4">
+            <LanguageSelector />
             <ThemeToggle />
 
             <div 
