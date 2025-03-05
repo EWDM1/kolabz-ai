@@ -11,6 +11,7 @@ import { useLanguage } from "@/components/LanguageContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { PaymentMethodFormWrapper } from "@/components/stripe/PaymentMethodForm";
 import { isTestMode } from "@/integrations/stripe/stripeConfig";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Checkout = () => {
   const { toast } = useToast();
@@ -131,7 +132,10 @@ const Checkout = () => {
               />
             )}
           </Link>
-          <ThemeToggle />
+          <div className="flex items-center space-x-2">
+            <LanguageSelector />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

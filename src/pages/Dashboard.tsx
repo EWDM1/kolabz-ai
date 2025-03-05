@@ -33,6 +33,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage } from "@/components/LanguageContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -135,6 +136,7 @@ const Dashboard = () => {
               />
             </div>
 
+            <LanguageSelector />
             <ThemeToggle />
 
             <div 
