@@ -1,3 +1,4 @@
+
 import { useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
@@ -5,8 +6,6 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { LanguageSelector } from "@/components/LanguageSelector";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -28,6 +27,7 @@ const AdminLayout = ({
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
 
+  // Check the sidebar collapsed state from localStorage
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
@@ -35,12 +35,14 @@ const AdminLayout = ({
     }
   }, []);
 
+  // Redirect if not admin
   useEffect(() => {
     if (requireAdmin && !isAdmin) {
       navigate("/dashboard");
     }
   }, [isAdmin, navigate, requireAdmin]);
 
+  // Listen for storage events to sync sidebar state across components
   useEffect(() => {
     const handleStorageChange = () => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
@@ -51,6 +53,7 @@ const AdminLayout = ({
 
     window.addEventListener("storage", handleStorageChange);
     
+    // Check for changes every second (for same-window updates)
     const interval = setInterval(() => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
       if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
@@ -88,10 +91,6 @@ const AdminLayout = ({
                 <div>
                   {title && <h1 className="text-3xl font-bold">{title}</h1>}
                   {description && <p className="text-muted-foreground">{description}</p>}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <LanguageSelector />
-                  <ThemeToggle />
                 </div>
               </div>
             )}
