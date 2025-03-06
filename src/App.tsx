@@ -23,7 +23,6 @@ import MySettings from "./pages/MySettings";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Checkout from "./pages/Checkout";
-import PromptingTools from "./pages/PromptingTools";
 
 // Reset default app CSS
 import "./App.css";
@@ -58,8 +57,6 @@ const App = () => (
                   <Route path="/admin/users/filter" element={<UserFilter />} />
                   <Route path="/admin/stripe" element={<StripeSettings />} />
                   <Route path="/admin/integrations" element={<IntegrationsSettings />} />
-                  
-                  <Route path="/prompting-tools" element={<PromptingTools />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

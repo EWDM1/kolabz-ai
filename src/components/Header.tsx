@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -79,12 +80,6 @@ const Header = () => {
           >
             {t("nav.about", "About Us")}
           </button>
-          <Link
-            to="/prompting-tools"
-            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
-          >
-            {t("tools.title", "Prompting Tools")}
-          </Link>
         </nav>
 
         <div className="hidden md:flex items-center space-x-3">
@@ -172,13 +167,6 @@ const Header = () => {
             >
               {t("nav.about", "About Us")}
             </button>
-            <Link
-              to="/prompting-tools"
-              className="py-2 border-b border-border text-left"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {t("tools.title", "Prompting Tools")}
-            </Link>
           </nav>
 
           <div className="mt-auto pt-6 grid gap-4">
