@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,9 +22,8 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Function to handle smooth scrolling
   const scrollToSection = (sectionId: string) => {
-    setIsMenuOpen(false); // Close mobile menu if open
+    setIsMenuOpen(false);
     
     const section = document.getElementById(sectionId);
     if (section) {
@@ -62,7 +60,6 @@ const Header = () => {
           )}
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
           <button 
             onClick={() => scrollToSection('features')} 
@@ -82,9 +79,14 @@ const Header = () => {
           >
             {t("nav.about", "About Us")}
           </button>
+          <Link
+            to="/prompting-tools"
+            className="text-sm font-medium opacity-80 hover:opacity-100 transition-all duration-200"
+          >
+            {t("tools.title", "Prompting Tools")}
+          </Link>
         </nav>
 
-        {/* Desktop CTA */}
         <div className="hidden md:flex items-center space-x-3">
           <div className="flex items-center">
             <LanguageSelector />
@@ -103,7 +105,6 @@ const Header = () => {
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center space-x-1">
           <div className="flex items-center">
             <LanguageSelector />
@@ -121,7 +122,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <div
         className={`md:hidden fixed inset-0 z-40 bg-background transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
@@ -172,6 +172,13 @@ const Header = () => {
             >
               {t("nav.about", "About Us")}
             </button>
+            <Link
+              to="/prompting-tools"
+              className="py-2 border-b border-border text-left"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {t("tools.title", "Prompting Tools")}
+            </Link>
           </nav>
 
           <div className="mt-auto pt-6 grid gap-4">

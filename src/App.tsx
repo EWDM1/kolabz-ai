@@ -1,9 +1,8 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -30,6 +29,7 @@ import LandingPageEdit from "./pages/admin/LandingPageEdit";
 import LandingPageEditor from "./pages/admin/LandingPageEditor";
 import LandingSEO from "./pages/admin/LandingSEO";
 import Checkout from "./pages/Checkout";
+import PromptingTools from "./pages/PromptingTools";
 
 // Reset default app CSS
 import "./App.css";
@@ -41,7 +41,7 @@ const App = () => (
     <ThemeProvider defaultTheme="light" storageKey="kolabz-theme">
       <LanguageProvider>
         <TooltipProvider>
-          <BrowserRouter>
+          <Router>
             <AuthProvider>
               <Elements stripe={getStripe()}>
                 <Toaster />
@@ -81,11 +81,13 @@ const App = () => (
                   <Route path="/admin/blog/categories" element={<NotFound />} />
                   <Route path="/admin/blog/tags" element={<NotFound />} />
                   
+                  <Route path="/prompting-tools" element={<PromptingTools />} />
+                  
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Elements>
             </AuthProvider>
-          </BrowserRouter>
+          </Router>
         </TooltipProvider>
       </LanguageProvider>
     </ThemeProvider>
