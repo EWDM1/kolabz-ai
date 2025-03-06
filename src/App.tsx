@@ -23,6 +23,7 @@ import MySettings from "./pages/MySettings";
 import StripeSettings from "./pages/admin/StripeSettings";
 import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Checkout from "./pages/Checkout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 // Reset default app CSS
 import "./App.css";
@@ -52,7 +53,8 @@ const App = () => (
                   <Route path="/my-settings" element={<MySettings />} />
                   
                   {/* Admin Routes */}
-                  <Route path="/admin" element={<NotFound />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/users" element={<UserManagement />} />
                   <Route path="/admin/users/filter" element={<UserFilter />} />
                   <Route path="/admin/stripe" element={<StripeSettings />} />

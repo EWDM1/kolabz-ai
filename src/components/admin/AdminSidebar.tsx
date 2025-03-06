@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -11,6 +10,7 @@ import {
   CreditCard,
   Code,
   HelpCircle,
+  LayoutDashboard
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -73,7 +73,6 @@ const SidebarGroup = ({
 }: SidebarGroupProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  // Close group when sidebar collapses
   useEffect(() => {
     if (isCollapsed) {
       setIsOpen(false);
@@ -129,7 +128,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   const path = location.pathname;
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Store the collapsed state in localStorage
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
@@ -145,7 +143,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && (
         <div
           className="fixed inset-0 z-30 bg-background/80 backdrop-blur-sm md:hidden"
@@ -153,7 +150,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-40 transform overflow-auto bg-card border-r border-border transition-all duration-300 ease-in-out md:translate-x-0",
@@ -215,6 +211,14 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         
         <div className={cn("py-6", isCollapsed ? "px-3" : "px-4", "space-y-4")}>
           <div className="space-y-1">
+            <SidebarItem
+              icon={<LayoutDashboard className="h-5 w-5" />}
+              label="Dashboard"
+              href="/admin/dashboard"
+              isActive={path === "/admin" || path === "/admin/dashboard"}
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
             <SidebarItem
               icon={<Users className="h-5 w-5" />}
               label="User Management"
