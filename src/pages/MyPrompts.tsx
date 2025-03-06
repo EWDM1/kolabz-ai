@@ -305,7 +305,7 @@ const MyPrompts = () => {
 
             <div 
               className="flex items-center space-x-2 cursor-pointer" 
-              onClick={() => handleNavigation("/settings")}
+              onClick={() => handleNavigation("/my-settings")}
             >
               <span className="text-sm font-medium hidden md:inline-block">
                 John Doe
@@ -339,7 +339,7 @@ const MyPrompts = () => {
                     <span>My Prompts</span>
                   </button>
                   <button
-                    onClick={() => handleNavigation("/settings")}
+                    onClick={() => handleNavigation("/my-settings")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <Settings className="h-5 w-5" />
