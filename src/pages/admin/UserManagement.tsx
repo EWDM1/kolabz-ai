@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -8,6 +9,7 @@ import { useAuth } from "@/components/AuthContext";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { DataActions } from "@/components/admin/user-management/DataActions";
+import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
 
 const UserManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,7 +22,11 @@ const UserManagement = () => {
     handleEditUser, 
     handleDeleteUser, 
     handleDeleteSelected, 
-    handleFilter 
+    handleFilter,
+    deleteDialogOpen,
+    closeDeleteDialog,
+    confirmDeleteUser,
+    deleteDialogData
   } = useUserManagement(user);
 
   useEffect(() => {
@@ -52,6 +58,22 @@ const UserManagement = () => {
       clearInterval(interval);
     };
   }, [sidebarCollapsed]);
+
+  // Prepare dialog content based on whether it's single or multiple deletion
+  const getDialogContent = () => {
+    if (deleteDialogData.isMultiple) {
+      return {
+        title: "Delete Selected Users",
+        description: `Are you sure you want to delete ${selectedUsers.length} users? This action cannot be undone.`
+      };
+    }
+    return {
+      title: "Delete User",
+      description: "Are you sure you want to delete this user? This action cannot be undone."
+    };
+  };
+
+  const dialogContent = getDialogContent();
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -86,6 +108,14 @@ const UserManagement = () => {
               setSelectedUsers={setSelectedUsers} 
               onEdit={handleEditUser}
               onDelete={handleDeleteUser}
+            />
+
+            <DeleteConfirmationDialog
+              isOpen={deleteDialogOpen}
+              onClose={closeDeleteDialog}
+              onConfirm={confirmDeleteUser}
+              title={dialogContent.title}
+              description={dialogContent.description}
             />
           </div>
         </main>

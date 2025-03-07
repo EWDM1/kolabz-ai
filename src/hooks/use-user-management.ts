@@ -8,6 +8,11 @@ import { AdminUser } from "@/components/admin/UserTable";
 
 export const useUserManagement = (user: User | null) => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState<{
+    userId?: string;
+    isMultiple: boolean;
+  }>({ isMultiple: false });
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -15,83 +20,112 @@ export const useUserManagement = (user: User | null) => {
     navigate(`/admin/users/edit/${user.id}`);
   };
 
+  const openDeleteDialog = (userId?: string) => {
+    setDeleteDialogData({
+      userId,
+      isMultiple: userId === undefined && selectedUsers.length > 0,
+    });
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  const performUserDeletion = async (userId: string) => {
+    try {
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+      
+      const isSuperAdmin = roles?.some(r => r.role === 'superadmin');
+      
+      if (isSuperAdmin && user?.role !== 'superadmin') {
+        toast({
+          variant: "destructive",
+          title: "Permission denied",
+          description: "You don't have permission to delete a superadmin user",
+        });
+        return false;
+      }
+      
+      const { error } = await supabase
+        .from('users')
+        .update({
+          deleted: true,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+      
+      if (error) throw error;
+      
+      return true;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete user",
+        description: "An error occurred while trying to delete the user.",
+      });
+      return false;
+    }
+  };
+
   const handleDeleteUser = async (userId: string) => {
-    if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
-      try {
-        const { data: roles } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', userId);
-        
-        const isSuperAdmin = roles?.some(r => r.role === 'superadmin');
-        
-        if (isSuperAdmin && user?.role !== 'superadmin') {
-          toast({
-            variant: "destructive",
-            title: "Permission denied",
-            description: "You don't have permission to delete a superadmin user",
-          });
-          return;
-        }
-        
-        const { error } = await supabase
-          .from('users')
-          .update({
-            deleted: true,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', userId);
-        
-        if (error) throw error;
-        
+    openDeleteDialog(userId);
+  };
+
+  const confirmDeleteUser = async () => {
+    closeDeleteDialog();
+    
+    // Handle single user deletion
+    if (deleteDialogData.userId) {
+      const success = await performUserDeletion(deleteDialogData.userId);
+      if (success) {
         toast({
           title: "User deleted",
           description: "The user has been successfully removed.",
         });
         
-        setSelectedUsers(selectedUsers.filter(id => id !== userId));
-      } catch (error) {
-        console.error("Error deleting user:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to delete user",
-          description: "An error occurred while trying to delete the user.",
-        });
+        setSelectedUsers(selectedUsers.filter(id => id !== deleteDialogData.userId));
       }
+    } 
+    // Handle multiple users deletion
+    else if (deleteDialogData.isMultiple) {
+      confirmDeleteSelected();
     }
   };
 
-  const handleDeleteSelected = async () => {
+  const handleDeleteSelected = () => {
     if (selectedUsers.length === 0) return;
-    
-    if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users? This action cannot be undone.`)) {
-      try {
-        for (const userId of selectedUsers) {
-          const { error } = await supabase
-            .from('users')
-            .update({
-              deleted: true,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', userId);
-          
-          if (error) throw error;
-        }
-        
+    openDeleteDialog();
+  };
+
+  const confirmDeleteSelected = async () => {
+    try {
+      let successCount = 0;
+      
+      for (const userId of selectedUsers) {
+        const success = await performUserDeletion(userId);
+        if (success) successCount++;
+      }
+      
+      if (successCount > 0) {
         toast({
-          title: `${selectedUsers.length} users deleted`,
+          title: `${successCount} users deleted`,
           description: "The selected users have been successfully removed.",
         });
         
         setSelectedUsers([]);
-      } catch (error) {
-        console.error("Error deleting users:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to delete users",
-          description: "An error occurred while trying to delete the selected users.",
-        });
       }
+    } catch (error) {
+      console.error("Error deleting users:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete users",
+        description: "An error occurred while trying to delete the selected users.",
+      });
     }
   };
 
@@ -105,6 +139,10 @@ export const useUserManagement = (user: User | null) => {
     handleEditUser,
     handleDeleteUser,
     handleDeleteSelected,
-    handleFilter
+    handleFilter,
+    deleteDialogOpen,
+    closeDeleteDialog,
+    confirmDeleteUser,
+    deleteDialogData
   };
 };
