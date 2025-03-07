@@ -1,176 +1,176 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { UserRole, useAuth } from "@/components/AuthContext";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { UserRole } from "@/components/admin/feature-management/types";
 
-interface EditUserFormProps {
-  userId: string;
-  initialData: {
-    name: string;
-    email: string;
-    role: UserRole;
-  };
-  onSuccess?: () => void;
+interface UserData {
+  id: string;
+  email: string;
+  name: string;
+  roles: string[];
+  [key: string]: any;
 }
 
-const EditUserForm = ({ userId, initialData, onSuccess }: EditUserFormProps) => {
-  const { isSuperAdmin } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: initialData.name,
-    email: initialData.email,
-    password: "",
-    confirmPassword: "",
-    role: initialData.role as UserRole,
-  });
+interface EditUserFormProps {
+  initialData: UserData;
+}
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+export const EditUserForm = ({ initialData }: EditUserFormProps) => {
+  const [formData, setFormData] = useState<UserData>(initialData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const availableRoles: UserRole[] = ["user", "admin", "superadmin"];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleRoleChange = (role: UserRole, checked: boolean) => {
+    setFormData(prev => {
+      const updatedRoles = checked 
+        ? [...prev.roles, role] 
+        : prev.roles.filter(r => r !== role);
+      
+      return { ...prev, roles: updatedRoles };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation if changing password
-    if (formData.password && formData.password !== formData.confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: "Passwords don't match",
-        description: "Please make sure both passwords match",
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    
     try {
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsSubmitting(true);
       
-      // In a real app, this would make an API call to update the user
-      console.log("Updated user:", { userId, ...formData });
+      // Update user data in the users table
+      const { error: updateError } = await supabase
+        .from('users')
+        .update({
+          name: formData.name,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', formData.id);
+      
+      if (updateError) throw updateError;
+      
+      // Update user roles
+      // First, delete all existing roles
+      const { error: deleteRolesError } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', formData.id);
+      
+      if (deleteRolesError) throw deleteRolesError;
+      
+      // Then insert new roles
+      for (const role of formData.roles) {
+        const { error: insertRoleError } = await supabase
+          .from('user_roles')
+          .insert({
+            user_id: formData.id,
+            role: role as UserRole
+          });
+        
+        if (insertRoleError) throw insertRoleError;
+      }
       
       toast({
-        title: "User updated successfully",
-        description: `${formData.name}'s information has been updated`,
+        title: "User updated",
+        description: "The user has been successfully updated.",
       });
       
-      // Call onSuccess callback if provided
-      if (onSuccess) {
-        onSuccess();
-      }
+      navigate("/admin/users");
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
         variant: "destructive",
-        title: "Failed to update user",
-        description: "There was an error updating the user account",
+        title: "Update failed",
+        description: "An error occurred while updating the user.",
       });
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Edit User</CardTitle>
-        <CardDescription>
-          Make changes to user information and settings
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                name="name"
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="john@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password (leave empty to keep current)</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                disabled={!formData.password}
-              />
-            </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-4 bg-card p-6 rounded-lg shadow-sm">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email (read-only)</Label>
+            <Input 
+              id="email" 
+              name="email" 
+              value={formData.email} 
+              readOnly 
+              disabled
+            />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="role">User Role</Label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              disabled={!isSuperAdmin && formData.role !== "user"}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-              {isSuperAdmin && <option value="superadmin">Super Admin</option>}
-            </select>
-            {!isSuperAdmin && formData.role !== "user" && (
-              <p className="text-xs text-amber-500 mt-1">
-                Only Super Admins can change roles other than "User"
-              </p>
-            )}
+            <Label htmlFor="name">Name</Label>
+            <Input 
+              id="name" 
+              name="name" 
+              value={formData.name} 
+              onChange={handleChange} 
+              required
+            />
           </div>
-          
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Updating User..." : "Update User"}
-            </Button>
+        </div>
+        
+        <div className="space-y-3">
+          <Label>User Roles</Label>
+          <div className="space-y-2">
+            {availableRoles.map((role) => (
+              <div key={role} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`role-${role}`} 
+                  checked={formData.roles.includes(role)} 
+                  onCheckedChange={(checked) => 
+                    handleRoleChange(role, checked as boolean)
+                  }
+                />
+                <Label 
+                  htmlFor={`role-${role}`}
+                  className="capitalize"
+                >
+                  {role === "user" ? "Client" : role}
+                </Label>
+              </div>
+            ))}
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+      
+      <div className="flex justify-end gap-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => navigate("/admin/users")}
+        >
+          Cancel
+        </Button>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <span className="mr-2">Saving...</span>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+            </>
+          ) : (
+            "Save Changes"
+          )}
+        </Button>
+      </div>
+    </form>
   );
 };
-
-export default EditUserForm;

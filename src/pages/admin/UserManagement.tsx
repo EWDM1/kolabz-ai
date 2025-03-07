@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -26,7 +25,6 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Check the sidebar collapsed state from localStorage
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
@@ -34,7 +32,6 @@ const UserManagement = () => {
     }
   }, []);
 
-  // Listen for storage events to sync sidebar state across components
   useEffect(() => {
     const handleStorageChange = () => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
@@ -45,7 +42,6 @@ const UserManagement = () => {
 
     window.addEventListener("storage", handleStorageChange);
     
-    // Check for changes every second (for same-window updates)
     const interval = setInterval(() => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
       if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
@@ -60,16 +56,12 @@ const UserManagement = () => {
   }, [sidebarCollapsed]);
 
   const handleEditUser = (user: AdminUser) => {
-    navigate(`/admin/users/edit/${user.id}`, { state: { user } });
+    navigate(`/admin/users/edit/${user.id}`);
   };
 
   const handleDeleteUser = async (userId: string) => {
     if (window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       try {
-        // We can't actually delete from auth.users through the client
-        // Instead, mark the user as inactive in our database
-        
-        // First check if the user has the superadmin role
         const { data: roles } = await supabase
           .from('user_roles')
           .select('role')
@@ -77,7 +69,6 @@ const UserManagement = () => {
         
         const isSuperAdmin = roles?.some(r => r.role === 'superadmin');
         
-        // Don't allow deleting superadmins unless you're also a superadmin
         if (isSuperAdmin && user?.role !== 'superadmin') {
           toast({
             variant: "destructive",
@@ -87,7 +78,6 @@ const UserManagement = () => {
           return;
         }
         
-        // For a soft delete, you could set a "deleted" flag in the users table
         const { error } = await supabase
           .from('users')
           .update({
@@ -103,7 +93,6 @@ const UserManagement = () => {
           description: "The user has been successfully removed.",
         });
         
-        // Refresh the user list
         setSelectedUsers(selectedUsers.filter(id => id !== userId));
       } catch (error) {
         console.error("Error deleting user:", error);
@@ -121,10 +110,6 @@ const UserManagement = () => {
     
     if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users? This action cannot be undone.`)) {
       try {
-        // In a real implementation, we would need to check if any of the selected users are superadmins
-        // and only allow deletion if the current user is also a superadmin
-        
-        // For now, let's just create a simple soft delete by setting a flag
         for (const userId of selectedUsers) {
           const { error } = await supabase
             .from('users')
@@ -160,7 +145,6 @@ const UserManagement = () => {
 
   const handleExport = async () => {
     try {
-      // Get users data
       const { data: users, error: usersError } = await supabase
         .from('users')
         .select('*')
@@ -168,14 +152,12 @@ const UserManagement = () => {
       
       if (usersError) throw usersError;
       
-      // Get roles for each user
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('*');
       
       if (rolesError) throw rolesError;
       
-      // Combine the data
       const exportData = users.map(user => {
         const userRoles = roles
           .filter(r => r.user_id === user.id)
@@ -187,12 +169,10 @@ const UserManagement = () => {
         };
       });
       
-      // Create the export file
       const dataStr = JSON.stringify(exportData, null, 2);
       const blob = new Blob([dataStr], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       
-      // Download the file
       const link = document.createElement("a");
       link.href = url;
       link.download = `users-export-${new Date().toISOString().split('T')[0]}.json`;
@@ -215,7 +195,6 @@ const UserManagement = () => {
   };
 
   const handleImport = () => {
-    // Create a file input and trigger it
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
@@ -229,15 +208,10 @@ const UserManagement = () => {
             description: `File "${file.name}" is being processed.`,
           });
           
-          // Read the file contents
           const fileReader = new FileReader();
           fileReader.onload = async (event) => {
             try {
               const jsonData = JSON.parse(event.target?.result as string);
-              
-              // Process each user in the data
-              // This would need to be implemented carefully in a real app
-              // to handle existing users, roles, etc.
               
               toast({
                 title: "Import complete",
