@@ -9,6 +9,7 @@ import {
   CreditCard
 } from "lucide-react";
 import { SidebarItem } from "./SidebarItem";
+import { cn } from "@/lib/utils";
 
 interface SidebarContentProps {
   isCollapsed: boolean;
@@ -81,7 +82,3 @@ export const SidebarContent = ({ isCollapsed, onClose }: SidebarContentProps) =>
     </div>
   );
 };
-
-import { cn } from "@/lib/utils";
-
-export { SidebarContent };
