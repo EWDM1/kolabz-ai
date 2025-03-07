@@ -26,6 +26,7 @@ import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Checkout from "./pages/Checkout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import FeatureManagement from "./pages/admin/FeatureManagement";
+import Help from "./pages/admin/Help";
 
 // Reset default app CSS
 import "./App.css";
@@ -63,6 +64,7 @@ const App = () => (
                   <Route path="/admin/features" element={<FeatureManagement />} />
                   <Route path="/admin/stripe" element={<StripeSettings />} />
                   <Route path="/admin/integrations" element={<IntegrationsSettings />} />
+                  <Route path="/admin/help" element={<Help />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>
