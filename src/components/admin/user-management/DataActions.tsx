@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Filter, Download, Upload, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 interface DataActionsProps {
   onFilter: () => void;
@@ -13,7 +19,7 @@ interface DataActionsProps {
 export function DataActions({ onFilter, onDeleteSelected, selectedCount }: DataActionsProps) {
   const { toast } = useToast();
 
-  const handleExport = async () => {
+  const exportAsJson = async () => {
     try {
       const { data: users, error: usersError } = await supabase
         .from('users')
@@ -52,7 +58,7 @@ export function DataActions({ onFilter, onDeleteSelected, selectedCount }: DataA
       
       toast({
         title: "Export complete",
-        description: "Users data has been exported successfully.",
+        description: "Users data has been exported as JSON.",
       });
     } catch (error) {
       console.error("Error exporting users:", error);
@@ -60,6 +66,78 @@ export function DataActions({ onFilter, onDeleteSelected, selectedCount }: DataA
         variant: "destructive",
         title: "Export failed",
         description: "An error occurred while trying to export users data.",
+      });
+    }
+  };
+
+  const exportAsCsv = async () => {
+    try {
+      const { data: users, error: usersError } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (usersError) throw usersError;
+      
+      const { data: roles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('*');
+      
+      if (rolesError) throw rolesError;
+      
+      // Process data for CSV format
+      const exportData = users.map(user => {
+        const userRoles = roles
+          .filter(r => r.user_id === user.id)
+          .map(r => r.role)
+          .join(", ");
+        
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          status: user.deleted ? "inactive" : "active",
+          roles: userRoles,
+          created_at: user.created_at,
+          updated_at: user.updated_at
+        };
+      });
+      
+      // Create CSV header
+      const headers = Object.keys(exportData[0]);
+      let csvContent = headers.join(",") + "\n";
+      
+      // Add data rows
+      exportData.forEach(user => {
+        const row = headers.map(header => {
+          // Handle special characters and quotes in CSV
+          const cellValue = user[header] === null ? '' : String(user[header]);
+          return `"${cellValue.replace(/"/g, '""')}"`;
+        });
+        csvContent += row.join(",") + "\n";
+      });
+      
+      // Create and download the file
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `users-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Export complete",
+        description: "Users data has been exported as CSV.",
+      });
+    } catch (error) {
+      console.error("Error exporting users as CSV:", error);
+      toast({
+        variant: "destructive",
+        title: "Export failed",
+        description: "An error occurred while trying to export users data as CSV.",
       });
     }
   };
@@ -118,10 +196,22 @@ export function DataActions({ onFilter, onDeleteSelected, selectedCount }: DataA
           <Filter className="mr-2 h-4 w-4" />
           Filter
         </Button>
-        <Button variant="outline" size="sm" onClick={handleExport}>
-          <Download className="mr-2 h-4 w-4" />
-          Export
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={exportAsJson}>
+              Export as JSON
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={exportAsCsv}>
+              Export as CSV
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button variant="outline" size="sm" onClick={handleImport}>
           <Upload className="mr-2 h-4 w-4" />
           Import
