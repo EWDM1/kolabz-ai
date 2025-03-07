@@ -39,6 +39,71 @@ export type Database = {
         }
         Relationships: []
       }
+      features: {
+        Row: {
+          category: Database["public"]["Enums"]["feature_category"]
+          created_at: string | null
+          description: string | null
+          id: string
+          key: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["feature_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["feature_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          key?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      role_features: {
+        Row: {
+          created_at: string | null
+          enabled: boolean
+          feature_id: string
+          id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          enabled?: boolean
+          feature_id: string
+          id?: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          enabled?: boolean
+          feature_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_features_feature_id_fkey"
+            columns: ["feature_id"]
+            isOneToOne: false
+            referencedRelation: "features"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -103,6 +168,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_feature_access: {
+        Args: {
+          user_id: string
+          feature_key: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           user_id: string
@@ -112,6 +184,12 @@ export type Database = {
       }
     }
     Enums: {
+      feature_category:
+        | "content"
+        | "users"
+        | "analytics"
+        | "settings"
+        | "billing"
       user_role: "user" | "admin" | "superadmin"
     }
     CompositeTypes: {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -10,7 +11,8 @@ import {
   CreditCard,
   Code,
   HelpCircle,
-  LayoutDashboard
+  LayoutDashboard,
+  Sliders
 } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { cn } from "@/lib/utils";
@@ -224,6 +226,14 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               label="User Management"
               href="/admin/users"
               isActive={path === "/admin/users"}
+              onClick={onClose}
+              isCollapsed={isCollapsed}
+            />
+            <SidebarItem
+              icon={<Sliders className="h-5 w-5" />}
+              label="Feature Management"
+              href="/admin/features"
+              isActive={path === "/admin/features"}
               onClick={onClose}
               isCollapsed={isCollapsed}
             />
