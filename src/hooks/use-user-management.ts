@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -6,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User } from "@/components/AuthContext";
 import { AdminUser } from "@/components/admin/UserTable";
 
-export const useUserManagement = (user: User | null) => {
+export const useUserManagement = (currentUser: any) => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogData, setDeleteDialogData] = useState<{
@@ -41,7 +40,7 @@ export const useUserManagement = (user: User | null) => {
       
       const isSuperAdmin = roles?.some(r => r.role === 'superadmin');
       
-      if (isSuperAdmin && user?.role !== 'superadmin') {
+      if (isSuperAdmin && currentUser?.role !== 'superadmin') {
         toast({
           variant: "destructive",
           title: "Permission denied",
@@ -79,7 +78,6 @@ export const useUserManagement = (user: User | null) => {
   const confirmDeleteUser = async () => {
     closeDeleteDialog();
     
-    // Handle single user deletion
     if (deleteDialogData.userId) {
       const success = await performUserDeletion(deleteDialogData.userId);
       if (success) {
@@ -91,7 +89,6 @@ export const useUserManagement = (user: User | null) => {
         setSelectedUsers(selectedUsers.filter(id => id !== deleteDialogData.userId));
       }
     } 
-    // Handle multiple users deletion
     else if (deleteDialogData.isMultiple) {
       confirmDeleteSelected();
     }
