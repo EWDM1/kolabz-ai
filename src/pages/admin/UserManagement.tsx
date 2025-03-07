@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -15,7 +14,6 @@ const UserManagement = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user } = useAuth();
   
-  // Use our custom hook
   const { 
     selectedUsers, 
     setSelectedUsers, 
