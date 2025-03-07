@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, AlertCircle, ExternalLink, CreditCard, KeyRound, Box, Check, X } from "lucide-react";
@@ -12,6 +11,12 @@ import { useToast } from "@/hooks/use-toast";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { cn } from "@/lib/utils";
+import { 
+  saveStripeConfig, 
+  fetchStripeConfig, 
+  toggleStripeTestMode, 
+  STRIPE_SETTINGS 
+} from "@/integrations/stripe/stripeConfig";
 
 const StripeSettings = () => {
   const { toast } = useToast();
@@ -34,20 +39,108 @@ const StripeSettings = () => {
     stripeSecretKey: false,
     stripeWebhookSecret: false
   });
+
+  // Load saved settings from Supabase
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const config = await fetchStripeConfig();
+        
+        // Set test mode from config
+        setTestMode(config.isTestMode);
+        
+        // Update saved keys status
+        setSavedKeys({
+          stripePublishableKey: !!config.publishableKey,
+          stripeSecretKey: !!config.secretKey,
+          stripeWebhookSecret: !!config.webhookSecret
+        });
+      } catch (error) {
+        console.error("Error loading Stripe settings:", error);
+        toast({
+          variant: "destructive",
+          title: "Error loading settings",
+          description: "There was a problem loading your Stripe settings."
+        });
+      }
+    };
+    
+    loadSettings();
+  }, [toast]);
+  
+  // Handle test/live mode toggle
+  const handleModeToggle = async () => {
+    const newMode = !testMode;
+    setLoading(true);
+    
+    try {
+      const success = await toggleStripeTestMode(newMode);
+      
+      if (success) {
+        setTestMode(newMode);
+        toast({
+          title: `Switched to ${newMode ? 'test' : 'live'} mode`,
+          description: `Your Stripe integration is now in ${newMode ? 'test' : 'live'} mode.`
+        });
+      } else {
+        throw new Error("Failed to update mode");
+      }
+    } catch (error) {
+      console.error("Error toggling mode:", error);
+      toast({
+        variant: "destructive",
+        title: "Error changing mode",
+        description: "There was a problem updating the Stripe mode."
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   // Handler for saving Stripe keys
   const handleSaveKeys = async () => {
     setLoading(true);
     
     try {
-      // For now, just simulate saving keys
-      setTimeout(() => {
-        const updatedKeys = {
-          stripePublishableKey: publishableKey ? true : savedKeys.stripePublishableKey,
-          stripeSecretKey: secretKey ? true : savedKeys.stripeSecretKey,
-          stripeWebhookSecret: webhookSecret ? true : savedKeys.stripeWebhookSecret
-        };
-        
+      const promises = [];
+      const updatedKeys = { ...savedKeys };
+      
+      // Save publishable key if provided
+      if (publishableKey) {
+        promises.push(
+          saveStripeConfig(STRIPE_SETTINGS.PUBLISHABLE_KEY, publishableKey)
+            .then(success => {
+              if (success) updatedKeys.stripePublishableKey = true;
+              return success;
+            })
+        );
+      }
+      
+      // Save secret key if provided
+      if (secretKey) {
+        promises.push(
+          saveStripeConfig(STRIPE_SETTINGS.SECRET_KEY, secretKey)
+            .then(success => {
+              if (success) updatedKeys.stripeSecretKey = true;
+              return success;
+            })
+        );
+      }
+      
+      // Save webhook secret if provided
+      if (webhookSecret) {
+        promises.push(
+          saveStripeConfig(STRIPE_SETTINGS.WEBHOOK_SECRET, webhookSecret)
+            .then(success => {
+              if (success) updatedKeys.stripeWebhookSecret = true;
+              return success;
+            })
+        );
+      }
+      
+      const results = await Promise.all(promises);
+      
+      if (results.every(result => result)) {
         setSavedKeys(updatedKeys);
         
         // Show success toast
@@ -60,8 +153,9 @@ const StripeSettings = () => {
         setPublishableKey("");
         setSecretKey("");
         setWebhookSecret("");
-        setLoading(false);
-      }, 1000);
+      } else {
+        throw new Error("Failed to save some settings");
+      }
     } catch (error) {
       console.error("Error saving Stripe keys:", error);
       toast({
@@ -69,6 +163,7 @@ const StripeSettings = () => {
         title: "Error saving settings",
         description: "There was an unexpected error saving your Stripe API keys",
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -135,7 +230,8 @@ const StripeSettings = () => {
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          onClick={() => setTestMode(!testMode)}
+                          onClick={handleModeToggle}
+                          disabled={loading}
                         >
                           Toggle Mode
                         </Button>
@@ -299,7 +395,7 @@ const StripeSettings = () => {
                         <div className="flex gap-2">
                           <Input
                             id="webhook-url"
-                            value={window.location.origin + "/api/stripe-webhook"}
+                            value={`${window.location.origin}/api/stripe-webhook`}
                             readOnly
                             className="bg-muted/50"
                           />
@@ -307,7 +403,7 @@ const StripeSettings = () => {
                             variant="outline"
                             size="icon"
                             onClick={() => {
-                              navigator.clipboard.writeText(window.location.origin + "/api/stripe-webhook");
+                              navigator.clipboard.writeText(`${window.location.origin}/api/stripe-webhook`);
                               toast({
                                 title: "URL copied",
                                 description: "Webhook URL copied to clipboard",
@@ -611,3 +707,4 @@ const StripeSettings = () => {
 };
 
 export default StripeSettings;
+

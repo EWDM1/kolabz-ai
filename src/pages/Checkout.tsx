@@ -10,7 +10,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { useLanguage } from "@/components/LanguageContext";
 import { useTheme } from "@/components/ThemeProvider";
 import { PaymentMethodFormWrapper } from "@/components/stripe/PaymentMethodForm";
-import { isTestMode } from "@/integrations/stripe/stripeConfig";
+import { isTestMode, getPublishableKey, isStripeConfigured } from "@/integrations/stripe/stripeConfig";
+import { supabase } from "@/integrations/supabase/client";
 
 const Checkout = () => {
   const { toast } = useToast();
@@ -21,10 +22,29 @@ const Checkout = () => {
   const { theme } = useTheme();
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<any>(null);
+  const [stripeReady, setStripeReady] = useState(false);
 
   // Extract plan details from location state or default to pro plan
   const planId = state?.planId || "pro";
   const isAnnual = state?.isAnnual !== undefined ? state?.isAnnual : true;
+
+  // Check if Stripe is configured
+  useEffect(() => {
+    const checkStripeConfig = async () => {
+      try {
+        const configured = await isStripeConfigured();
+        setStripeReady(configured);
+        
+        if (!configured) {
+          console.warn("Stripe is not fully configured. Checkout functionality will be limited.");
+        }
+      } catch (error) {
+        console.error("Error checking Stripe configuration:", error);
+      }
+    };
+    
+    checkStripeConfig();
+  }, []);
 
   useEffect(() => {
     // If no plan was selected, redirect to pricing
@@ -84,9 +104,30 @@ const Checkout = () => {
     setIsProcessing(true);
 
     try {
-      // In a real app, you would make an API call to your backend
-      // For demo purposes, we'll simulate the process with a delay
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+      
+      // In a real implementation, you would call your backend API to create a subscription
+      // For demo, we'll create a record in a subscriptions table
+      
+      const subscriptionData = {
+        user_id: user.id,
+        plan_id: planId,
+        is_annual: isAnnual,
+        payment_method_id: paymentMethod.id,
+        status: 'active',
+        current_period_end: new Date(Date.now() + (isAnnual ? 365 : 30) * 24 * 60 * 60 * 1000).toISOString(),
+      };
+      
+      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Log the subscription data that would be created
+      console.log("Creating subscription:", subscriptionData);
       
       // Simulated successful subscription
       toast({
@@ -97,6 +138,7 @@ const Checkout = () => {
       // Navigate to dashboard
       navigate("/dashboard");
     } catch (error) {
+      console.error("Checkout error:", error);
       toast({
         title: t("checkout.subscription_error", "Subscription error"),
         description: t("checkout.try_again", "There was a problem activating your subscription. Please try again."),
@@ -156,15 +198,22 @@ const Checkout = () => {
                 <CardTitle>{t("checkout.payment_method", "Payment method")}</CardTitle>
               </CardHeader>
               <CardContent>
-                {isTestMode() && (
+                {!stripeReady ? (
+                  <div className="p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 text-sm rounded-md">
+                    <p className="font-medium">{t("checkout.stripe_not_configured", "Stripe Not Configured")}</p>
+                    <p>{t("checkout.demo_mode", "Checkout is running in demo mode. No actual charges will be made.")}</p>
+                  </div>
+                ) : isTestMode() ? (
                   <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-sm rounded-md">
                     <p className="font-medium">{t("checkout.test_mode", "Test Mode")}</p>
                     <p>{t("checkout.test_card", "Use test card: 4242 4242 4242 4242, any future date, any CVC")}</p>
                   </div>
-                )}
+                ) : null}
+                
                 <PaymentMethodFormWrapper 
                   onSuccess={handlePaymentSuccess} 
-                  onError={handlePaymentError} 
+                  onError={handlePaymentError}
+                  demoMode={!stripeReady}
                 />
               </CardContent>
             </Card>

@@ -1,50 +1,159 @@
 
-// Stripe configuration with test mode support
-interface StripeConfig {
-  publishableKey: string;
-  secretKey: string;
+// Stripe configuration with persistent settings from Supabase
+import { supabase } from "@/integrations/supabase/client";
+
+// Settings keys
+export const STRIPE_SETTINGS = {
+  PUBLISHABLE_KEY: 'stripe_publishable_key',
+  SECRET_KEY: 'stripe_secret_key',
+  WEBHOOK_SECRET: 'stripe_webhook_secret',
+  MODE: 'stripe_mode'
+};
+
+// Interface for Stripe configuration
+export interface StripeConfig {
+  publishableKey: string | null;
+  secretKey: string | null;
+  webhookSecret: string | null;
   isTestMode: boolean;
 }
 
-// Default to test mode for safety
+// Default to empty values and test mode
 const defaultConfig: StripeConfig = {
-  publishableKey: 'pk_live_51PMd4EGG8uF0Uz6BnVVnuDGYg0wBhmKLAFPu7Wz8ebmbJ6ev6zLby73QTHH3NoSuHLDhEM8hm31y2Mvgv9O7lHqC00KL6ugAIn',
-  secretKey: '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',
-  isTestMode: true // Default to test mode for safety
+  publishableKey: null,
+  secretKey: null,
+  webhookSecret: null,
+  isTestMode: true
 };
 
-let stripeConfig: StripeConfig = { ...defaultConfig };
+// Cache the config to avoid frequent database calls
+let cachedConfig: StripeConfig | null = null;
+let lastFetchTimestamp = 0;
+const CACHE_DURATION = 60 * 1000; // 1 minute cache
 
-// Function to toggle between test and live modes
-export const toggleStripeTestMode = (isTestMode: boolean): void => {
-  stripeConfig.isTestMode = isTestMode;
-  // In a real implementation, you would switch between test and live keys
-  // For demo purposes, we're using the same keys
-  localStorage.setItem('stripe_test_mode', isTestMode.toString());
-};
-
-// Initialize test mode from localStorage if available
-export const initStripeConfig = (): void => {
-  const savedTestMode = localStorage.getItem('stripe_test_mode');
-  if (savedTestMode !== null) {
-    stripeConfig.isTestMode = savedTestMode === 'true';
+// Fetch Stripe configuration from Supabase
+export const fetchStripeConfig = async (): Promise<StripeConfig> => {
+  const currentTime = Date.now();
+  
+  // Return cached configuration if it's still valid
+  if (cachedConfig && (currentTime - lastFetchTimestamp < CACHE_DURATION)) {
+    return cachedConfig;
+  }
+  
+  try {
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('key, value')
+      .in('key', [
+        STRIPE_SETTINGS.PUBLISHABLE_KEY,
+        STRIPE_SETTINGS.SECRET_KEY,
+        STRIPE_SETTINGS.WEBHOOK_SECRET,
+        STRIPE_SETTINGS.MODE
+      ]);
+    
+    if (error) {
+      console.error('Error fetching Stripe configuration:', error);
+      return defaultConfig;
+    }
+    
+    // Convert the array of key-value pairs to an object
+    const settings: Record<string, string | null> = {};
+    data.forEach(item => {
+      settings[item.key] = item.value;
+    });
+    
+    const config: StripeConfig = {
+      publishableKey: settings[STRIPE_SETTINGS.PUBLISHABLE_KEY] || null,
+      secretKey: settings[STRIPE_SETTINGS.SECRET_KEY] || null,
+      webhookSecret: settings[STRIPE_SETTINGS.WEBHOOK_SECRET] || null,
+      isTestMode: settings[STRIPE_SETTINGS.MODE] !== 'live'
+    };
+    
+    // Update the cache
+    cachedConfig = config;
+    lastFetchTimestamp = currentTime;
+    
+    return config;
+  } catch (error) {
+    console.error('Error in fetchStripeConfig:', error);
+    return defaultConfig;
   }
 };
 
-// Get the current Stripe publishable key based on mode
-export const getPublishableKey = (): string => {
-  return stripeConfig.publishableKey;
+// Save Stripe configuration to Supabase
+export const saveStripeConfig = async (
+  key: string,
+  value: string | null
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('app_settings')
+      .update({ value, updated_at: new Date().toISOString() })
+      .eq('key', key);
+    
+    if (error) {
+      console.error('Error saving Stripe configuration:', error);
+      return false;
+    }
+    
+    // Invalidate cache
+    cachedConfig = null;
+    lastFetchTimestamp = 0;
+    
+    return true;
+  } catch (error) {
+    console.error('Error in saveStripeConfig:', error);
+    return false;
+  }
 };
 
-// Get the current Stripe config
-export const getStripeConfig = (): StripeConfig => {
-  return { ...stripeConfig };
+// Toggle between test and live modes
+export const toggleStripeTestMode = async (isTestMode: boolean): Promise<boolean> => {
+  const result = await saveStripeConfig(
+    STRIPE_SETTINGS.MODE,
+    isTestMode ? 'test' : 'live'
+  );
+  
+  if (result) {
+    // Also update localStorage for UI consistency before page refresh
+    localStorage.setItem('stripe_test_mode', isTestMode.toString());
+  }
+  
+  return result;
+};
+
+// Get the current Stripe publishable key
+export const getPublishableKey = async (): Promise<string | null> => {
+  const config = await fetchStripeConfig();
+  return config.publishableKey;
+};
+
+// Check if Stripe is properly configured
+export const isStripeConfigured = async (): Promise<boolean> => {
+  const config = await fetchStripeConfig();
+  return !!(config.publishableKey && config.secretKey);
 };
 
 // Get test mode status
 export const isTestMode = (): boolean => {
-  return stripeConfig.isTestMode;
+  // First check localStorage for UI consistency
+  const savedTestMode = localStorage.getItem('stripe_test_mode');
+  if (savedTestMode !== null) {
+    return savedTestMode === 'true';
+  }
+  
+  // Default to test mode for safety
+  return true;
 };
 
-// Initialize on import
+// Initialize from localStorage if available
+export const initStripeConfig = (): void => {
+  const savedTestMode = localStorage.getItem('stripe_test_mode');
+  if (savedTestMode === null) {
+    // Set default to test mode if not set
+    localStorage.setItem('stripe_test_mode', 'true');
+  }
+};
+
+// Call init on import
 initStripeConfig();
