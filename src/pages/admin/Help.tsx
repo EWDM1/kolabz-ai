@@ -1,9 +1,23 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Info, Search, MailQuestion, HelpCircle, ExternalLink, MessageCircleQuestion } from "lucide-react";
+import { 
+  Info, 
+  Search, 
+  BookOpen, 
+  HelpCircle, 
+  ExternalLink, 
+  MessageCircleQuestion,
+  FileText,
+  GraduationCap,
+  Lightbulb,
+  VideoIcon,
+  BookText,
+  ClipboardList
+} from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 const Help = () => {
@@ -17,22 +31,193 @@ const Help = () => {
     <AdminLayout>
       <div className="container mx-auto py-6 space-y-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold tracking-tight">Help & Support</h1>
-          <p className="text-muted-foreground">Get assistance and find answers to common questions</p>
+          <h1 className="text-3xl font-bold tracking-tight">Help Center</h1>
+          <p className="text-muted-foreground">Knowledge base, guides, and frequently asked questions</p>
         </div>
 
-        <Tabs defaultValue="faq" className="w-full">
+        <Tabs defaultValue="knowledge" className="w-full">
           <TabsList className="mb-4">
+            <TabsTrigger value="knowledge">Knowledge Base</TabsTrigger>
+            <TabsTrigger value="guides">Guides</TabsTrigger>
             <TabsTrigger value="faq">FAQ</TabsTrigger>
-            <TabsTrigger value="documentation">Documentation</TabsTrigger>
             <TabsTrigger value="contact">Contact Support</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="knowledge">
+            <Card>
+              <CardHeader>
+                <CardTitle>Knowledge Base</CardTitle>
+                <CardDescription>Find detailed documentation and resources</CardDescription>
+                
+                <div className="relative mt-4">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input type="search" placeholder="Search knowledge base..." className="pl-8" />
+                </div>
+              </CardHeader>
+              <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Getting Started</CardTitle>
+                    <BookOpen className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Learn the basics of the platform and set up your account properly.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      Read Guide <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">User Management</CardTitle>
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Comprehensive guide on managing users, roles, and permissions.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      Read Guide <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Feature Management</CardTitle>
+                    <ClipboardList className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Learn how to configure and control platform features.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      Read Guide <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">API Documentation</CardTitle>
+                    <BookText className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Technical documentation for developers working with our API endpoints.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      View API Docs <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Security Best Practices</CardTitle>
+                    <Info className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Learn how to keep your data and users secure on our platform.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      Read Guide <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Integration Guides</CardTitle>
+                    <Lightbulb className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">Step-by-step guides for integrating with third-party services.</p>
+                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
+                      View Guides <ExternalLink className="h-3.5 w-3.5" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="guides">
+            <Card>
+              <CardHeader>
+                <CardTitle>Getting Started Guides</CardTitle>
+                <CardDescription>Step-by-step instructions to help you master the platform</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <GraduationCap className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Platform Walkthrough</h3>
+                        <p className="text-sm text-muted-foreground">A complete tour of all platform features and capabilities</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="ml-auto">Watch Guide</Button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <VideoIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">User Management Tutorial</h3>
+                        <p className="text-sm text-muted-foreground">Learn how to add, edit, and manage users efficiently</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="ml-auto">Watch Tutorial</Button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <VideoIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Feature Management Guide</h3>
+                        <p className="text-sm text-muted-foreground">Configure and control platform features</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="ml-auto">Watch Tutorial</Button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Integration Setup Guide</h3>
+                        <p className="text-sm text-muted-foreground">Connect third-party services to enhance functionality</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="ml-auto">Read Guide</Button>
+                    </div>
+                  </div>
+
+                  <div className="rounded-lg border p-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium">Data Export & Reporting</h3>
+                        <p className="text-sm text-muted-foreground">Learn how to generate and export reports</p>
+                      </div>
+                      <Button variant="outline" size="sm" className="ml-auto">Read Guide</Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
           
           <TabsContent value="faq">
             <Card>
               <CardHeader>
                 <CardTitle>Frequently Asked Questions</CardTitle>
-                <CardDescription>Find answers to common questions about the admin dashboard</CardDescription>
+                <CardDescription>Find answers to common questions about the platform</CardDescription>
                 
                 <div className="relative mt-4">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -75,56 +260,28 @@ const Help = () => {
                       Yes, in the User Management page, click the "Export" button to download user data in CSV or JSON format.
                     </AccordionContent>
                   </AccordionItem>
+                  
+                  <AccordionItem value="item-6">
+                    <AccordionTrigger>How do I reset a user's password?</AccordionTrigger>
+                    <AccordionContent>
+                      In the User Management page, find the user and click "Edit". You'll find a "Reset Password" option in the user editing form.
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-7">
+                    <AccordionTrigger>How can I customize the dashboard?</AccordionTrigger>
+                    <AccordionContent>
+                      Currently, the dashboard layout is fixed, but you can control which widgets appear by adjusting your feature settings in the Feature Management section.
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="item-8">
+                    <AccordionTrigger>Is there a mobile app available?</AccordionTrigger>
+                    <AccordionContent>
+                      Currently, we offer a responsive web application that works well on mobile devices. A dedicated mobile app is on our roadmap for future development.
+                    </AccordionContent>
+                  </AccordionItem>
                 </Accordion>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="documentation">
-            <Card>
-              <CardHeader>
-                <CardTitle>Documentation Resources</CardTitle>
-                <CardDescription>Comprehensive guides and documentation for the platform</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Admin Guide</CardTitle>
-                    <Info className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">Complete guide for administrators with detailed explanations of all features.</p>
-                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
-                      View Guide <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">API Documentation</CardTitle>
-                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">Technical documentation for developers working with our API endpoints.</p>
-                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
-                      View API Docs <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Video Tutorials</CardTitle>
-                    <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">Step-by-step video guides for common administrative tasks.</p>
-                    <Button variant="outline" size="sm" className="mt-4 w-full gap-1.5">
-                      Watch Tutorials <ExternalLink className="h-3.5 w-3.5" />
-                    </Button>
-                  </CardContent>
-                </Card>
               </CardContent>
             </Card>
           </TabsContent>
@@ -165,7 +322,7 @@ const Help = () => {
                   
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <MailQuestion className="h-5 w-5 text-muted-foreground" />
+                      <HelpCircle className="h-5 w-5 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">Support response within 24 hours</span>
                     </div>
                     <Button type="submit" className="gap-2">
