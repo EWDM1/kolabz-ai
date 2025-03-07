@@ -26,11 +26,37 @@ import { Users, CreditCard, Activity, UserPlus, UserCheck, UserMinus } from "luc
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
+// Define explicit types for the metrics state
+interface UserGrowthData {
+  month: string;
+  users: number;
+}
+
+interface ActivityData {
+  day: string;
+  logins: number;
+  signups: number;
+}
+
+interface RoleData {
+  name: string;
+  value: number;
+}
+
+interface MetricsState {
+  totalUsers: number;
+  activeUsers: number;
+  newUsers: number;
+  userGrowth: UserGrowthData[];
+  usersByRole: RoleData[];
+  activityData: ActivityData[];
+}
+
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [metrics, setMetrics] = useState({
+  const [metrics, setMetrics] = useState<MetricsState>({
     totalUsers: 0,
     activeUsers: 0,
     newUsers: 0,
@@ -120,15 +146,9 @@ const AdminDashboard = () => {
       // Process growth data into monthly counts
       const monthlyGrowth = processGrowthData(growthData || []);
 
-      // Get users by role
-      const { data: rolesData, error: rolesError } = await supabase
-        .from('user_roles')
-        .select('role, count')
-        .eq('deleted', false);
-
       // Since we can't do GROUP BY directly, simulate role distribution
-      const roleDistribution = [
-        { name: 'User', value: Math.max(totalUsers - 5, 0) },
+      const roleDistribution: RoleData[] = [
+        { name: 'User', value: Math.max((totalUsers || 0) - 5, 0) },
         { name: 'Admin', value: 4 },
         { name: 'Superadmin', value: 1 }
       ];
@@ -155,7 +175,7 @@ const AdminDashboard = () => {
   };
 
   // Process user growth data into monthly format
-  const processGrowthData = (userData: any[]) => {
+  const processGrowthData = (userData: any[]): UserGrowthData[] => {
     const months: Record<string, number> = {};
     
     userData.forEach(user => {
@@ -177,8 +197,8 @@ const AdminDashboard = () => {
   };
 
   // Generate sample activity data (would be replaced with real data in production)
-  const generateActivityData = () => {
-    const data = [];
+  const generateActivityData = (): ActivityData[] => {
+    const data: ActivityData[] = [];
     const now = new Date();
     
     for (let i = 6; i >= 0; i--) {
