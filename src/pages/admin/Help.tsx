@@ -1,10 +1,9 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Info, Search, MailHelp, HelpCircle, ExternalLink, MessageCircleQuestion } from "lucide-react";
+import { Info, Search, MailQuestion, HelpCircle, ExternalLink, MessageCircleQuestion } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 const Help = () => {
@@ -166,7 +165,7 @@ const Help = () => {
                   
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                      <MailHelp className="h-5 w-5 text-muted-foreground" />
+                      <MailQuestion className="h-5 w-5 text-muted-foreground" />
                       <span className="text-sm text-muted-foreground">Support response within 24 hours</span>
                     </div>
                     <Button type="submit" className="gap-2">
