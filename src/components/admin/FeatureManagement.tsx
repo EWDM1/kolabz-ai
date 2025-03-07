@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Database } from "@/integrations/supabase/types";
 
 type Feature = {
   id: string;
@@ -31,6 +32,9 @@ type FeatureCategory = {
   color: string;
 };
 
+// Define user role type to match the expected enum values in the database
+type UserRole = Database["public"]["Enums"]["user_role"];
+
 const featureCategories: Record<string, FeatureCategory> = {
   content: { name: "Content", value: "content", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400" },
   users: { name: "Users", value: "users", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" },
@@ -42,7 +46,7 @@ const featureCategories: Record<string, FeatureCategory> = {
 export function FeatureManagement() {
   const [features, setFeatures] = useState<Feature[]>([]);
   const [roleFeatures, setRoleFeatures] = useState<RoleFeature[]>([]);
-  const [activeRole, setActiveRole] = useState<string>("user");
+  const [activeRole, setActiveRole] = useState<UserRole>("user");
   const [loading, setLoading] = useState<boolean>(true);
   const [updating, setUpdating] = useState<Record<string, boolean>>({});
   const { toast } = useToast();
@@ -112,12 +116,12 @@ export function FeatureManagement() {
           )
         );
       } else {
-        // Create new record
+        // Create new record - using the proper type casting for role
         const { data, error } = await supabase
           .from('role_features')
           .insert({
             feature_id: featureId,
-            role: activeRole,
+            role: activeRole as UserRole, // Cast to the expected enum type
             enabled
           })
           .select()
