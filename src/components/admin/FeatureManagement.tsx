@@ -192,7 +192,11 @@ export function FeatureManagement() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="user" onValueChange={setActiveRole} value={activeRole}>
+        <Tabs 
+          defaultValue="user" 
+          value={activeRole} 
+          onValueChange={(value) => setActiveRole(value as UserRole)}
+        >
           <TabsList className="mb-4">
             <TabsTrigger value="user">User</TabsTrigger>
             <TabsTrigger value="admin">Admin</TabsTrigger>
