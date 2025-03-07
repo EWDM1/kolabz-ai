@@ -1,12 +1,12 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Edit, Trash, CheckCircle, XCircle, User, Shield, Crown } from "lucide-react";
-import { User as AuthUser, UserRole } from "@/components/AuthContext";
+import { User } from "@/components/AuthContext";
+import { UserRole } from "@/components/admin/feature-management/types";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface AdminUser extends AuthUser {
+export interface AdminUser extends User {
   status: "active" | "inactive";
   lastLogin?: string;
   lastActive?: string;

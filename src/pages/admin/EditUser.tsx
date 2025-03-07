@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -34,7 +33,6 @@ const EditUser = () => {
       try {
         setIsLoading(true);
         
-        // Fetch user data from the users table
         const { data: userData, error: userError } = await supabase
           .from('users')
           .select('*')
@@ -43,7 +41,6 @@ const EditUser = () => {
         
         if (userError) throw userError;
         
-        // Fetch user roles
         const { data: rolesData, error: rolesError } = await supabase
           .from('user_roles')
           .select('role')
@@ -51,7 +48,6 @@ const EditUser = () => {
         
         if (rolesError) throw rolesError;
         
-        // Combine the data
         const roles = rolesData.map(r => r.role);
         
         setUserData({
@@ -73,7 +69,6 @@ const EditUser = () => {
     fetchUserData();
   }, [id, toast]);
 
-  // Listen for storage events to sync sidebar state across components
   useEffect(() => {
     const handleStorageChange = () => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
@@ -109,7 +104,7 @@ const EditUser = () => {
         <Banner
           id="edit-user-banner"
           message="👤 Edit user details and manage their roles."
-          variant="teal"
+          variant="normal"
           height="2.5rem"
         />
         
