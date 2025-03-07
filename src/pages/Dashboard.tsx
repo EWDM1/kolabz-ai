@@ -1,18 +1,14 @@
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/components/AuthContext';
+import { useAuth, useRedirectForSuperAdmin } from '@/components/AuthContext';
 
 const Dashboard = () => {
+  // Use the custom hook for redirection logic
+  useRedirectForSuperAdmin();
+  
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // If user is a superadmin, redirect to the admin dashboard
-    if (user?.role === 'superadmin') {
-      navigate('/admin/dashboard');
-    }
-  }, [user, navigate]);
 
   // Regular dashboard content for non-superadmin users
   return (

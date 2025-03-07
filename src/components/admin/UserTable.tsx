@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Edit, Trash, CheckCircle, XCircle, User, Shield, Crown } from "lucide-react";
+import { Search, Edit, Trash, CheckCircle, XCircle, Shield, Crown, User as UserIcon } from "lucide-react";
 import { User } from "@/components/AuthContext";
 import { UserRole } from "@/components/admin/feature-management/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -147,9 +148,9 @@ export function UserTable({
       case "admin":
         return <Shield className="h-4 w-4 mr-1.5" />;
       case "user":
-        return <User className="h-4 w-4 mr-1.5" />;
+        return <UserIcon className="h-4 w-4 mr-1.5" />;
       default:
-        return <User className="h-4 w-4 mr-1.5" />;
+        return <UserIcon className="h-4 w-4 mr-1.5" />;
     }
   };
 
