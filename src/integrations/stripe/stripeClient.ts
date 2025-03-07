@@ -1,12 +1,12 @@
 
 import { loadStripe } from '@stripe/stripe-js';
-import { getPublishableKey } from './stripeConfig';
+import { getPublishableKeySync } from './stripeConfig';
 
 let stripePromise: Promise<any> | null = null;
 
-export const getStripeClient = () => {
+export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(getPublishableKey());
+    stripePromise = loadStripe(getPublishableKeySync());
   }
   return stripePromise;
 };

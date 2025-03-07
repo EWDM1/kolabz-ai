@@ -1,4 +1,3 @@
-
 // Stripe configuration with persistent settings from Supabase
 import { supabase } from "@/integrations/supabase/client";
 
@@ -126,6 +125,16 @@ export const toggleStripeTestMode = async (isTestMode: boolean): Promise<boolean
 export const getPublishableKey = async (): Promise<string | null> => {
   const config = await fetchStripeConfig();
   return config.publishableKey;
+};
+
+// Get the current Stripe publishable key synchronously (for immediate use)
+export const getPublishableKeySync = (): string => {
+  // If we have a cached config, use it
+  if (cachedConfig && cachedConfig.publishableKey) {
+    return cachedConfig.publishableKey;
+  }
+  // Otherwise return an empty string (will be updated async)
+  return '';
 };
 
 // Check if Stripe is properly configured

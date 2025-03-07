@@ -1,6 +1,6 @@
 
 import { loadStripe } from '@stripe/stripe-js';
-import { getPublishableKey, isTestMode } from './stripeConfig';
+import { getPublishableKeySync, isTestMode } from './stripeConfig';
 
 // Initialize Stripe
 let stripePromise: Promise<any> | null = null;
@@ -8,7 +8,7 @@ let stripePromise: Promise<any> | null = null;
 // Get Stripe instance with current publishable key
 export const getStripe = () => {
   if (!stripePromise) {
-    stripePromise = loadStripe(getPublishableKey());
+    stripePromise = loadStripe(getPublishableKeySync());
   }
   return stripePromise;
 };
