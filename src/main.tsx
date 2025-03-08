@@ -1,3 +1,4 @@
+
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -22,7 +23,6 @@ import HelpSupport from './pages/HelpSupport'
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import UserManagement from './pages/admin/UserManagement'
-import EditUser from './pages/admin/EditUser'
 import FeatureManagement from './pages/admin/FeatureManagement'
 import IntegrationsSettings from './pages/admin/IntegrationsSettings'
 import StripeSettings from './pages/admin/StripeSettings'
@@ -80,17 +80,8 @@ const router = createBrowserRouter([
         element: <AdminDashboard />,
       },
       {
-        path: 'admin/users',
-        element: <UserManagement />,
-      },
-      // Keep user-management as an alias for backward compatibility
-      {
         path: 'admin/user-management',
         element: <UserManagement />,
-      },
-      {
-        path: 'admin/users/edit/:id',
-        element: <EditUser />,
       },
       {
         path: 'admin/feature-management',

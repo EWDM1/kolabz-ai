@@ -2,7 +2,6 @@
 import { useUserData } from './user-management/use-user-data';
 import { useUserSelection } from './user-management/use-user-selection';
 import { useUserFilters } from './user-management/use-user-filters';
-import { useUserActions } from './user-management/use-user-actions';
 import { useDeleteDialog } from './user-management/use-delete-dialog';
 import { useSidebarState } from './use-sidebar-state';
 
@@ -17,7 +16,6 @@ export const useUserManagementPage = () => {
     toggleFilterVisible, 
     filterUsers 
   } = useUserFilters();
-  const { handleEditUser } = useUserActions();
   const { 
     deleteDialogOpen, 
     deleteDialogData, 
@@ -48,7 +46,6 @@ export const useUserManagementPage = () => {
     filterUsers,
     
     // Actions
-    handleEditUser,
     handleDeleteUser,
     handleDeleteSelected,
     

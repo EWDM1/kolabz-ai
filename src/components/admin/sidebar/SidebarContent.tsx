@@ -27,7 +27,7 @@ export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentP
     // Set the active item based on the current location
     const path = location.pathname;
     
-    if (path.includes('/admin/users')) {
+    if (path.includes('/admin/user-management')) {
       setActiveItem('users');
     } else if (path.includes('/admin/integrations')) {
       setActiveItem('integrations');
@@ -58,7 +58,7 @@ export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentP
       <SidebarItem 
         icon={<Users size={20} />} 
         label="User Management" 
-        href="/admin/users" 
+        href="/admin/user-management" 
         isActive={activeItem === 'users'}
         isCollapsed={isCollapsed}
         onClick={onClose}

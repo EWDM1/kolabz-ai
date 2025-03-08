@@ -56,8 +56,8 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           <SidebarItem 
             icon={<Users size={20} />} 
             label="User Management" 
-            href="/admin/users" 
-            isActive={location.pathname.includes("/admin/users") || location.pathname.includes("/admin/user-management")}
+            href="/admin/user-management" 
+            isActive={location.pathname.includes("/admin/user-management")}
             isCollapsed={isCollapsed}
             onClick={onClose}
           />

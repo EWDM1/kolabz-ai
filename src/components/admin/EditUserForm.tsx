@@ -1,11 +1,9 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { UserRole } from "@/components/admin/feature-management/types";
@@ -20,12 +18,12 @@ interface UserData {
 
 interface EditUserFormProps {
   initialData: UserData;
+  onSaveComplete?: () => void;
 }
 
-export const EditUserForm = ({ initialData }: EditUserFormProps) => {
+export const EditUserForm = ({ initialData, onSaveComplete }: EditUserFormProps) => {
   const [formData, setFormData] = useState<UserData>(initialData);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   const availableRoles: UserRole[] = ["user", "admin", "superadmin"];
@@ -88,7 +86,9 @@ export const EditUserForm = ({ initialData }: EditUserFormProps) => {
         description: "The user has been successfully updated.",
       });
       
-      navigate("/admin/users");
+      if (onSaveComplete) {
+        onSaveComplete();
+      }
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
@@ -156,7 +156,7 @@ export const EditUserForm = ({ initialData }: EditUserFormProps) => {
         <Button
           type="button"
           variant="outline"
-          onClick={() => navigate("/admin/users")}
+          onClick={onSaveComplete}
         >
           Cancel
         </Button>
