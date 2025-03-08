@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -56,10 +56,7 @@ const App = () => (
                   <Route path="/my-settings" element={<MySettings />} />
                   <Route path="/help" element={<Help />} />
                   
-                  {/* Redirect /admin to /admin/dashboard */}
-                  <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-                  
-                  {/* Admin Routes */}
+                  {/* Admin Routes - removed duplicate "/admin" route */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/users" element={<UserManagement />} />
                   <Route path="/admin/users/filter" element={<UserFilter />} />
