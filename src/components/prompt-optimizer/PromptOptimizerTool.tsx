@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bot, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,9 +8,25 @@ import { supabase } from "@/integrations/supabase/client";
 import PromptOptimizerForm from "./PromptOptimizerForm";
 import PromptExampleList from "./PromptExampleList";
 import OptimizedPromptResult from "./OptimizedPromptResult";
+import { Prompt } from "@/components/prompts/types";
+
+// Local storage key
+const SAVED_PROMPT_KEY = "kolabz_last_optimized_prompt";
+const SAVED_FORM_STATE_KEY = "kolabz_prompt_form_state";
 
 interface PromptOptimizerToolProps {
   onSavePrompt?: (prompt: string) => void;
+}
+
+interface FormState {
+  llm: string;
+  specialty: string;
+  tone: string;
+  detailLevel: string;
+  promptObjective: string;
+  context: string;
+  specificQuestions: string;
+  constraints: string;
 }
 
 const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
@@ -31,6 +47,49 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
+
+  // Load saved state from localStorage on component mount
+  useEffect(() => {
+    // Load the last generated prompt
+    const savedPrompt = localStorage.getItem(SAVED_PROMPT_KEY);
+    if (savedPrompt) {
+      setOptimizedPrompt(savedPrompt);
+    }
+
+    // Load form state
+    const savedFormState = localStorage.getItem(SAVED_FORM_STATE_KEY);
+    if (savedFormState) {
+      try {
+        const parsedState = JSON.parse(savedFormState) as FormState;
+        setLlm(parsedState.llm || "gpt-4");
+        setSpecialty(parsedState.specialty || "");
+        setTone(parsedState.tone || "");
+        setDetailLevel(parsedState.detailLevel || "");
+        setPromptObjective(parsedState.promptObjective || "");
+        setContext(parsedState.context || "");
+        setSpecificQuestions(parsedState.specificQuestions || "");
+        setConstraints(parsedState.constraints || "");
+      } catch (err) {
+        console.error("Error parsing saved form state:", err);
+      }
+    }
+  }, []);
+
+  // Save form state to localStorage whenever it changes
+  useEffect(() => {
+    const formState: FormState = {
+      llm,
+      specialty,
+      tone,
+      detailLevel,
+      promptObjective,
+      context,
+      specificQuestions,
+      constraints
+    };
+    
+    localStorage.setItem(SAVED_FORM_STATE_KEY, JSON.stringify(formState));
+  }, [llm, specialty, tone, detailLevel, promptObjective, context, specificQuestions, constraints]);
 
   // Handle selecting an example prompt
   const handleSelectExample = (example: string) => {
@@ -66,9 +125,12 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
 
       if (data && data.optimizedPrompt) {
         setOptimizedPrompt(data.optimizedPrompt);
+        // Save to localStorage
+        localStorage.setItem(SAVED_PROMPT_KEY, data.optimizedPrompt);
+        
         toast({
           title: "Success!",
-          description: "Your optimized prompt has been generated"
+          description: "Your optimized prompt has been generated and saved"
         });
       } else if (data && data.error) {
         throw new Error(data.error);
@@ -89,10 +151,20 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   };
 
   // Handle saving the prompt to library
-  const handleSavePrompt = () => {
+  const handleSavePrompt = (prompt: string) => {
+    // Save to localStorage
+    localStorage.setItem(SAVED_PROMPT_KEY, prompt);
+    
+    // Call the onSavePrompt prop if provided (e.g., for saving to a database)
     if (onSavePrompt) {
-      onSavePrompt(optimizedPrompt);
+      onSavePrompt(prompt);
     }
+    
+    // Display a toast notification
+    toast({
+      title: "Prompt Saved",
+      description: "Your prompt has been saved locally and will be available when you return"
+    });
   };
 
   return (

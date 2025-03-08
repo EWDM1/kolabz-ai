@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 
 interface OptimizedPromptResultProps {
   optimizedPrompt: string;
-  onSavePrompt?: () => void;
+  onSavePrompt?: (prompt: string) => void;
 }
 
 const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromptResultProps) => {
@@ -37,8 +37,10 @@ const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromp
   };
 
   const handleSavePrompt = () => {
+    const promptToSave = isEditing ? editablePrompt : optimizedPrompt;
+    
     if (onSavePrompt) {
-      onSavePrompt();
+      onSavePrompt(promptToSave);
     }
     
     toast({
