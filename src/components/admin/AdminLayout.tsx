@@ -6,6 +6,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/components/AuthContext";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -22,18 +23,9 @@ const AdminLayout = ({
   bannerMessage,
   requireAdmin = true,
 }: AdminLayoutProps) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-
-  // Check the sidebar collapsed state from localStorage
-  useEffect(() => {
-    const savedState = localStorage.getItem("adminSidebarCollapsed");
-    if (savedState !== null) {
-      setSidebarCollapsed(savedState === "true");
-    }
-  }, []);
+  const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
 
   // Redirect if not admin
   useEffect(() => {
@@ -41,31 +33,6 @@ const AdminLayout = ({
       navigate("/dashboard");
     }
   }, [isAdmin, navigate, requireAdmin]);
-
-  // Listen for storage events to sync sidebar state across components
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedState = localStorage.getItem("adminSidebarCollapsed");
-      if (savedState !== null) {
-        setSidebarCollapsed(savedState === "true");
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    
-    // Check for changes every second (for same-window updates)
-    const interval = setInterval(() => {
-      const savedState = localStorage.getItem("adminSidebarCollapsed");
-      if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
-        setSidebarCollapsed(savedState === "true");
-      }
-    }, 1000);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      clearInterval(interval);
-    };
-  }, [sidebarCollapsed]);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -85,12 +52,12 @@ const AdminLayout = ({
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
         <main className="flex-1 overflow-y-auto py-6 px-4 md:px-6 lg:px-8">
-          <div className="grid gap-4 lg:gap-8">
+          <div className="grid gap-4 lg:gap-8 max-w-7xl mx-auto">
             {(title || description) && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
                 <div>
-                  {title && <h1 className="text-3xl font-bold">{title}</h1>}
-                  {description && <p className="text-muted-foreground">{description}</p>}
+                  {title && <h1 className="text-3xl font-bold tracking-tight">{title}</h1>}
+                  {description && <p className="text-muted-foreground mt-1">{description}</p>}
                 </div>
               </div>
             )}

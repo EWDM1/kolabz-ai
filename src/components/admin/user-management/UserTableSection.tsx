@@ -1,6 +1,7 @@
 
 import { UserTable } from "@/components/admin/UserTable";
 import { AdminUser } from "@/components/admin/user-management/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface UserTableSectionProps {
   users: AdminUser[];

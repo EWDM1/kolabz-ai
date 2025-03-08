@@ -1,18 +1,20 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserManagementPage } from "@/hooks/use-user-management-page";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { UserFiltersPanel } from "@/components/admin/user-management/UserFiltersPanel";
 import { UserTableSection } from "@/components/admin/user-management/UserTableSection";
 import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
-import { AdminUser } from "@/components/admin/user-management/types";
 import { cn } from "@/lib/utils";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 const UserManagement = () => {
   const navigate = useNavigate();
+  const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
+  
   const {
     users = [],
     loading = false,
@@ -32,9 +34,6 @@ const UserManagement = () => {
     closeDeleteDialog = () => {},
     confirmDeleteUser = async () => {},
     deleteDialogData = { isMultiple: false },
-    sidebarOpen = false,
-    setSidebarOpen = () => {},
-    sidebarCollapsed = false
   } = useUserManagementPage();
 
   // We need to adapt the onEdit and onDelete functions to match the expected types
@@ -47,37 +46,31 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
-      <div className={cn(
-        "flex-1 overflow-auto transition-all duration-300 ease-in-out",
-        sidebarCollapsed ? "ml-16" : "ml-64"
-      )}>
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center mb-6">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="gap-1">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </div>
-          
-          <UserManagementHeader 
-            selectedCount={selectedUsers.length}
-            onDelete={handleDeleteSelected}
-            onRefresh={fetchUsers}
-            onDeleteSelected={handleDeleteSelected}
-            toggleFilterVisible={handleFilterClick}
-          />
-          
-          {filterVisible && (
+    <AdminLayout 
+      title="User Management" 
+      description="Manage your application users, their roles and permissions"
+      bannerMessage="👥 Manage users, assign roles, and control access levels."
+    >
+      <div className="space-y-6 animate-fade-in">
+        <UserManagementHeader 
+          selectedCount={selectedUsers.length}
+          onDelete={handleDeleteSelected}
+          onRefresh={fetchUsers}
+          onDeleteSelected={handleDeleteSelected}
+          toggleFilterVisible={handleFilterClick}
+        />
+        
+        {filterVisible && (
+          <div className="animate-slide-up">
             <UserFiltersPanel 
               filterValues={filterValues}
               onFilterChange={handleFilterChange}
               onResetFilters={resetFilters}
             />
-          )}
-          
+          </div>
+        )}
+        
+        <div className="bg-card rounded-lg border border-border shadow-sm overflow-hidden">
           <UserTableSection 
             users={filterUsers(users)}
             loading={loading}
@@ -86,17 +79,17 @@ const UserManagement = () => {
             onEdit={handleEditUserAdapter}
             onDelete={handleDeleteUserAdapter}
           />
-          
-          <DeleteConfirmationDialog 
-            isOpen={deleteDialogOpen}
-            onClose={closeDeleteDialog}
-            onConfirm={confirmDeleteUser}
-            isMultiple={deleteDialogData.isMultiple}
-            count={deleteDialogData.isMultiple ? selectedUsers.length : 1}
-          />
         </div>
+        
+        <DeleteConfirmationDialog 
+          isOpen={deleteDialogOpen}
+          onClose={closeDeleteDialog}
+          onConfirm={confirmDeleteUser}
+          isMultiple={deleteDialogData.isMultiple}
+          count={deleteDialogData.isMultiple ? selectedUsers.length : 1}
+        />
       </div>
-    </div>
+    </AdminLayout>
   );
 };
 

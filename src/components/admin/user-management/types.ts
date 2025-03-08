@@ -1,3 +1,4 @@
+
 import { UserRole } from "@/components/admin/feature-management/types";
 
 export interface AdminUser {
@@ -23,6 +24,8 @@ export interface UserManagementHeaderProps {
   selectedCount: number;
   onDelete: () => void;
   onRefresh: () => Promise<void> | void;
+  onDeleteSelected: () => void;
+  toggleFilterVisible: () => void;
 }
 
 export interface ImportActionsProps {
@@ -46,4 +49,5 @@ export interface DeleteConfirmationDialogProps {
   isMultiple?: boolean;
   title?: string;
   description?: string;
+  count?: number;
 }

@@ -4,6 +4,7 @@ import { Edit, Trash } from "lucide-react";
 import { AdminUser } from "./types";
 import { UserRoleBadge } from "./UserRoleBadge";
 import { UserStatusBadge } from "./UserStatusBadge";
+import { cn } from "@/lib/utils";
 
 interface UserTableRowProps {
   user: AdminUser;
@@ -21,24 +22,30 @@ export function UserTableRow({
   onDelete 
 }: UserTableRowProps) {
   return (
-    <tr key={user.id} className="border-b hover:bg-muted/50">
+    <tr 
+      key={user.id} 
+      className={cn(
+        "border-b transition-colors",
+        isSelected ? "bg-primary/5" : "hover:bg-muted/50"
+      )}
+    >
       <td className="py-3 px-4">
         <input 
           type="checkbox" 
-          className="rounded border-gray-300"
+          className="rounded border-gray-300 text-primary focus:ring-primary/30"
           checked={isSelected}
           onChange={() => onSelect(user.id)}
         />
       </td>
-      <td className="py-3 px-4">{user.name}</td>
-      <td className="py-3 px-4">{user.email}</td>
+      <td className="py-3 px-4 font-medium">{user.name}</td>
+      <td className="py-3 px-4 text-muted-foreground">{user.email}</td>
       <td className="py-3 px-4">
         <UserRoleBadge role={user.role} />
       </td>
       <td className="py-3 px-4">
         <UserStatusBadge status={user.status} />
       </td>
-      <td className="py-3 px-4">{user.lastActive}</td>
+      <td className="py-3 px-4 text-muted-foreground">{user.lastActive}</td>
       <td className="py-3 px-4 text-right">
         <div className="flex justify-end space-x-2">
           {onEdit && (
