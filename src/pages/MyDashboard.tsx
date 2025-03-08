@@ -1,11 +1,13 @@
 
 import { Link } from "react-router-dom";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { useAuth } from "@/components/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import PromptOptimizerTool from "@/components/prompt-optimizer/PromptOptimizerTool";
 
 const MyDashboard = () => {
@@ -50,8 +52,18 @@ const MyDashboard = () => {
             )}
           </Link>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 cursor-pointer">
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer ml-2">
               <span className="text-sm font-medium hidden md:inline-block">
                 {user?.name || "John Doe"}
               </span>
