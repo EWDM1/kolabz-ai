@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { RefreshCw } from "lucide-react";
 
 export interface UserManagementHeaderProps {
   selectedCount: number;
@@ -36,7 +36,7 @@ export const UserManagementHeader: React.FC<UserManagementHeaderProps> = ({
           </Button>
         )}
         <Button variant="outline" onClick={onRefresh}>
-          <ReloadIcon className="h-4 w-4 mr-2" />
+          <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
         </Button>
         {toggleFilterVisible && (

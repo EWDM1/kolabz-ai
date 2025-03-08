@@ -64,6 +64,8 @@ const UserManagement = () => {
           
           <UserManagementHeader 
             selectedCount={selectedUsers.length}
+            onDelete={() => {}} // Providing an empty function to satisfy the required prop
+            onRefresh={fetchUsers} // Passing the fetchUsers function for refreshing data
             onDeleteSelected={handleDeleteSelected}
             toggleFilterVisible={handleFilterClick}
           />
@@ -72,7 +74,7 @@ const UserManagement = () => {
             <UserFiltersPanel 
               filterValues={filterValues}
               onFilterChange={handleFilterChange}
-              handleResetFilters={resetFilters}
+              onResetFilters={resetFilters} // Fix: Changed handleResetFilters to onResetFilters
             />
           )}
           
