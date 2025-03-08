@@ -1,11 +1,10 @@
 
 import { useState } from "react";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { SAVED_PROMPT_KEY } from "./hooks/usePromptForm";
 
 import FormSelect from "./components/FormSelect";
+import ObjectiveInput from "./components/ObjectiveInput";
 import AdvancedOptions from "./components/AdvancedOptions";
 import FormActions from "./components/FormActions";
 import { 
@@ -97,16 +96,10 @@ const PromptOptimizerForm = ({
         placeholder="Select AI model"
       />
 
-      <div className="space-y-1.5">
-        <Label htmlFor="prompt-objective">What do you want the AI to do? <span className="text-primary">*</span></Label>
-        <Textarea
-          id="prompt-objective"
-          placeholder="Be specific about your objective (e.g., 'Create a content calendar for a product launch')"
-          className="min-h-[80px]"
-          value={promptObjective}
-          onChange={(e) => setPromptObjective(e.target.value)}
-        />
-      </div>
+      <ObjectiveInput 
+        value={promptObjective}
+        onChange={setPromptObjective}
+      />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <FormSelect 
