@@ -54,9 +54,9 @@ const App = () => (
                   <Route path="/manage-subscription" element={<ManageSubscription />} />
                   <Route path="/change-plan" element={<ChangePlan />} />
                   <Route path="/my-settings" element={<MySettings />} />
+                  <Route path="/help" element={<Help />} />
                   
-                  {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminDashboard />} />
+                  {/* Admin Routes - removed duplicate "/admin" route */}
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
                   <Route path="/admin/users" element={<UserManagement />} />
                   <Route path="/admin/users/filter" element={<UserFilter />} />

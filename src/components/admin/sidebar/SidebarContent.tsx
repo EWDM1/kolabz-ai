@@ -27,7 +27,7 @@ export const SidebarContent = ({ isCollapsed, onClose }: SidebarContentProps) =>
           icon={<LayoutDashboard className="h-5 w-5" />}
           label="Dashboard"
           href="/admin/dashboard"
-          isActive={path === "/admin" || path === "/admin/dashboard"}
+          isActive={path === "/admin/dashboard"}
           onClick={onClose}
           isCollapsed={isCollapsed}
         />
