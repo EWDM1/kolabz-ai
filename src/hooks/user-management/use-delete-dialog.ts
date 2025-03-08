@@ -1,33 +1,33 @@
 
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { DeleteDialogData } from "@/components/admin/user-management/types";
 
-export interface DeleteDialogData {
-  isMultiple: boolean;
-  userId?: string;
-}
-
-export const useDeleteDialog = (selectedUsers: string[], refreshUsers: () => void) => {
-  const { toast } = useToast();
+export const useDeleteDialog = (
+  selectedUsers: string[],
+  onDeleteSuccess: () => Promise<void>
+) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteDialogData, setDeleteDialogData] = useState<DeleteDialogData>({ isMultiple: false });
+  const [deleteDialogData, setDeleteDialogData] = useState<DeleteDialogData>({
+    isMultiple: false
+  });
+  const { toast } = useToast();
 
   const handleDeleteUser = (userId: string) => {
-    setDeleteDialogData({ isMultiple: false, userId });
+    setDeleteDialogData({
+      isMultiple: false,
+      userId
+    });
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteSelected = () => {
-    if (selectedUsers.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No users selected",
-        description: "Please select at least one user to delete."
-      });
-      return;
-    }
+    if (selectedUsers.length === 0) return;
     
-    setDeleteDialogData({ isMultiple: true });
+    setDeleteDialogData({
+      isMultiple: true
+    });
     setDeleteDialogOpen(true);
   };
 
@@ -37,28 +37,38 @@ export const useDeleteDialog = (selectedUsers: string[], refreshUsers: () => voi
 
   const confirmDeleteUser = async () => {
     try {
-      // Here you would typically call an API to delete the user(s)
-      // For now, we'll just simulate success
+      let userIds: string[] = [];
       
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (deleteDialogData.isMultiple) {
+        userIds = selectedUsers;
+      } else if (deleteDialogData.userId) {
+        userIds = [deleteDialogData.userId];
+      }
+      
+      if (userIds.length === 0) return;
+      
+      // Delete users (soft delete approach)
+      const { error } = await supabase
+        .from("users")
+        .update({ deleted: true, status: "inactive" })
+        .in("id", userIds);
+      
+      if (error) throw error;
+      
+      // Close dialog and refresh list
+      closeDeleteDialog();
+      await onDeleteSuccess();
       
       toast({
         title: "Success",
-        description: deleteDialogData.isMultiple 
-          ? `${selectedUsers.length} users deleted successfully.` 
-          : "User deleted successfully."
+        description: `${userIds.length > 1 ? "Users" : "User"} successfully deleted`,
       });
-      
-      // Refresh the user list
-      refreshUsers();
-      
-      // Close the dialog
-      closeDeleteDialog();
     } catch (error: any) {
+      console.error("Error deleting user(s):", error);
       toast({
         variant: "destructive",
-        title: "Failed to delete user(s)",
-        description: error.message || "There was an error deleting the user(s)."
+        title: "Error",
+        description: error.message || "Failed to delete user(s)",
       });
     }
   };

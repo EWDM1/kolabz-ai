@@ -1,15 +1,14 @@
 
 import { UserTable } from "@/components/admin/UserTable";
-import { AdminUser } from "@/components/admin/user-management/types";
-import { Card } from "@/components/ui/card";
+import { AdminUser } from "./types";
 
 interface UserTableSectionProps {
   users: AdminUser[];
   loading: boolean;
   selectedUsers: string[];
   setSelectedUsers: (users: string[]) => void;
-  onEdit: (user: AdminUser) => void;
-  onDelete: (user: AdminUser) => void;
+  onEdit?: (user: AdminUser) => void;
+  onDelete?: (user: AdminUser) => void;
 }
 
 export function UserTableSection({
@@ -21,7 +20,7 @@ export function UserTableSection({
   onDelete
 }: UserTableSectionProps) {
   return (
-    <div className="p-4">
+    <div className="overflow-hidden rounded-md border border-border">
       <UserTable
         users={users}
         loading={loading}

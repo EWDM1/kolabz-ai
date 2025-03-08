@@ -1,70 +1,90 @@
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { AdminUser } from "@/components/admin/user-management/types";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-// Mocked data since we're not actually connecting to Supabase in this example
-const mockUsers: AdminUser[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    role: 'admin',
-    status: 'active',
-    lastActive: '2023-04-15T10:00:00Z'
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    role: 'user',
-    status: 'active',
-    lastActive: '2023-04-14T15:30:00Z'
-  },
-  {
-    id: '3',
-    name: 'Bob Johnson',
-    email: 'bob@example.com',
-    role: 'user', // Changed from moderator to match AdminUser type
-    status: 'inactive',
-    lastActive: '2023-03-25T08:15:00Z'
-  }
-];
-
 export const useUserData = () => {
-  const { toast } = useToast();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Fetch users function - currently mocked
-  const fetchUsers = useCallback(async () => {
-    setLoading(true);
+  const fetchUsers = async () => {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setLoading(true);
       
-      // Set mock data
-      setUsers(mockUsers);
+      // Fetch users from Supabase
+      const { data: usersData, error: usersError } = await supabase
+        .from("users")
+        .select("*")
+        .order("created_at", { ascending: false });
+      
+      if (usersError) throw usersError;
+      
+      // Fetch roles for each user
+      const userIds = usersData.map(user => user.id);
+      const { data: rolesData, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id, role")
+        .in("user_id", userIds);
+      
+      if (rolesError) throw rolesError;
+      
+      // Map roles to users
+      const userRoles: Record<string, string[]> = {};
+      rolesData?.forEach(role => {
+        if (!userRoles[role.user_id]) {
+          userRoles[role.user_id] = [];
+        }
+        userRoles[role.user_id].push(role.role);
+      });
+      
+      // Format users with their highest role
+      const formattedUsers: AdminUser[] = usersData.map(user => {
+        // Determine the highest role (superadmin > admin > user)
+        let highestRole = "user";
+        const roles = userRoles[user.id] || [];
+        
+        if (roles.includes("superadmin")) {
+          highestRole = "superadmin";
+        } else if (roles.includes("admin")) {
+          highestRole = "admin";
+        }
+        
+        // Format last active date
+        const lastActive = user.last_sign_in_at 
+          ? new Date(user.last_sign_in_at).toLocaleDateString()
+          : "Never";
+        
+        return {
+          id: user.id,
+          name: user.name || user.email.split("@")[0],
+          email: user.email,
+          role: highestRole,
+          status: user.status || "active",
+          lastActive,
+          created_at: user.created_at,
+          updated_at: user.updated_at
+        };
+      });
+      
+      setUsers(formattedUsers);
     } catch (error: any) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
       toast({
         variant: "destructive",
-        title: "Failed to load users",
-        description: error.message || "There was an error fetching the users."
+        title: "Error",
+        description: error.message || "Failed to fetch users",
       });
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  };
 
-  // Initialize data
+  // Fetch users on component mount
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, []);
 
-  return {
-    users,
-    loading,
-    fetchUsers
-  };
+  return { users, loading, fetchUsers };
 };

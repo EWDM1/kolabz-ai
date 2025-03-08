@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from 'react';
+import { useState } from "react";
 import { AdminUser } from "@/components/admin/user-management/types";
 
 export interface FilterValues {
@@ -7,43 +7,39 @@ export interface FilterValues {
   email: string;
   role: string;
   status: string;
-  dateRange: {
-    from: Date | undefined;
-    to: Date | undefined;
-  };
 }
 
-const initialFilterValues: FilterValues = {
-  name: '',
-  email: '',
-  role: '',
-  status: '',
-  dateRange: {
-    from: undefined,
-    to: undefined
-  }
-};
-
 export const useUserFilters = () => {
-  const [filterValues, setFilterValues] = useState<FilterValues>(initialFilterValues);
+  const [filterValues, setFilterValues] = useState<FilterValues>({
+    name: "",
+    email: "",
+    role: "",
+    status: ""
+  });
+  
   const [filterVisible, setFilterVisible] = useState(false);
-
-  const handleFilterChange = useCallback((key: keyof FilterValues, value: any) => {
+  
+  const handleFilterChange = (field: keyof FilterValues, value: string) => {
     setFilterValues(prev => ({
       ...prev,
-      [key]: value
+      [field]: value
     }));
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    setFilterValues(initialFilterValues);
-  }, []);
-
-  const toggleFilterVisible = useCallback(() => {
+  };
+  
+  const resetFilters = () => {
+    setFilterValues({
+      name: "",
+      email: "",
+      role: "",
+      status: ""
+    });
+  };
+  
+  const toggleFilterVisible = () => {
     setFilterVisible(prev => !prev);
-  }, []);
-
-  const filterUsers = useCallback((users: AdminUser[]) => {
+  };
+  
+  const filterUsers = (users: AdminUser[]) => {
     return users.filter(user => {
       // Filter by name
       if (filterValues.name && !user.name.toLowerCase().includes(filterValues.name.toLowerCase())) {
@@ -65,28 +61,10 @@ export const useUserFilters = () => {
         return false;
       }
       
-      // Filter by date (last active date)
-      if (user.lastActive) {
-        const userActiveDate = new Date(user.lastActive);
-        
-        if (filterValues.dateRange.from && userActiveDate < filterValues.dateRange.from) {
-          return false;
-        }
-        
-        if (filterValues.dateRange.to) {
-          const toDateEnd = new Date(filterValues.dateRange.to);
-          toDateEnd.setHours(23, 59, 59, 999);
-          
-          if (userActiveDate > toDateEnd) {
-            return false;
-          }
-        }
-      }
-      
       return true;
     });
-  }, [filterValues]);
-
+  };
+  
   return {
     filterValues,
     handleFilterChange,
