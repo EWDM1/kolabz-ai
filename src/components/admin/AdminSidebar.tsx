@@ -1,6 +1,15 @@
 
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Settings, 
+  HelpCircle,
+  Puzzle,
+  Zap,
+  CreditCard
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SidebarItem } from "./sidebar/SidebarItem";
 import { SidebarGroup } from "./sidebar/SidebarGroup";

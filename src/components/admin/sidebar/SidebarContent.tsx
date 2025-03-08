@@ -1,8 +1,6 @@
 
 import { useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
-import { SidebarItem } from "./SidebarItem";
-import { SidebarGroup } from "./SidebarGroup";
 import { 
   LayoutDashboard, 
   Users, 
@@ -12,6 +10,8 @@ import {
   Zap,
   CreditCard
 } from "lucide-react";
+import { SidebarItem } from "./SidebarItem";
+import { SidebarGroup } from "./SidebarGroup";
 
 export interface SidebarContentProps {
   onClose?: () => void;
