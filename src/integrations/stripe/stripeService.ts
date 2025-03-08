@@ -1,7 +1,7 @@
 
 import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from "@/integrations/supabase/client";
-import { getPublishableKey } from './stripeConfig';
+import { getPublishableKey, getPublishableKeySync } from './stripeConfig';
 
 // Get Stripe instance 
 let stripePromise: Promise<any> | null = null;
