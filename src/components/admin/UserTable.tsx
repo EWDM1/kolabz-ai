@@ -1,10 +1,9 @@
 
 import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { RefreshCw, Search } from "lucide-react";
 import { UserTableProps } from "@/components/admin/user-management/types";
-import { UserTableRow } from "@/components/admin/user-management/UserTableRow";
+import { UserTableHeader } from "@/components/admin/user-management/UserTableHeader";
+import { UserTableHead } from "@/components/admin/user-management/UserTableHead";
+import { UserTableBody } from "@/components/admin/user-management/UserTableBody";
 
 export function UserTable({ 
   users,
@@ -31,72 +30,40 @@ export function UserTable({
     }
   };
 
+  const handleSelectAll = (selected: boolean) => {
+    if (selected) {
+      setSelectedUsers(users.map(user => user.id));
+    } else {
+      setSelectedUsers([]);
+    }
+  };
+
   if (loading) {
     return <div className="py-8 text-center">Loading users...</div>;
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search users..."
-            className="pl-8 w-full sm:w-64"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-      </div>
+      <UserTableHeader 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
 
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-muted border-b">
-                <th className="py-3 px-4 text-left font-medium">
-                  <input 
-                    type="checkbox" 
-                    className="rounded border-gray-300"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedUsers(users.map(user => user.id));
-                      } else {
-                        setSelectedUsers([]);
-                      }
-                    }}
-                    checked={selectedUsers.length === users.length && users.length > 0}
-                  />
-                </th>
-                <th className="py-3 px-4 text-left font-medium">User</th>
-                <th className="py-3 px-4 text-left font-medium">Email</th>
-                <th className="py-3 px-4 text-left font-medium">Role</th>
-                <th className="py-3 px-4 text-left font-medium">Status</th>
-                <th className="py-3 px-4 text-left font-medium">Last Active</th>
-                <th className="py-3 px-4 text-right font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
-                  <UserTableRow
-                    key={user.id}
-                    user={user}
-                    isSelected={selectedUsers.includes(user.id)}
-                    onSelect={handleRowSelection}
-                    onEdit={onEdit}
-                    onDelete={onDelete}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
-                    No users found matching your search criteria.
-                  </td>
-                </tr>
-              )}
-            </tbody>
+            <UserTableHead 
+              users={users}
+              selectedUsers={selectedUsers}
+              onSelectAll={handleSelectAll}
+            />
+            <UserTableBody 
+              users={filteredUsers}
+              selectedUsers={selectedUsers}
+              onSelect={handleRowSelection}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
           </table>
         </div>
       </div>
