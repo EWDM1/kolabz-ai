@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Bot, 
@@ -8,7 +7,6 @@ import {
   BookOpen, 
   MessageSquare, 
   Brain,
-  ArrowRight,
   ChevronDown,
   ChevronUp
 } from "lucide-react";
@@ -86,7 +84,6 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const { toast } = useToast();
   const { theme } = useTheme();
 
-  // Form state
   const [llm, setLlm] = useState("gpt-4");
   const [specialty, setSpecialty] = useState("");
   const [tone, setTone] = useState("");
@@ -98,22 +95,16 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const [activeTab, setActiveTab] = useState("build");
   const [showAdvanced, setShowAdvanced] = useState(false);
   
-  // Output state
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editablePrompt, setEditablePrompt] = useState("");
-  
-  // Handle Examples
+
   const useExamplePrompt = (example: string) => {
     setPromptObjective(example);
     setActiveTab("build");
   };
-  
-  // Generate the optimized prompt
+
   const handleGeneratePrompt = () => {
-    // In a real app, this would call an API to process the inputs
-    // For now, we'll just build a structured prompt based on the inputs
-    
     const specialtyText = specialty ? SPECIALTY_OPTIONS.find(opt => opt.value === specialty)?.label || specialty : "";
     const toneText = tone ? TONE_OPTIONS.find(opt => opt.value === tone)?.label || tone : "";
     const detailText = detailLevel ? DETAIL_OPTIONS.find(opt => opt.value === detailLevel)?.label || detailLevel : "";
@@ -131,8 +122,7 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
     setOptimizedPrompt(formattedPrompt);
     setEditablePrompt(formattedPrompt);
   };
-  
-  // Handle copy to clipboard
+
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(isEditing ? editablePrompt : optimizedPrompt);
     toast({
@@ -140,20 +130,16 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
       description: "Prompt copied to clipboard"
     });
   };
-  
-  // Handle editing the prompt
+
   const handleEditPrompt = () => {
     if (isEditing) {
-      // Save edited prompt
       setOptimizedPrompt(editablePrompt);
       setIsEditing(false);
     } else {
-      // Enter edit mode
       setIsEditing(true);
     }
   };
-  
-  // Handle saving the prompt
+
   const handleSavePrompt = () => {
     if (onSavePrompt) {
       onSavePrompt(isEditing ? editablePrompt : optimizedPrompt);
@@ -178,7 +164,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
       </CardHeader>
       
       <CardContent className="space-y-6">
-        {/* LLM Selection */}
         <div className="space-y-1.5">
           <Label htmlFor="llm-select">Target AI Model</Label>
           <Select value={llm} onValueChange={setLlm}>
@@ -198,7 +183,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
           </Select>
         </div>
         
-        {/* Build or Example tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="build" className="flex-1">Build Prompt</TabsTrigger>
@@ -206,7 +190,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
           </TabsList>
           
           <TabsContent value="build" className="pt-4 space-y-6 animate-fade-in">
-            {/* Primary purpose */}
             <div className="space-y-1.5">
               <Label htmlFor="prompt-objective">What do you want the AI to do? <span className="text-primary">*</span></Label>
               <Textarea
@@ -218,7 +201,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
               />
             </div>
             
-            {/* Three column layout for main settings */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="specialty-select">Area of Specialty</Label>
@@ -269,7 +251,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
               </div>
             </div>
             
-            {/* Advanced Options (Collapsible) */}
             <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced} className="w-full border rounded-md p-2">
               <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium py-2 px-2 hover:bg-muted/50 rounded">
                 <span>Advanced Options</span>
@@ -309,7 +290,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
               </CollapsibleContent>
             </Collapsible>
             
-            {/* Generate Prompt Button */}
             <Button 
               onClick={handleGeneratePrompt}
               className="w-full" 
@@ -349,7 +329,6 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
           </TabsContent>
         </Tabs>
         
-        {/* Results Section */}
         {optimizedPrompt && (
           <div className="mt-6 space-y-4">
             <h3 className="font-bold flex items-center gap-2">
@@ -407,17 +386,10 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
         )}
       </CardContent>
       
-      <CardFooter className="border-t border-border pt-4 flex justify-between">
+      <CardFooter className="border-t border-border pt-4">
         <div className="text-xs text-muted-foreground">
           Optimized for {LLM_OPTIONS.find(opt => opt.value === llm)?.label || llm}
         </div>
-        
-        <Button variant="ghost" size="sm" className="text-xs" asChild>
-          <a href="/prompt-library" className="flex items-center gap-1.5">
-            View Prompt Library
-            <ArrowRight className="h-3.5 w-3.5" />
-          </a>
-        </Button>
       </CardFooter>
     </Card>
   );
