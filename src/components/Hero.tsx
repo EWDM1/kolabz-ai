@@ -17,13 +17,6 @@ const Hero = () => {
   const [promptBase, setPromptBase] = useState("");
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
   
-  // Example prompt template when user clicks on an example
-  const useExamplePrompt = (example: string) => {
-    setPromptBase(example);
-    // In a real app, this would trigger the optimization
-    handleOptimizePrompt(example);
-  };
-  
   // Function to optimize prompt (simulated)
   const handleOptimizePrompt = (prompt: string) => {
     // This would normally call an API to optimize the prompt
@@ -74,10 +67,8 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap gap-4 mb-8">
-              <Button size="lg" asChild>
-                <Link to="/signup">
-                  {t("hero.getStarted", "Get Started")}
-                </Link>
+              <Button size="lg" onClick={() => scrollToSection('pricing')}>
+                {t("hero.getStarted", "Get Started")}
               </Button>
               <Button size="lg" variant="outline" onClick={() => scrollToSection('pricing')}>
                 {t("hero.pricing", "See Pricing")}
@@ -116,36 +107,6 @@ const Hero = () => {
                   placeholder="Enter your prompt here. Be specific about what you want the AI to do."
                   className="mt-1 min-h-[100px]"
                 />
-              </div>
-              
-              <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
-                <h3 className="font-medium text-sm mb-2">{t("hero.examples", "Example Prompts (Click to use)")}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <button 
-                    onClick={() => useExamplePrompt("Create a data visualization dashboard for sales analytics")}
-                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                  >
-                    {t("hero.example1", "Create a data visualization dashboard")}
-                  </button>
-                  <button 
-                    onClick={() => useExamplePrompt("Write a blog post about productivity tips for remote workers")}
-                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                  >
-                    {t("hero.example2", "Write a blog post about productivity")}
-                  </button>
-                  <button 
-                    onClick={() => useExamplePrompt("Develop a marketing strategy for a new mobile app")}
-                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                  >
-                    {t("hero.example3", "Develop a marketing strategy")}
-                  </button>
-                  <button 
-                    onClick={() => useExamplePrompt("Create a Python script to analyze CSV data")}
-                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                  >
-                    {t("hero.example4", "Create a Python script")}
-                  </button>
-                </div>
               </div>
               
               <Button 
