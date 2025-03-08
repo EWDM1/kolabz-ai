@@ -12,30 +12,29 @@ import { cn } from "@/lib/utils";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
 const UserManagement = () => {
+  const navigate = useNavigate();
   const {
-    users,
-    loading,
-    fetchUsers,
+    users = [],
+    loading = false,
+    fetchUsers = () => {},
     selectedUsers,
     setSelectedUsers,
     filterValues,
     handleFilterChange,
-    resetFilters,
-    handleResetFilters,
-    handleFilterClick,
+    resetFilters = () => {},
+    handleFilterClick = () => {},
     filterVisible,
     filterUsers,
-    handleEditUser,
-    handleDeleteUser,
-    handleDeleteSelected,
-    deleteDialogOpen,
-    closeDeleteDialog,
-    confirmDeleteUser,
-    deleteDialogData,
-    sidebarOpen,
-    setSidebarOpen,
-    sidebarCollapsed,
-    navigate
+    handleEditUser = () => {},
+    handleDeleteUser = () => {},
+    handleDeleteSelected = () => {},
+    deleteDialogOpen = false,
+    closeDeleteDialog = () => {},
+    confirmDeleteUser = async () => {},
+    deleteDialogData = { isMultiple: false },
+    sidebarOpen = false,
+    setSidebarOpen = () => {},
+    sidebarCollapsed = false
   } = useUserManagementPage();
 
   // We need to adapt the onEdit and onDelete functions to match the expected types
@@ -64,16 +63,16 @@ const UserManagement = () => {
           </div>
           
           <UserManagementHeader 
-            onFilterClick={handleFilterClick}
             selectedCount={selectedUsers.length}
             onDeleteSelected={handleDeleteSelected}
+            toggleFilterVisible={handleFilterClick}
           />
           
           {filterVisible && (
             <UserFiltersPanel 
               filterValues={filterValues}
               onFilterChange={handleFilterChange}
-              onReset={handleResetFilters}
+              handleResetFilters={resetFilters}
             />
           )}
           
@@ -87,8 +86,8 @@ const UserManagement = () => {
           />
           
           <DeleteConfirmationDialog 
-            open={deleteDialogOpen}
-            onOpenChange={closeDeleteDialog}
+            isOpen={deleteDialogOpen}
+            onClose={closeDeleteDialog}
             onConfirm={confirmDeleteUser}
             isMultiple={deleteDialogData.isMultiple}
             count={deleteDialogData.isMultiple ? selectedUsers.length : 1}

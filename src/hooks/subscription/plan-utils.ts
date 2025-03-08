@@ -10,11 +10,12 @@ export const convertDbPlanToLocal = (dbPlan: DbPlan): SubscriptionPlan => {
   if (dbPlan.features) {
     try {
       if (typeof dbPlan.features === 'string') {
-        featuresArray = JSON.parse(dbPlan.features);
+        featuresArray = JSON.parse(dbPlan.features) as PlanFeature[];
       } else if (Array.isArray(dbPlan.features)) {
-        featuresArray = dbPlan.features as PlanFeature[];
+        // Type assertion to handle conversion from Json[] to PlanFeature[]
+        featuresArray = dbPlan.features as unknown as PlanFeature[];
       } else if (typeof dbPlan.features === 'object') {
-        featuresArray = JSON.parse(JSON.stringify(dbPlan.features));
+        featuresArray = JSON.parse(JSON.stringify(dbPlan.features)) as PlanFeature[];
       }
     } catch (e) {
       console.error('Error parsing plan features:', e);
