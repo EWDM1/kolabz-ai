@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 import { useUserManagementPage } from "@/hooks/use-user-management-page";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { UserFiltersPanel } from "@/components/admin/user-management/UserFiltersPanel";
@@ -17,7 +16,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 const UserManagement = () => {
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
   const [userData, setUserData] = useState(null);
