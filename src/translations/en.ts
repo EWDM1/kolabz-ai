@@ -21,7 +21,7 @@ const enTranslations = {
   "hero.optimizedPrompt": "Optimized Prompt:",
   "hero.copy": "Copy to Clipboard",
   "hero.plans": "See Plans & Pricing",
-  "hero.testimonial": "Trusted by 5,000+ creators and businesses",
+  "hero.testimonial": "Trusted by 10,000+ creators and businesses",
   
   "features.title": "Designed for prompt engineering excellence",
   "features.description": "Kolabz combines intuitive design with powerful functionality to help you generate prompts that get exceptional results from any AI model.",
