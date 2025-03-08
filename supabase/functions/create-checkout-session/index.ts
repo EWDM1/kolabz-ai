@@ -5,6 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
 // Get environment variables
 const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') as string
+const appUrl = Deno.env.get('APP_URL') || 'http://localhost:5173'
 
 serve(async (req) => {
   // Handle CORS preflight request
@@ -58,65 +59,32 @@ serve(async (req) => {
       apiVersion: '2022-11-15',
     })
 
-    // Get stripe_price_id from database
-    const { data: priceData, error: priceError } = await supabaseClient
-      .from('prices')
-      .select('stripe_price_id')
-      .eq('id', priceId)
+    // Get user data
+    const { data: userData, error: userDataError } = await supabaseClient
+      .from('users')
+      .select('email, name')
+      .eq('id', user.id)
       .single()
-
-    if (priceError || !priceData) {
-      throw new Error('Price not found')
-    }
-
-    // Get customer ID or create a new customer
-    const { data: customerData, error: customerError } = await supabaseClient
-      .from('customers')
-      .select('stripe_customer_id')
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    let customerId
-    if (customerData?.stripe_customer_id) {
-      customerId = customerData.stripe_customer_id
-    } else {
-      // Create a new customer
-      const newCustomer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id
-        }
-      })
       
-      customerId = newCustomer.id
-      
-      // Save customer ID to database
-      const { error: insertError } = await supabaseClient
-        .from('customers')
-        .insert({
-          user_id: user.id,
-          stripe_customer_id: customerId
-        })
-      
-      if (insertError) {
-        console.error('Error saving customer ID:', insertError)
-      }
+    if (userDataError) {
+      throw userDataError
     }
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
-      customer: customerId,
+      payment_method_types: ['card'],
       line_items: [
         {
-          price: priceData.stripe_price_id,
+          price: priceId,
           quantity: 1,
         },
       ],
       mode: 'subscription',
-      success_url: `${req.headers.get('origin')}/manage-subscription?success=true`,
-      cancel_url: `${req.headers.get('origin')}/checkout?canceled=true`,
+      success_url: `${appUrl}/subscribe/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/subscribe/cancel`,
+      customer_email: userData.email,
       metadata: {
-        user_id: user.id
+        user_id: user.id,
       },
     })
 

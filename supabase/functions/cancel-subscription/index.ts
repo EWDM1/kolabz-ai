@@ -4,12 +4,7 @@ import { corsHeaders } from '../_shared/cors.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
 // Get environment variables
-const supabaseUrl = Deno.env.get('SUPABASE_URL') as string
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') as string
 const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') as string
-
-// Create a Supabase client with the admin key
-const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 serve(async (req) => {
   // Handle CORS preflight request
@@ -18,91 +13,82 @@ serve(async (req) => {
   }
 
   try {
-    // Get the authorization header from the request
+    // Get the authorization header
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
+        JSON.stringify({ error: 'Authorization header is missing' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Get JWT token from the authorization header (Bearer token)
-    const token = authHeader.replace('Bearer ', '')
-    
-    // Verify the JWT token and get the user
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token)
-    
+    // Create Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { 
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false }
+      }
+    )
+
+    // Get current user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Invalid token or user not found' }),
+        JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Get subscription data from the database
-    const { data: subscriptionData, error: subscriptionError } = await supabase
+    // Load Stripe
+    const { Stripe } = await import('https://esm.sh/stripe@12.0.0?target=deno')
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2022-11-15',
+    })
+
+    // Get subscription ID from database
+    const { data: subscriptionData, error: subscriptionError } = await supabaseClient
       .from('subscriptions')
       .select('stripe_subscription_id')
       .eq('user_id', user.id)
       .eq('status', 'active')
       .maybeSingle()
-    
-    if (subscriptionError || !subscriptionData) {
-      return new Response(
-        JSON.stringify({ error: 'No active subscription found for this user' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+
+    if (subscriptionError) {
+      throw subscriptionError
     }
 
-    // If there's a Stripe subscription ID, cancel it in Stripe
-    if (subscriptionData.stripe_subscription_id) {
-      // Dynamically import Stripe
-      const { Stripe } = await import('https://esm.sh/stripe@12.0.0?target=deno')
-      const stripe = new Stripe(stripeSecretKey, {
-        apiVersion: '2022-11-15',
-      })
-      
-      try {
-        // Cancel at period end rather than immediately canceling
-        await stripe.subscriptions.update(subscriptionData.stripe_subscription_id, {
-          cancel_at_period_end: true
-        })
-      } catch (stripeError) {
-        console.error('Stripe cancellation error:', stripeError)
-        // Continue with local cancellation even if Stripe fails
-      }
+    if (!subscriptionData?.stripe_subscription_id) {
+      throw new Error('No active subscription found')
     }
 
-    // Update subscription status in the database
-    const { error: updateError } = await supabase
+    // Cancel the subscription
+    await stripe.subscriptions.cancel(subscriptionData.stripe_subscription_id)
+
+    // Update subscription status in database
+    const { error: updateError } = await supabaseClient
       .from('subscriptions')
-      .update({
+      .update({ 
         status: 'canceled',
         updated_at: new Date().toISOString()
       })
       .eq('user_id', user.id)
-      .eq('status', 'active')
-    
+      .eq('stripe_subscription_id', subscriptionData.stripe_subscription_id)
+
     if (updateError) {
-      return new Response(
-        JSON.stringify({ error: 'Failed to update subscription status' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      throw updateError
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'Subscription has been cancelled. You will have access until the end of your current billing period.' 
-      }),
+      JSON.stringify({ success: true, message: 'Subscription cancelled successfully' }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
     console.error('Error cancelling subscription:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: error.message || 'Failed to cancel subscription' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })

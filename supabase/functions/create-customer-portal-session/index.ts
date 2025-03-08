@@ -1,106 +1,88 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { corsHeaders } from '../_shared/cors.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+// Get environment variables
+const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') as string
+const appUrl = Deno.env.get('APP_URL') || 'http://localhost:5173'
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    // Get the authorization header from the request
-    const authHeader = req.headers.get('Authorization');
+    // Get the authorization header
+    const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'No authorization header' }),
+        JSON.stringify({ error: 'Authorization header is missing' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      )
     }
 
-    // Initialize Supabase client with the service role key
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Get JWT token from the authorization header (Bearer token)
-    const token = authHeader.replace('Bearer ', '');
-    
-    // Verify the JWT token and get the user
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
-    
+    // Create Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { 
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false }
+      }
+    )
+
+    // Get current user
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
     if (userError || !user) {
       return new Response(
-        JSON.stringify({ error: 'Invalid token or user not found' }),
+        JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      )
     }
 
-    // Get request parameters
-    const { returnUrl } = await req.json();
-    
-    // Get customer ID from the database or create one if it doesn't exist
-    const { data: subscriptionData, error: subscriptionError } = await supabase
+    // Parse request body
+    const body = await req.json().catch(() => ({}))
+    const returnUrl = body.returnUrl || `${appUrl}/manage-subscription`
+
+    // Load Stripe
+    const { Stripe } = await import('https://esm.sh/stripe@12.0.0?target=deno')
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2022-11-15',
+    })
+
+    // Get customer ID from database
+    const { data: subscriptionData, error: subscriptionError } = await supabaseClient
       .from('subscriptions')
-      .select('stripe_customer_id')
+      .select('customer_id')
       .eq('user_id', user.id)
-      .maybeSingle();
-    
-    if (subscriptionError || !subscriptionData) {
-      return new Response(
-        JSON.stringify({ error: 'No subscription found for this user' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    if (!subscriptionData.stripe_customer_id) {
-      return new Response(
-        JSON.stringify({ error: 'No Stripe customer ID found for this user' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      .eq('status', 'active')
+      .maybeSingle()
+
+    if (subscriptionError) {
+      throw subscriptionError
     }
 
-    // Create a customer portal session with Stripe
-    const session = await fetch('https://api.stripe.com/v1/billing_portal/sessions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${stripeSecretKey}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams({
-        'customer': subscriptionData.stripe_customer_id,
-        'return_url': returnUrl || `${req.headers.get('origin')}/manage-subscription`
-      })
-    });
-
-    const sessionData = await session.json();
-    
-    if (session.status !== 200) {
-      console.error('Stripe error:', sessionData);
-      return new Response(
-        JSON.stringify({ error: 'Failed to create Stripe portal session', details: sessionData }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!subscriptionData?.customer_id) {
+      throw new Error('No active subscription found')
     }
 
-    // Return the session URL
+    // Create customer portal session
+    const session = await stripe.billingPortal.sessions.create({
+      customer: subscriptionData.customer_id,
+      return_url: returnUrl,
+    })
+
     return new Response(
-      JSON.stringify({ url: sessionData.url }),
+      JSON.stringify({ url: session.url }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    )
   } catch (error) {
-    console.error('Error creating customer portal session:', error);
+    console.error('Error creating customer portal session:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+      JSON.stringify({ error: error.message || 'Failed to create customer portal session' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
-});
+})

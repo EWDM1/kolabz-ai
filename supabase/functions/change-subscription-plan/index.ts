@@ -3,6 +3,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { corsHeaders } from '../_shared/cors.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 
+// Get environment variables
 const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY') as string
 
 serve(async (req) => {
@@ -57,10 +58,10 @@ serve(async (req) => {
       apiVersion: '2022-11-15',
     })
 
-    // Get customer ID from subscriptions table
+    // Get subscription data from database
     const { data: subscriptionData, error: subscriptionError } = await supabaseClient
       .from('subscriptions')
-      .select('customer_id, subscription_id')
+      .select('stripe_subscription_id, customer_id')
       .eq('user_id', user.id)
       .eq('status', 'active')
       .maybeSingle()
@@ -69,90 +70,54 @@ serve(async (req) => {
       throw subscriptionError
     }
 
-    let customerId = subscriptionData?.customer_id
-
-    // If no customer exists, create one
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: {
-          user_id: user.id
-        }
-      })
-      customerId = customer.id
+    if (!subscriptionData?.stripe_subscription_id || !subscriptionData?.customer_id) {
+      throw new Error('No active subscription found')
     }
 
-    let result
-    
-    // If there's an existing subscription, update it
-    if (subscriptionData?.subscription_id) {
-      // Get the price ID based on the plan and interval
-      const { data: priceData, error: priceError } = await supabaseClient
-        .from('prices')
-        .select('id, stripe_price_id')
-        .eq('product_id', planId)
-        .eq('interval', isAnnual ? 'year' : 'month')
-        .single()
+    // Get price ID for the new plan
+    const { data: planData, error: planError } = await supabaseClient
+      .from('subscription_plans')
+      .select('stripe_price_id_monthly, stripe_price_id_annual')
+      .eq('id', planId)
+      .single()
 
-      if (priceError || !priceData) {
-        throw new Error('Price not found for the selected plan and interval')
-      }
+    if (planError || !planData) {
+      throw planError || new Error('Plan not found')
+    }
 
-      // Update the subscription
-      const subscription = await stripe.subscriptions.update(
-        subscriptionData.subscription_id,
+    const priceId = isAnnual ? planData.stripe_price_id_annual : planData.stripe_price_id_monthly
+
+    if (!priceId) {
+      throw new Error('Price ID not found for the selected plan')
+    }
+
+    // Update the subscription
+    await stripe.subscriptions.update(subscriptionData.stripe_subscription_id, {
+      items: [
         {
-          items: [{
-            price: priceData.stripe_price_id,
-          }],
-          proration_behavior: 'create_prorations'
-        }
-      )
-
-      result = { 
-        subscription_id: subscription.id,
-        customer_id: customerId,
-        message: 'Subscription updated successfully' 
-      }
-    } else {
-      // Get the price ID based on the plan and interval
-      const { data: priceData, error: priceError } = await supabaseClient
-        .from('prices')
-        .select('id, stripe_price_id')
-        .eq('product_id', planId)
-        .eq('interval', isAnnual ? 'year' : 'month')
-        .single()
-
-      if (priceError || !priceData) {
-        throw new Error('Price not found for the selected plan and interval')
-      }
-
-      // Create a new subscription
-      const subscription = await stripe.subscriptions.create({
-        customer: customerId,
-        items: [
-          { price: priceData.stripe_price_id },
-        ],
-        metadata: {
-          user_id: user.id
+          id: subscriptionData.stripe_subscription_id,
+          price: priceId,
         },
-        payment_behavior: 'default_incomplete',
-        payment_settings: {
-          save_default_payment_method: 'on_subscription'
-        },
-        expand: ['latest_invoice.payment_intent']
+      ],
+    })
+
+    // Update subscription in database
+    const { error: updateError } = await supabaseClient
+      .from('subscriptions')
+      .update({ 
+        plan_id: planId,
+        is_annual: isAnnual,
+        updated_at: new Date().toISOString()
       })
+      .eq('user_id', user.id)
+      .eq('stripe_subscription_id', subscriptionData.stripe_subscription_id)
 
-      result = { 
-        subscription_id: subscription.id,
-        customer_id: customerId,
-        client_secret: subscription.latest_invoice?.payment_intent?.client_secret,
-        message: 'Subscription created successfully'
-      }
+    if (updateError) {
+      throw updateError
     }
 
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({ success: true, message: 'Subscription plan changed successfully' }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
