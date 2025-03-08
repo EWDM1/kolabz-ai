@@ -1,5 +1,5 @@
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/components/LanguageContext";
 
@@ -22,7 +22,7 @@ const Login = () => {
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="relative z-10 rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <AuthForm mode="login" redirectUrl={returnUrl} />
+            <AuthForm mode="login" />
           </div>
         </div>
       </div>

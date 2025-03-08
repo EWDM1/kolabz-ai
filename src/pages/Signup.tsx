@@ -22,7 +22,7 @@ const Signup = () => {
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="relative z-10 rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <AuthForm mode="signup" redirectUrl={returnUrl} />
+            <AuthForm mode="signup" />
           </div>
         </div>
       </div>
