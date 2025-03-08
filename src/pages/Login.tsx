@@ -2,13 +2,31 @@
 import { Link, useLocation } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/components/LanguageContext";
+import { useEffect } from "react";
+import { useAuth } from "@/components/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const location = useLocation();
   const { t } = useLanguage();
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const navigate = useNavigate();
   
   // Check if we have a returnUrl in the location state
   const returnUrl = location.state?.returnUrl || '/';
+  
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      if (isSuperAdmin) {
+        navigate("/admin/dashboard");
+      } else if (isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate(returnUrl);
+      }
+    }
+  }, [user, isAdmin, isSuperAdmin, navigate, returnUrl]);
   
   return (
     <div className="flex min-h-screen flex-col bg-background">

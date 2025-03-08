@@ -13,7 +13,7 @@ interface FormData {
 export const useAuthForm = (mode: "login" | "signup") => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, register, isAdmin } = useAuth();
+  const { login, register, isAdmin, isSuperAdmin } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -72,8 +72,20 @@ export const useAuthForm = (mode: "login" | "signup") => {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
         if (success) {
-          // Navigate based on returnUrl or user role
-          navigate(isAdmin ? "/admin" : returnUrl);
+          // First check if the user is a superadmin, then check if they're an admin
+          if (isSuperAdmin) {
+            navigate("/admin/dashboard");
+          } else if (isAdmin) {
+            navigate("/admin");
+          } else {
+            // For regular users, navigate to the return URL
+            navigate(returnUrl);
+          }
+          
+          toast({
+            title: "Login successful",
+            description: "Welcome back!",
+          });
         } else {
           setFormError("Invalid email or password");
         }
