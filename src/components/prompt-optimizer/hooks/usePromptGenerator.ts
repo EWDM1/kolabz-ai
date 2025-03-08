@@ -35,6 +35,12 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
     setError("");
 
     try {
+      // Notify user the generation process has started
+      toast({
+        title: "Generating prompt...",
+        description: "This may take a moment"
+      });
+      
       const { data, error } = await supabase.functions.invoke("optimize-prompt", {
         body: params
       });
@@ -51,7 +57,7 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
         
         toast({
           title: "Success!",
-          description: "Your optimized prompt has been generated and saved"
+          description: "Your optimized prompt has been generated"
         });
       } else if (data && data.error) {
         throw new Error(data.error);
@@ -61,10 +67,18 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
     } catch (err: any) {
       console.error("Error generating prompt:", err);
       
+      // Clear any previous generating toast
+      toast({
+        title: "Generation stopped",
+        description: "There was an error generating the prompt",
+        variant: "destructive"
+      });
+      
       // Custom error message for the 402 Payment Required error
       let errorMessage = err.message || "Failed to generate prompt";
-      if (errorMessage.includes("402") || errorMessage.includes("payment")) {
-        errorMessage = "The DeepSeek API requires payment or has reached its limit. Please check the API key or try again later.";
+      if (errorMessage.includes("402") || errorMessage.includes("payment") || 
+          errorMessage.includes("DeepSeek") || errorMessage.includes("limit")) {
+        errorMessage = "The DeepSeek AI API requires payment or has reached its limit. Please check the API key or try again later.";
       }
       
       setError(errorMessage);

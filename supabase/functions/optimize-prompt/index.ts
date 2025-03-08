@@ -57,7 +57,7 @@ serve(async (req) => {
     const toneText = tone || "";
     const detailText = detailLevel || "detailed";
     
-    const systemMessage = `You are an expert prompt engineer tasked with creating the most effective prompts for AI models. Based on the user's parameters, craft a structured prompt that follows best practices for ${llm || "large language models"}.`;
+    const systemMessage = `You are an expert prompt engineer tasked with creating the most effective prompts for AI models. Based on the user's parameters, craft a structured prompt that follows best practices for ${llm || "large language models"}. Your output should be JUST THE PROMPT with no explanations or conclusions - this ensures users can copy-paste without editing.`;
     
     const userMessage = `Create an optimized prompt based on these parameters:
     - Target AI Model: ${llm || "Any LLM"}
@@ -69,7 +69,7 @@ serve(async (req) => {
     - Specific Questions: ${specificQuestions || ""}
     - Constraints: ${constraints || ""}
     
-    The prompt should be in a structured format using [Role], [Context], [Task], [Format], and [Constraints] sections as appropriate. Make it highly effective for the intended AI model.`;
+    The prompt should be in a structured format using [Role], [Context], [Task], [Format], and [Constraints] sections as appropriate. Make it highly effective for the intended AI model. DO NOT include any explanations or introductory text. Output ONLY the prompt text.`;
 
     // Call DeepSeek API
     console.log("Calling DeepSeek API...");

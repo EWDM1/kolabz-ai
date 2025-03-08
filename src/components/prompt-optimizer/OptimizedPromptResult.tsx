@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PromptDisplay from "./components/PromptDisplay";
 import PromptActions from "./components/PromptActions";
