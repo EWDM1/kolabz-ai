@@ -1,27 +1,30 @@
 
-import { Banner } from "@/components/ui/banner";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import AdminHeader from "@/components/admin/AdminHeader";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useUserManagementPage } from "@/hooks/use-user-management-page";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { UserFiltersPanel } from "@/components/admin/user-management/UserFiltersPanel";
-import { UserActionsPanel } from "@/components/admin/user-management/UserActionsPanel";
 import { UserTableSection } from "@/components/admin/user-management/UserTableSection";
-import { useUserManagementPage } from "@/hooks/use-user-management-page";
+import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
+import { AdminUser } from "@/components/admin/user-management/types";
 import { cn } from "@/lib/utils";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 const UserManagement = () => {
   const {
     users,
     loading,
     fetchUsers,
-    filterValues,
-    handleFilterChange,
-    handleResetFilters,
-    handleFilterClick,
     selectedUsers,
     setSelectedUsers,
+    filterValues,
+    handleFilterChange,
+    resetFilters,
+    handleResetFilters,
+    handleFilterClick,
+    filterVisible,
+    filterUsers,
     handleEditUser,
     handleDeleteUser,
     handleDeleteSelected,
@@ -35,97 +38,63 @@ const UserManagement = () => {
     navigate
   } = useUserManagementPage();
 
+  // We need to adapt the onEdit and onDelete functions to match the expected types
+  const handleEditUserAdapter = (user: AdminUser) => {
+    handleEditUser(user.id);
+  };
+  
+  const handleDeleteUserAdapter = (user: AdminUser) => {
+    handleDeleteUser(user.id);
+  };
+
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className={cn(
-        "flex-1 transition-all duration-300 ease-in-out w-full",
-        sidebarCollapsed ? "md:ml-16" : "md:ml-64",
-        "px-4 md:px-6 lg:px-8"
+        "flex-1 overflow-auto transition-all duration-300 ease-in-out",
+        sidebarCollapsed ? "ml-16" : "ml-64"
       )}>
-        <Banner
-          id="user-management-banner"
-          message="👤 Manage users, control access, and monitor activity."
-          variant="rainbow"
-          height="2.5rem"
-        />
-        
-        <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-        
-        <main className="flex-1 overflow-y-auto py-6">
-          <div className="space-y-6">
-            <UserManagementHeader
-              selectedCount={selectedUsers.length}
-              onDelete={handleDeleteSelected}
-              onRefresh={fetchUsers}
-            />
-            
-            <Tabs defaultValue="all">
-              <UserActionsPanel 
-                users={users}
-                onImportComplete={fetchUsers}
-                onAddUser={() => navigate("/admin/users/edit/new")}
-              />
-
-              <UserFiltersPanel
-                filterValues={filterValues}
-                onFilterChange={handleFilterChange}
-                onResetFilters={handleResetFilters}
-              />
-
-              <TabsContent value="all">
-                <UserTableSection
-                  users={users}
-                  filteredUsers={users}
-                  loading={loading}
-                  selectedUsers={selectedUsers}
-                  setSelectedUsers={setSelectedUsers}
-                  onEdit={handleEditUser}
-                  onDelete={handleDeleteUser}
-                  onDeleteSelected={handleDeleteSelected}
-                  onFilter={handleFilterClick}
-                />
-              </TabsContent>
-              
-              <TabsContent value="active">
-                <UserTableSection
-                  users={users}
-                  filteredUsers={users.filter(user => user.status === 'active')}
-                  loading={loading}
-                  selectedUsers={selectedUsers}
-                  setSelectedUsers={setSelectedUsers}
-                  onEdit={handleEditUser}
-                  onDelete={handleDeleteUser}
-                  onDeleteSelected={handleDeleteSelected}
-                  onFilter={handleFilterClick}
-                />
-              </TabsContent>
-              
-              <TabsContent value="inactive">
-                <UserTableSection
-                  users={users}
-                  filteredUsers={users.filter(user => user.status === 'inactive')}
-                  loading={loading}
-                  selectedUsers={selectedUsers}
-                  setSelectedUsers={setSelectedUsers}
-                  onEdit={handleEditUser}
-                  onDelete={handleDeleteUser}
-                  onDeleteSelected={handleDeleteSelected}
-                  onFilter={handleFilterClick}
-                />
-              </TabsContent>
-            </Tabs>
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center mb-6">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="gap-1">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Dashboard
+            </Button>
           </div>
-        </main>
+          
+          <UserManagementHeader 
+            onFilterClick={handleFilterClick}
+            selectedCount={selectedUsers.length}
+            onDeleteSelected={handleDeleteSelected}
+          />
+          
+          {filterVisible && (
+            <UserFiltersPanel 
+              filterValues={filterValues}
+              onFilterChange={handleFilterChange}
+              onReset={handleResetFilters}
+            />
+          )}
+          
+          <UserTableSection 
+            users={filterUsers(users)}
+            loading={loading}
+            selectedUsers={selectedUsers}
+            setSelectedUsers={setSelectedUsers}
+            onEdit={handleEditUserAdapter}
+            onDelete={handleDeleteUserAdapter}
+          />
+          
+          <DeleteConfirmationDialog 
+            open={deleteDialogOpen}
+            onOpenChange={closeDeleteDialog}
+            onConfirm={confirmDeleteUser}
+            isMultiple={deleteDialogData.isMultiple}
+            count={deleteDialogData.isMultiple ? selectedUsers.length : 1}
+          />
+        </div>
       </div>
-      
-      <DeleteConfirmationDialog
-        isOpen={deleteDialogOpen}
-        onClose={closeDeleteDialog}
-        onConfirm={confirmDeleteUser}
-        isMultiple={deleteDialogData.isMultiple}
-      />
     </div>
   );
 };

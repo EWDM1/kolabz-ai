@@ -1,29 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { Json } from "@/integrations/supabase/types";
+import { SubscriptionPlan } from "./types";
+import { 
+  fetchPlansService, 
+  savePlanService, 
+  togglePlanStatusService,
+  deletePlanService
+} from "./plan-service";
 
-export interface PlanFeature {
-  text: string;
-  included: boolean;
-}
-
-export interface SubscriptionPlan {
-  id: string;
-  name: string;
-  description: string | null;
-  price_monthly: number;
-  price_annual: number;
-  currency: string;
-  trial_days: number;
-  features: PlanFeature[];
-  active: boolean;
-  stripe_price_id_monthly: string | null;
-  stripe_price_id_annual: string | null;
-  created_at: string;
-  updated_at: string;
-}
+export type { PlanFeature, SubscriptionPlan } from "./types";
 
 export const useSubscriptionPlans = () => {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
@@ -31,58 +17,13 @@ export const useSubscriptionPlans = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   
-  // Helper function to convert database data to our interface format
-  const convertDbPlanToLocal = (dbPlan: any): SubscriptionPlan => {
-    let featuresArray: PlanFeature[] = [];
-    
-    // Handle features conversion from JSON to PlanFeature[]
-    if (dbPlan.features) {
-      try {
-        if (typeof dbPlan.features === 'string') {
-          featuresArray = JSON.parse(dbPlan.features);
-        } else if (Array.isArray(dbPlan.features)) {
-          featuresArray = dbPlan.features;
-        } else if (typeof dbPlan.features === 'object') {
-          featuresArray = JSON.parse(JSON.stringify(dbPlan.features));
-        }
-      } catch (e) {
-        console.error('Error parsing plan features:', e);
-        featuresArray = [];
-      }
-    }
-    
-    return {
-      id: dbPlan.id,
-      name: dbPlan.name || '',
-      description: dbPlan.description,
-      price_monthly: dbPlan.price_monthly,
-      price_annual: dbPlan.price_annual,
-      currency: dbPlan.currency,
-      trial_days: dbPlan.trial_days,
-      features: featuresArray,
-      active: dbPlan.active,
-      stripe_price_id_monthly: dbPlan.stripe_price_id_monthly,
-      stripe_price_id_annual: dbPlan.stripe_price_id_annual,
-      created_at: dbPlan.created_at,
-      updated_at: dbPlan.updated_at
-    };
-  };
-  
   // Fetch all subscription plans
   const fetchPlans = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const { data, error } = await supabase
-        .from('subscription_plans')
-        .select('*')
-        .order('price_monthly', { ascending: true });
-      
-      if (error) throw error;
-      
-      // Convert the data to our interface format
-      const formattedPlans = data?.map(convertDbPlanToLocal) || [];
+      const formattedPlans = await fetchPlansService();
       setPlans(formattedPlans);
     } catch (err: any) {
       console.error('Error fetching subscription plans:', err);
@@ -102,61 +43,7 @@ export const useSubscriptionPlans = () => {
     try {
       setLoading(true);
       
-      let result;
-      
-      // Ensure required fields for new plans
-      const dbPlan = {
-        ...plan,
-        name: plan.name || '',
-        price_monthly: plan.price_monthly || 0,
-        price_annual: plan.price_annual || 0,
-        // Convert the features to a JSON string for the database
-        features: JSON.stringify(plan.features || [])
-      };
-      
-      if (plan.id) {
-        // Update existing plan
-        result = await supabase
-          .from('subscription_plans')
-          .update({
-            name: dbPlan.name,
-            description: dbPlan.description,
-            price_monthly: dbPlan.price_monthly,
-            price_annual: dbPlan.price_annual,
-            currency: dbPlan.currency,
-            trial_days: dbPlan.trial_days,
-            features: dbPlan.features,
-            active: dbPlan.active,
-            stripe_price_id_monthly: dbPlan.stripe_price_id_monthly,
-            stripe_price_id_annual: dbPlan.stripe_price_id_annual,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', plan.id)
-          .select()
-          .single();
-      } else {
-        // Create new plan
-        result = await supabase
-          .from('subscription_plans')
-          .insert({
-            name: dbPlan.name,
-            description: dbPlan.description,
-            price_monthly: dbPlan.price_monthly,
-            price_annual: dbPlan.price_annual,
-            currency: dbPlan.currency || 'usd',
-            trial_days: dbPlan.trial_days || 7,
-            features: dbPlan.features,
-            active: dbPlan.active !== undefined ? dbPlan.active : true,
-            stripe_price_id_monthly: dbPlan.stripe_price_id_monthly,
-            stripe_price_id_annual: dbPlan.stripe_price_id_annual,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-          .select()
-          .single();
-      }
-      
-      if (result.error) throw result.error;
+      const savedPlan = await savePlanService(plan);
       
       toast({
         title: "Success",
@@ -166,7 +53,7 @@ export const useSubscriptionPlans = () => {
       // Refresh plans
       fetchPlans();
       
-      return convertDbPlanToLocal(result.data);
+      return savedPlan;
     } catch (err: any) {
       console.error('Error saving subscription plan:', err);
       toast({
@@ -185,15 +72,7 @@ export const useSubscriptionPlans = () => {
     try {
       setLoading(true);
       
-      const { error } = await supabase
-        .from('subscription_plans')
-        .update({ 
-          active,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', planId);
-      
-      if (error) throw error;
+      await togglePlanStatusService(planId, active);
       
       toast({
         title: "Success",
@@ -219,12 +98,7 @@ export const useSubscriptionPlans = () => {
     try {
       setLoading(true);
       
-      const { error } = await supabase
-        .from('subscription_plans')
-        .delete()
-        .eq('id', planId);
-      
-      if (error) throw error;
+      await deletePlanService(planId);
       
       toast({
         title: "Success",
