@@ -1,10 +1,9 @@
 
 import { useState } from "react";
-import { Copy, FileEdit, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useTheme } from "@/components/ThemeProvider";
+import { Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import PromptDisplay from "./components/PromptDisplay";
+import PromptActions from "./components/PromptActions";
 
 interface OptimizedPromptResultProps {
   optimizedPrompt: string;
@@ -13,7 +12,6 @@ interface OptimizedPromptResultProps {
 
 const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromptResultProps) => {
   const { toast } = useToast();
-  const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [editablePrompt, setEditablePrompt] = useState(optimizedPrompt);
 
@@ -58,52 +56,19 @@ const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromp
         Optimized Prompt:
       </h3>
       
-      {isEditing ? (
-        <Textarea
-          value={editablePrompt}
-          onChange={(e) => setEditablePrompt(e.target.value)}
-          className="min-h-[200px] font-mono text-sm"
-        />
-      ) : (
-        <div className={`p-4 rounded-lg border ${
-          theme === 'dark' 
-            ? 'border-gray-700 bg-gray-800/50' 
-            : 'border-gray-200 bg-gray-50/80'
-        }`}>
-          <pre className="whitespace-pre-wrap text-sm font-mono">{optimizedPrompt}</pre>
-        </div>
-      )}
+      <PromptDisplay 
+        isEditing={isEditing}
+        optimizedPrompt={optimizedPrompt}
+        editablePrompt={editablePrompt}
+        onEditablePromptChange={setEditablePrompt}
+      />
       
-      <div className="flex flex-wrap gap-3">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleCopyPrompt}
-          className="flex items-center gap-1.5"
-        >
-          <Copy className="h-3.5 w-3.5" />
-          Copy to Clipboard
-        </Button>
-        
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleEditPrompt}
-          className="flex items-center gap-1.5"
-        >
-          <FileEdit className="h-3.5 w-3.5" />
-          {isEditing ? "Save Edits" : "Edit Prompt"}
-        </Button>
-        
-        <Button 
-          variant="secondary" 
-          size="sm"
-          onClick={handleSavePrompt}
-          className="flex items-center gap-1.5 ml-auto"
-        >
-          Save Prompt
-        </Button>
-      </div>
+      <PromptActions 
+        isEditing={isEditing}
+        onCopyPrompt={handleCopyPrompt}
+        onEditPrompt={handleEditPrompt}
+        onSavePrompt={handleSavePrompt}
+      />
     </div>
   );
 };
