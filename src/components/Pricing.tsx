@@ -17,7 +17,7 @@ const Pricing = () => {
       description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
       features: [
         { text: t("pricing.features.unlimited_opt", "Unlimited prompt optimizations"), included: true },
-        { text: t("pricing.features.unlimited_lib", "Unlimited prompt library"), included: true },
+        { text: t("pricing.features.save_prompts", "Save Up to 100 Prompts"), included: true },
         { text: t("pricing.features.all_templates", "Access to all templates"), included: true },
         { text: t("pricing.features.export", "1-click export to any platform"), included: true },
         { text: t("pricing.features.priority", "Priority support"), included: false },
