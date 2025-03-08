@@ -34,10 +34,76 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           onClose={onClose} 
         />
         
-        <SidebarContent 
-          isCollapsed={isCollapsed} 
-          onClose={onClose} 
-        />
+        <div className="flex-1 py-4">
+          <SidebarItem 
+            icon={<LayoutDashboard size={20} />} 
+            label="Dashboard" 
+            href="/admin" 
+            isActive={location.pathname === "/admin"}
+            isCollapsed={isCollapsed}
+            onClick={onClose}
+          />
+          
+          <SidebarItem 
+            icon={<Users size={20} />} 
+            label="User Management" 
+            href="/admin/user-management" 
+            isActive={location.pathname.includes("/admin/user-management")}
+            isCollapsed={isCollapsed}
+            onClick={onClose}
+          />
+          
+          <SidebarItem 
+            icon={<Puzzle size={20} />} 
+            label="Feature Management" 
+            href="/admin/feature-management" 
+            isActive={location.pathname.includes("/admin/feature-management")}
+            isCollapsed={isCollapsed}
+            onClick={onClose}
+          />
+          
+          <SidebarItem 
+            icon={<CreditCard size={20} />} 
+            label="Subscriptions" 
+            href="/admin/subscription-management" 
+            isActive={location.pathname.includes("/admin/subscription-management")}
+            isCollapsed={isCollapsed}
+            onClick={onClose}
+          />
+          
+          <SidebarGroup 
+            icon={<Settings size={20} />}
+            label="Settings" 
+            isCollapsed={isCollapsed}
+          >
+            <SidebarItem 
+              icon={<Settings size={20} />} 
+              label="Integrations" 
+              href="/admin/integrations-settings" 
+              isActive={location.pathname.includes("/admin/integrations-settings")}
+              isCollapsed={isCollapsed}
+              onClick={onClose}
+            />
+            
+            <SidebarItem 
+              icon={<Zap size={20} />} 
+              label="Stripe Settings" 
+              href="/admin/stripe-settings" 
+              isActive={location.pathname.includes("/admin/stripe-settings")}
+              isCollapsed={isCollapsed}
+              onClick={onClose}
+            />
+          </SidebarGroup>
+          
+          <SidebarItem 
+            icon={<HelpCircle size={20} />} 
+            label="Help & Support" 
+            href="/admin/help" 
+            isActive={location.pathname.includes("/admin/help")}
+            isCollapsed={isCollapsed}
+            onClick={onClose}
+          />
+        </div>
       </aside>
     </>
   );

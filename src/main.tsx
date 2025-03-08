@@ -25,8 +25,6 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import UserManagement from './pages/admin/UserManagement'
 import EditUser from './pages/admin/EditUser'
 import FeatureManagement from './pages/admin/FeatureManagement'
-import Analytics from './pages/admin/Analytics'
-import EmailManager from './pages/admin/EmailManager'
 import IntegrationsSettings from './pages/admin/IntegrationsSettings'
 import StripeSettings from './pages/admin/StripeSettings'
 import SubscriptionManagement from './pages/admin/SubscriptionManagement'
@@ -93,14 +91,6 @@ const router = createBrowserRouter([
       {
         path: 'admin/feature-management',
         element: <FeatureManagement />,
-      },
-      {
-        path: 'admin/analytics',
-        element: <Analytics />,
-      },
-      {
-        path: 'admin/email-manager',
-        element: <EmailManager />,
       },
       {
         path: 'admin/integrations-settings',
