@@ -1,9 +1,23 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
-import { HelpCircle, LogOut } from "lucide-react";
+import { 
+  HelpCircle, 
+  LogOut, 
+  PlusCircle,
+  X,
+  Search,
+  SlidersHorizontal,
+  Download,
+  Trash,
+  Clock,
+  Eye,
+  Edit,
+  Tag
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
