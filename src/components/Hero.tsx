@@ -54,128 +54,149 @@ const Hero = () => {
       </div>
 
       <div className="container px-4 mx-auto relative z-10">
-        <div className="flex flex-col items-center text-center mb-12">
-          <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-sm text-primary font-medium mb-4 animate-slide-up delay-100">
-            <span className="w-2 h-2 rounded-full bg-primary mr-2"></span>
-            {t("hero.tagline", "Craft perfect prompts in seconds")}
-          </div>
-          
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight animate-slide-up delay-200 mb-4 max-w-3xl">
-            {t("hero.title", "Master AI Prompts")} <br /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
-              {t("hero.titleAccent", "With Precision")}
-            </span>
-          </h1>
-          
-          <p className="text-lg text-muted-foreground animate-slide-up delay-300 max-w-2xl">
-            {t("hero.description", "Kolabz empowers you to generate optimized prompts for any AI model. Create, refine, and save prompts that get better results, every time.")}
-          </p>
-        </div>
-
-        <div className="max-w-3xl mx-auto bg-card rounded-xl shadow-lg border border-border p-6 animate-fade-in">
-          <h2 className="text-2xl font-bold mb-6 text-center">Prompt Optimizer</h2>
-          
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="target-model">Target AI Model</Label>
-              <Input 
-                id="target-model"
-                value={targetModel}
-                onChange={(e) => setTargetModel(e.target.value)}
-                placeholder="e.g., GPT-4, Claude, Gemini, etc."
-                className="mt-1"
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left Column - Hero content */}
+          <div className="flex flex-col items-start text-left">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-sm text-primary font-medium mb-4 animate-slide-up delay-100">
+              <span className="w-2 h-2 rounded-full bg-primary mr-2"></span>
+              {t("hero.tagline", "Craft perfect prompts in seconds")}
             </div>
             
-            <div>
-              <Label htmlFor="prompt-base">Your Base Prompt</Label>
-              <Textarea 
-                id="prompt-base"
-                value={promptBase}
-                onChange={(e) => setPromptBase(e.target.value)}
-                placeholder="Enter your prompt here. Be specific about what you want the AI to do."
-                className="mt-1 min-h-[100px]"
-              />
-            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight animate-slide-up delay-200 mb-6">
+              {t("hero.title", "Master AI Prompts")} <br /> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
+                {t("hero.titleAccent", "With Precision")}
+              </span>
+            </h1>
             
-            <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
-              <h3 className="font-medium text-sm mb-2">Example Prompts (Click to use)</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <button 
-                  onClick={() => useExamplePrompt("Create a data visualization dashboard for sales analytics")}
-                  className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                >
-                  Create a data visualization dashboard
-                </button>
-                <button 
-                  onClick={() => useExamplePrompt("Write a blog post about productivity tips for remote workers")}
-                  className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                >
-                  Write a blog post about productivity
-                </button>
-                <button 
-                  onClick={() => useExamplePrompt("Develop a marketing strategy for a new mobile app")}
-                  className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                >
-                  Develop a marketing strategy
-                </button>
-                <button 
-                  onClick={() => useExamplePrompt("Create a Python script to analyze CSV data")}
-                  className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
-                >
-                  Create a Python script
-                </button>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={() => handleOptimizePrompt(promptBase)}
-              className="w-full" 
-              size="lg"
-              disabled={!promptBase.trim()}
-            >
-              Optimize Prompt
-            </Button>
-            
-            {optimizedPrompt && (
-              <div className="mt-6 space-y-4">
-                <h3 className="font-bold">Optimized Prompt:</h3>
-                <div className={`p-4 rounded-lg border ${
-                  theme === 'dark' 
-                    ? 'border-gray-700 bg-gray-800/50' 
-                    : 'border-gray-200 bg-gray-50/80'
-                }`}>
-                  <pre className="whitespace-pre-wrap text-sm">{optimizedPrompt}</pre>
-                </div>
-                
-                <div className="flex justify-between">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      navigator.clipboard.writeText(optimizedPrompt);
-                    }}
-                  >
-                    Copy to Clipboard
-                  </Button>
-                  
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => scrollToSection('pricing')}
-                  >
-                    See Plans & Pricing
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          <div className="mt-6 pt-4 border-t border-border">
-            <p className="text-xs text-muted-foreground text-center">
-              {t("hero.security", "Secure payments via Stripe • 7-day free trial • Cancel anytime")}
+            <p className="text-lg text-muted-foreground animate-slide-up delay-300 mb-8 max-w-xl">
+              {t("hero.description", "Kolabz empowers you to generate optimized prompts for any AI model. Create, refine, and save prompts that get better results, every time.")}
             </p>
+
+            <div className="flex flex-wrap gap-4 mb-8">
+              <Button size="lg" asChild>
+                <Link to="/signup">
+                  {t("hero.getStarted", "Get Started")}
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" onClick={() => scrollToSection('pricing')}>
+                {t("hero.pricing", "See Pricing")}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="flex items-center text-sm text-muted-foreground">
+              <span className="mr-2">★★★★★</span>
+              <span>{t("hero.testimonial", "Trusted by 10,000+ creators and businesses")}</span>
+            </div>
+          </div>
+
+          {/* Right Column - Prompt Optimizer Tool */}
+          <div className="bg-card rounded-xl shadow-lg border border-border p-6 animate-fade-in">
+            <h2 className="text-2xl font-bold mb-6">{t("hero.promptOptimizer", "Prompt Optimizer")}</h2>
+            
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="target-model">{t("hero.targetModel", "Target AI Model")}</Label>
+                <Input 
+                  id="target-model"
+                  value={targetModel}
+                  onChange={(e) => setTargetModel(e.target.value)}
+                  placeholder="e.g., GPT-4, Claude, Gemini, etc."
+                  className="mt-1"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="prompt-base">{t("hero.basePrompt", "Your Base Prompt")}</Label>
+                <Textarea 
+                  id="prompt-base"
+                  value={promptBase}
+                  onChange={(e) => setPromptBase(e.target.value)}
+                  placeholder="Enter your prompt here. Be specific about what you want the AI to do."
+                  className="mt-1 min-h-[100px]"
+                />
+              </div>
+              
+              <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                <h3 className="font-medium text-sm mb-2">{t("hero.examples", "Example Prompts (Click to use)")}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <button 
+                    onClick={() => useExamplePrompt("Create a data visualization dashboard for sales analytics")}
+                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                  >
+                    {t("hero.example1", "Create a data visualization dashboard")}
+                  </button>
+                  <button 
+                    onClick={() => useExamplePrompt("Write a blog post about productivity tips for remote workers")}
+                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                  >
+                    {t("hero.example2", "Write a blog post about productivity")}
+                  </button>
+                  <button 
+                    onClick={() => useExamplePrompt("Develop a marketing strategy for a new mobile app")}
+                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                  >
+                    {t("hero.example3", "Develop a marketing strategy")}
+                  </button>
+                  <button 
+                    onClick={() => useExamplePrompt("Create a Python script to analyze CSV data")}
+                    className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                  >
+                    {t("hero.example4", "Create a Python script")}
+                  </button>
+                </div>
+              </div>
+              
+              <Button 
+                onClick={() => handleOptimizePrompt(promptBase)}
+                className="w-full" 
+                size="lg"
+                disabled={!promptBase.trim()}
+              >
+                {t("hero.optimize", "Optimize Prompt")}
+              </Button>
+              
+              {optimizedPrompt && (
+                <div className="mt-6 space-y-4">
+                  <h3 className="font-bold">{t("hero.optimizedPrompt", "Optimized Prompt:")}</h3>
+                  <div className={`p-4 rounded-lg border ${
+                    theme === 'dark' 
+                      ? 'border-gray-700 bg-gray-800/50' 
+                      : 'border-gray-200 bg-gray-50/80'
+                  }`}>
+                    <pre className="whitespace-pre-wrap text-sm">{optimizedPrompt}</pre>
+                  </div>
+                  
+                  <div className="flex justify-between">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(optimizedPrompt);
+                      }}
+                    >
+                      {t("hero.copy", "Copy to Clipboard")}
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => scrollToSection('pricing')}
+                    >
+                      {t("hero.plans", "See Plans & Pricing")}
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground text-center">
+                {t("hero.security", "Secure payments via Stripe • 7-day free trial • Cancel anytime")}
+              </p>
+            </div>
           </div>
         </div>
       </div>
