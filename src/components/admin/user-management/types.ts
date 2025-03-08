@@ -12,8 +12,39 @@ export interface AdminUser {
 }
 
 export interface UserTableProps {
+  users: AdminUser[];
+  loading?: boolean;
   selectedUsers: string[];
   setSelectedUsers: (users: string[]) => void;
   onEdit?: (user: AdminUser) => void;
   onDelete?: (userId: string) => void;
+}
+
+export interface UserManagementHeaderProps {
+  selectedCount: number;
+  onDelete: () => void;
+  onRefresh: () => Promise<void> | void;
+}
+
+export interface ImportActionsProps {
+  onImportComplete?: () => Promise<void> | void;
+}
+
+export interface ExportActionsProps {
+  users?: AdminUser[];
+}
+
+export interface DataActionsProps {
+  onFilter: () => void;
+  onDeleteSelected: () => void;
+  selectedCount: number;
+}
+
+export interface DeleteConfirmationDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isMultiple?: boolean;
+  title?: string;
+  description?: string;
 }

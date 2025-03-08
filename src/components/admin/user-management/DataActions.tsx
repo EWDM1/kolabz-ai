@@ -3,12 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Filter, Trash2 } from "lucide-react";
 import { ExportActions } from "./ExportActions";
 import { ImportActions } from "./ImportActions";
-
-interface DataActionsProps {
-  onFilter: () => void;
-  onDeleteSelected: () => void;
-  selectedCount: number;
-}
+import { DataActionsProps } from "./types";
 
 export function DataActions({ onFilter, onDeleteSelected, selectedCount }: DataActionsProps) {
   return (

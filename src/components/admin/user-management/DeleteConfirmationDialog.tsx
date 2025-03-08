@@ -10,21 +10,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
-interface DeleteConfirmationDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  description: string;
-}
+import { DeleteConfirmationDialogProps } from "./types";
 
 export function DeleteConfirmationDialog({
   isOpen,
   onClose,
   onConfirm,
-  title,
-  description,
+  isMultiple = false,
+  title = isMultiple ? "Delete Multiple Users" : "Delete User",
+  description = isMultiple
+    ? "Are you sure you want to delete these users? This action cannot be undone."
+    : "Are you sure you want to delete this user? This action cannot be undone."
 }: DeleteConfirmationDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -102,6 +102,12 @@ const UserManagement = () => {
     setFilterValues({});
   };
 
+  // Handler for filter button
+  const handleFilterClick = () => {
+    // Scroll to filter section
+    document.querySelector('.border.rounded-md.p-4.mb-6')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="flex min-h-screen bg-background">
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -209,7 +215,11 @@ const UserManagement = () => {
               </div>
 
               <TabsContent value="all">
-                <DataActions />
+                <DataActions 
+                  onFilter={handleFilterClick}
+                  onDeleteSelected={handleDeleteSelected}
+                  selectedCount={selectedUsers.length}
+                />
                 <UserTable
                   users={users}
                   loading={loading}
@@ -221,7 +231,11 @@ const UserManagement = () => {
               </TabsContent>
               
               <TabsContent value="active">
-                <DataActions />
+                <DataActions 
+                  onFilter={handleFilterClick}
+                  onDeleteSelected={handleDeleteSelected}
+                  selectedCount={selectedUsers.length}
+                />
                 <UserTable
                   users={users.filter(user => user.status === 'active')}
                   loading={loading}
@@ -233,7 +247,11 @@ const UserManagement = () => {
               </TabsContent>
               
               <TabsContent value="inactive">
-                <DataActions />
+                <DataActions 
+                  onFilter={handleFilterClick}
+                  onDeleteSelected={handleDeleteSelected}
+                  selectedCount={selectedUsers.length}
+                />
                 <UserTable
                   users={users.filter(user => user.status === 'inactive')}
                   loading={loading}
@@ -249,7 +267,7 @@ const UserManagement = () => {
       </div>
       
       <DeleteConfirmationDialog
-        open={deleteDialogOpen}
+        isOpen={deleteDialogOpen}
         onClose={closeDeleteDialog}
         onConfirm={confirmDeleteUser}
         isMultiple={deleteDialogData.isMultiple}
