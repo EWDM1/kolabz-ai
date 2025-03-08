@@ -109,7 +109,7 @@ serve(async (req) => {
 })
 
 // Handler for successful payment intents
-async function handlePaymentIntentSucceeded(paymentIntent: any) {
+async function handlePaymentIntentSucceeded(paymentIntent) {
   console.log(`PaymentIntent was successful: ${paymentIntent.id}`)
   
   // Here you would typically:
@@ -117,33 +117,33 @@ async function handlePaymentIntentSucceeded(paymentIntent: any) {
   // 2. Update your database with order status
   // 3. Possibly send email confirmation
   
-  const { data, error } = await supabase
-    .from('app_settings')
-    .select('*')
-    .eq('key', 'last_payment_intent')
-    .single()
-  
-  if (error && error.code !== 'PGRST116') {
-    console.error('Error checking payment record:', error)
-  }
-  
-  // Store or update the last payment intent (just as an example)
-  const upsertResult = await supabase
-    .from('app_settings')
-    .upsert({
-      key: 'last_payment_intent',
-      value: paymentIntent.id,
-      description: 'Latest successful payment intent',
-      updated_at: new Date().toISOString()
-    })
-  
-  if (upsertResult.error) {
-    console.error('Error storing payment record:', upsertResult.error)
+  try {
+    const { data, error } = await supabase
+      .from('app_settings')
+      .select('*')
+      .eq('key', 'last_payment_intent')
+      .single()
+    
+    // Store or update the last payment intent (just as an example)
+    const upsertResult = await supabase
+      .from('app_settings')
+      .upsert({
+        key: 'last_payment_intent',
+        value: paymentIntent.id,
+        description: 'Latest successful payment intent',
+        updated_at: new Date().toISOString()
+      })
+    
+    if (upsertResult.error) {
+      console.error('Error storing payment record:', upsertResult.error)
+    }
+  } catch (error) {
+    console.error('Error handling payment intent:', error)
   }
 }
 
 // Handler for completed checkout sessions
-async function handleCheckoutSessionCompleted(session: any) {
+async function handleCheckoutSessionCompleted(session) {
   console.log(`Checkout session completed: ${session.id}`)
   
   if (session.customer && session.subscription) {
@@ -152,15 +152,86 @@ async function handleCheckoutSessionCompleted(session: any) {
     // 1. Associate the subscription with the user
     // 2. Update user access/permissions
     // 3. Send welcome email
+    try {
+      // Find user with this customer ID
+      const { data: userData, error: userError } = await supabase
+        .from('subscriptions')
+        .select('user_id')
+        .eq('stripe_customer_id', session.customer)
+        .maybeSingle()
+      
+      if (userError || !userData) {
+        console.error('Error finding user for customer:', userError || 'No user found')
+        return
+      }
+      
+      // Update the subscription data
+      const { error: updateError } = await supabase
+        .from('subscriptions')
+        .update({
+          status: 'active',
+          stripe_subscription_id: session.subscription,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userData.user_id)
+      
+      if (updateError) {
+        console.error('Error updating subscription:', updateError)
+      }
+    } catch (error) {
+      console.error('Error handling checkout session:', error)
+    }
   }
 }
 
 // Handler for subscription events
-async function handleSubscriptionEvent(subscription: any, eventType: string) {
+async function handleSubscriptionEvent(subscription, eventType) {
   console.log(`Subscription event ${eventType}: ${subscription.id}`)
   
-  // Here you would typically:
-  // 1. Update user subscription status
-  // 2. Handle upgrades, downgrades, cancellations
-  // 3. Send relevant emails
+  try {
+    // Find the user with this subscription
+    const { data: userData, error: userError } = await supabase
+      .from('subscriptions')
+      .select('user_id')
+      .eq('stripe_subscription_id', subscription.id)
+      .maybeSingle()
+    
+    if (userError || !userData) {
+      console.error('Error finding user for subscription:', userError || 'No user found')
+      return
+    }
+    
+    // Update status based on event type
+    let status
+    switch (eventType) {
+      case 'customer.subscription.created':
+        status = 'active'
+        break
+      case 'customer.subscription.updated':
+        status = subscription.status
+        break
+      case 'customer.subscription.deleted':
+        status = 'canceled'
+        break
+      default:
+        status = subscription.status
+    }
+    
+    // Update the subscription status
+    const { error: updateError } = await supabase
+      .from('subscriptions')
+      .update({
+        status: status,
+        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userData.user_id)
+    
+    if (updateError) {
+      console.error('Error updating subscription status:', updateError)
+    }
+  } catch (error) {
+    console.error('Error handling subscription event:', error)
+  }
 }

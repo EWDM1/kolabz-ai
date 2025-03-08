@@ -1,3 +1,4 @@
+
 // Stripe configuration with persistent settings from Supabase
 import { supabase } from "@/integrations/supabase/client";
 
@@ -85,13 +86,40 @@ export const saveStripeConfig = async (
   value: string | null
 ): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    // Check if the setting exists
+    const { data, error: checkError } = await supabase
       .from('app_settings')
-      .update({ value, updated_at: new Date().toISOString() })
-      .eq('key', key);
+      .select('id')
+      .eq('key', key)
+      .maybeSingle();
     
-    if (error) {
-      console.error('Error saving Stripe configuration:', error);
+    if (checkError) {
+      console.error('Error checking if setting exists:', checkError);
+      return false;
+    }
+    
+    let result;
+    
+    if (data) {
+      // Update existing setting
+      result = await supabase
+        .from('app_settings')
+        .update({ value, updated_at: new Date().toISOString() })
+        .eq('key', key);
+    } else {
+      // Insert new setting
+      result = await supabase
+        .from('app_settings')
+        .insert({ 
+          key, 
+          value, 
+          description: `Stripe ${key} configuration`,
+          updated_at: new Date().toISOString() 
+        });
+    }
+    
+    if (result.error) {
+      console.error('Error saving Stripe configuration:', result.error);
       return false;
     }
     

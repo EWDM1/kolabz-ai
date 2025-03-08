@@ -41,19 +41,26 @@ serve(async (req) => {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
-    } catch (stripeError: any) {
+    } catch (stripeError) {
+      console.error('Stripe connection error:', stripeError)
       return new Response(
-        JSON.stringify({ connected: false, message: `Stripe connection error: ${stripeError.message}` }),
+        JSON.stringify({ 
+          connected: false, 
+          message: `Stripe connection error: ${stripeError.message || 'Unknown error'}` 
+        }),
         { 
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking Stripe status:', error)
     return new Response(
-      JSON.stringify({ connected: false, message: error.message }),
+      JSON.stringify({ 
+        connected: false, 
+        message: error.message || 'Unknown error occurred'
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

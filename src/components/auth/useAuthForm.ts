@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/components/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -67,25 +67,20 @@ export const useAuthForm = (mode: "login" | "signup") => {
     }
     
     setIsLoading(true);
+    setFormError("");
 
     try {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
+        
         if (success) {
-          // First check if the user is a superadmin, then check if they're an admin
-          if (isSuperAdmin) {
-            navigate("/admin/dashboard");
-          } else if (isAdmin) {
-            navigate("/admin");
-          } else {
-            // For regular users, navigate to the return URL
-            navigate(returnUrl);
-          }
-          
           toast({
             title: "Login successful",
             description: "Welcome back!",
           });
+          
+          // Auth state will be automatically updated in AuthContext, which will redirect
+          // No need for navigation here - it's handled by AuthContext/Login page
         } else {
           setFormError("Invalid email or password");
         }

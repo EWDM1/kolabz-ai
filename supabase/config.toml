@@ -1,1 +1,21 @@
+
 project_id = "ftgtlhdocyixykjkbfpr"
+[api]
+enabled = true
+[analytics]
+enabled = false
+[auth]
+enabled = true
+[dev]
+port = 8000
+format = "yaml"
+[db]
+shadow = false
+pool_timeout_ms = 1000
+url = "nothing"
+[functions]
+enabled = true
+[realtime]
+enabled = false
+[storage]
+enabled = true

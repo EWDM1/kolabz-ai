@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/components/LanguageContext";
@@ -22,7 +22,7 @@ export const useCheckout = () => {
   const [loading, setLoading] = useState(true);
 
   // Extract plan details from location state or saved state
-  const getSavedState = () => {
+  const getSavedState = useCallback(() => {
     const savedState = localStorage.getItem(CHECKOUT_STATE_KEY);
     if (savedState) {
       try {
@@ -32,7 +32,7 @@ export const useCheckout = () => {
       }
     }
     return null;
-  };
+  }, []);
   
   const planId = state?.planId || getSavedState()?.planId || "pro";
   const isAnnual = state?.isAnnual !== undefined ? state?.isAnnual : 
@@ -65,19 +65,19 @@ export const useCheckout = () => {
           });
         } else {
           // Fall back to hardcoded plans if not found in database
-          setPlanDetails(fallbackPlanDetails[planId as keyof typeof fallbackPlanDetails]);
+          setPlanDetails(getFallbackPlanDetails(planId, isAnnual, t));
         }
       } catch (error) {
         console.error("Error fetching plan details:", error);
         // Fall back to hardcoded plans
-        setPlanDetails(fallbackPlanDetails[planId as keyof typeof fallbackPlanDetails]);
+        setPlanDetails(getFallbackPlanDetails(planId, isAnnual, t));
       } finally {
         setLoading(false);
       }
     };
     
     fetchPlanDetails();
-  }, [planId, isAnnual]);
+  }, [planId, isAnnual, t]);
 
   // Format currency for display
   const formatCurrency = (amount: number, currency: string = 'usd') => {
@@ -90,36 +90,18 @@ export const useCheckout = () => {
     return formatter.format(amount / 100);
   };
 
-  // Fallback plan details
-  const fallbackPlanDetails = {
-    pro: {
-      name: t("pricing.pro.name", "Pro"),
-      price: isAnnual ? "$100" : "$10",
-      period: isAnnual ? "year" : "month",
-      description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
-      trialDays: 7
-    },
-    elite: {
-      name: t("pricing.elite.name", "Elite"),
-      price: isAnnual ? "$240" : "$24",
-      period: isAnnual ? "year" : "month",
-      description: t("pricing.elite.description", "Ideal for power users and small teams"),
-      trialDays: 7
-    },
-  };
-
   // Save checkout state for login redirect
-  const saveCheckoutState = () => {
+  const saveCheckoutState = useCallback(() => {
     localStorage.setItem(CHECKOUT_STATE_KEY, JSON.stringify({
       planId,
       isAnnual
     }));
-  };
+  }, [planId, isAnnual]);
 
   // Clear saved checkout state after successful checkout
-  const clearCheckoutState = () => {
+  const clearCheckoutState = useCallback(() => {
     localStorage.removeItem(CHECKOUT_STATE_KEY);
-  };
+  }, []);
 
   // Check if Stripe is configured
   useEffect(() => {
@@ -250,3 +232,25 @@ export const useCheckout = () => {
     handleCheckout
   };
 };
+
+// Fallback plan details function moved outside for clarity
+function getFallbackPlanDetails(planId: string, isAnnual: boolean, t: Function) {
+  const fallbackPlans: Record<string, any> = {
+    pro: {
+      name: t("pricing.pro.name", "Pro"),
+      price: isAnnual ? "$100" : "$10",
+      period: isAnnual ? "year" : "month",
+      description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
+      trialDays: 7
+    },
+    elite: {
+      name: t("pricing.elite.name", "Elite"),
+      price: isAnnual ? "$240" : "$24",
+      period: isAnnual ? "year" : "month",
+      description: t("pricing.elite.description", "Ideal for power users and small teams"),
+      trialDays: 7
+    },
+  };
+  
+  return fallbackPlans[planId] || fallbackPlans.pro;
+}

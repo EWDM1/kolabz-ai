@@ -86,7 +86,7 @@ serve(async (req) => {
     if (session.status !== 200) {
       console.error('Stripe error:', sessionData);
       return new Response(
-        JSON.stringify({ error: 'Failed to create Stripe portal session' }),
+        JSON.stringify({ error: 'Failed to create Stripe portal session', details: sessionData }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

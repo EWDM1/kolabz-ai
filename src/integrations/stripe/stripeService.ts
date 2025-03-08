@@ -1,75 +1,87 @@
 
-import { loadStripe } from '@stripe/stripe-js';
-import { getPublishableKeySync, isTestMode } from './stripeConfig';
+import { supabase } from "@/integrations/supabase/client";
 
-// Initialize Stripe
-let stripePromise: Promise<any> | null = null;
-
-// Get Stripe instance with current publishable key
-export const getStripe = () => {
-  if (!stripePromise) {
-    stripePromise = loadStripe(getPublishableKeySync());
-  }
-  return stripePromise;
-};
-
-// Function to update a payment method
-export const updatePaymentMethod = async () => {
-  const stripe = await getStripe();
-  
-  // Create a payment method collection session
-  // In a real implementation, this would call your backend
-  const { error, paymentMethod } = await stripe.collectBankAccountForPayment({
-    params: {
-      payment_method_type: 'card',
-    },
-  });
-  
-  if (error) {
-    console.error('Error updating payment method:', error);
-    throw error;
+// Format card details for display
+export const formatCardDetails = (paymentMethod: any) => {
+  if (!paymentMethod || !paymentMethod.card) {
+    return {
+      last4: '••••',
+      expiry: '••/••',
+      brand: 'card'
+    };
   }
   
-  return paymentMethod;
-};
-
-// Function to change subscription plan
-export const changeSubscriptionPlan = async (planId: string, isAnnual: boolean) => {
-  // In a real implementation, this would call your backend
-  // For demo purposes, we're just simulating a successful response
-  console.log(`Changing to plan ${planId} with annual billing: ${isAnnual} (Test mode: ${isTestMode()})`);
-  
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
   return {
-    success: true,
-    planId,
-    isAnnual,
-    nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    testMode: isTestMode()
+    last4: paymentMethod.card.last4,
+    expiry: `${String(paymentMethod.card.exp_month).padStart(2, '0')}/${String(paymentMethod.card.exp_year).slice(-2)}`,
+    brand: paymentMethod.card.brand
   };
 };
 
-// Function to cancel subscription
-export const cancelSubscription = async () => {
-  // In a real implementation, this would call your backend
-  console.log(`Cancelling subscription (Test mode: ${isTestMode()})`);
-  
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
-  return {
-    success: true,
-    message: 'Subscription cancelled successfully',
-    testMode: isTestMode()
-  };
+// Cancel subscription
+export const cancelSubscription = async (): Promise<{
+  success: boolean;
+  message?: string;
+}> => {
+  try {
+    // Get current user
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+    
+    // Call the cancel subscription function
+    const { data, error } = await supabase.functions.invoke(
+      'cancel-subscription',
+      {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      }
+    );
+    
+    if (error) {
+      throw error;
+    }
+    
+    return {
+      success: true,
+      message: data.message || 'Subscription cancelled successfully'
+    };
+  } catch (error) {
+    console.error('Error cancelling subscription:', error);
+    return {
+      success: false,
+      message: error.message || 'Failed to cancel subscription'
+    };
+  }
 };
 
-// Utility to format card details
-export const formatCardDetails = (last4: string, expMonth: number, expYear: number) => {
-  return {
-    last4,
-    expiry: `${expMonth.toString().padStart(2, '0')}/${expYear.toString().slice(-2)}`
-  };
+// Check if subscription is active
+export const hasActiveSubscription = async (): Promise<boolean> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return false;
+    }
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('status')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error checking subscription status:', error);
+      return false;
+    }
+    
+    return !!data;
+  } catch (error) {
+    console.error('Error checking active subscription:', error);
+    return false;
+  }
 };
