@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/ThemeProvider";
 
@@ -91,6 +92,7 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const [context, setContext] = useState("");
   const [specificQuestions, setSpecificQuestions] = useState("");
   const [constraints, setConstraints] = useState("");
+  const [activeTab, setActiveTab] = useState("build");
   
   // Output state
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
@@ -100,6 +102,7 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   // Handle Examples
   const useExamplePrompt = (example: string) => {
     setPromptObjective(example);
+    setActiveTab("build");
   };
   
   // Generate the optimized prompt
@@ -191,135 +194,153 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
           </Select>
         </div>
         
-        {/* Two column layout for prompt customization */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Column 1: Main prompt settings */}
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="specialty-select">Area of Specialty</Label>
-              <Select value={specialty} onValueChange={setSpecialty}>
-                <SelectTrigger id="specialty-select" className="w-full">
-                  <SelectValue placeholder="Select specialty area" />
-                </SelectTrigger>
-                <SelectContent position="popper" className="w-full bg-popover">
-                  {SPECIALTY_OPTIONS.map(option => (
-                    <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-1.5">
-              <Label htmlFor="tone-select">Tone</Label>
-              <Select value={tone} onValueChange={setTone}>
-                <SelectTrigger id="tone-select" className="w-full">
-                  <SelectValue placeholder="Select tone" />
-                </SelectTrigger>
-                <SelectContent position="popper" className="w-full bg-popover">
-                  {TONE_OPTIONS.map(option => (
-                    <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-1.5">
-              <Label htmlFor="detail-select">Detail Level</Label>
-              <Select value={detailLevel} onValueChange={setDetailLevel}>
-                <SelectTrigger id="detail-select" className="w-full">
-                  <SelectValue placeholder="Select detail level" />
-                </SelectTrigger>
-                <SelectContent position="popper" className="w-full bg-popover">
-                  {DETAIL_OPTIONS.map(option => (
-                    <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="space-y-1.5">
-              <Label htmlFor="context-input">Context (Optional)</Label>
-              <Input
-                id="context-input"
-                placeholder="Add background information or constraints"
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-              />
-            </div>
-          </div>
+        {/* Build or Example tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="build" className="flex-1">Build Prompt</TabsTrigger>
+            <TabsTrigger value="examples" className="flex-1">Example Prompts</TabsTrigger>
+          </TabsList>
           
-          {/* Column 2: Advanced prompt details */}
-          <div className="space-y-4">
+          <TabsContent value="build" className="pt-4 space-y-6 animate-fade-in">
+            {/* Primary purpose */}
             <div className="space-y-1.5">
-              <Label htmlFor="prompt-objective">Prompt Objective</Label>
+              <Label htmlFor="prompt-objective">What do you want the AI to do? <span className="text-primary">*</span></Label>
               <Textarea
                 id="prompt-objective"
-                placeholder="What do you want the AI to do? Be specific."
+                placeholder="Be specific about your objective (e.g., 'Create a content calendar for a product launch')"
                 className="min-h-[80px]"
                 value={promptObjective}
                 onChange={(e) => setPromptObjective(e.target.value)}
               />
             </div>
             
-            <div className="space-y-1.5">
-              <Label htmlFor="specific-questions">Specific Questions (Optional)</Label>
-              <Textarea
-                id="specific-questions"
-                placeholder="Add specific questions you want answered (one per line)"
-                className="min-h-[80px]"
-                value={specificQuestions}
-                onChange={(e) => setSpecificQuestions(e.target.value)}
-              />
+            {/* Two column layout for other settings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Column 1: Main settings */}
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="specialty-select">Area of Specialty</Label>
+                  <Select value={specialty} onValueChange={setSpecialty}>
+                    <SelectTrigger id="specialty-select" className="w-full">
+                      <SelectValue placeholder="Select specialty area" />
+                    </SelectTrigger>
+                    <SelectContent position="popper" className="w-full bg-popover">
+                      {SPECIALTY_OPTIONS.map(option => (
+                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <Label htmlFor="tone-select">Tone</Label>
+                  <Select value={tone} onValueChange={setTone}>
+                    <SelectTrigger id="tone-select" className="w-full">
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent position="popper" className="w-full bg-popover">
+                      {TONE_OPTIONS.map(option => (
+                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <Label htmlFor="detail-select">Detail Level</Label>
+                  <Select value={detailLevel} onValueChange={setDetailLevel}>
+                    <SelectTrigger id="detail-select" className="w-full">
+                      <SelectValue placeholder="Select detail level" />
+                    </SelectTrigger>
+                    <SelectContent position="popper" className="w-full bg-popover">
+                      {DETAIL_OPTIONS.map(option => (
+                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              
+              {/* Column 2: Additional context */}
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="context-input">Context (Optional)</Label>
+                  <Input
+                    id="context-input"
+                    placeholder="Add background information or constraints"
+                    value={context}
+                    onChange={(e) => setContext(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <Label htmlFor="specific-questions">Specific Questions (Optional)</Label>
+                  <Textarea
+                    id="specific-questions"
+                    placeholder="Add specific questions you want answered (one per line)"
+                    className="min-h-[80px]"
+                    value={specificQuestions}
+                    onChange={(e) => setSpecificQuestions(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-1.5">
+                  <Label htmlFor="constraints-input">Constraints (Optional)</Label>
+                  <Input
+                    id="constraints-input"
+                    placeholder="e.g., 'Keep it under 500 words' or 'Avoid technical jargon'"
+                    value={constraints}
+                    onChange={(e) => setConstraints(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
             
-            <div className="space-y-1.5">
-              <Label htmlFor="constraints-input">Constraints (Optional)</Label>
-              <Input
-                id="constraints-input"
-                placeholder="e.g., 'Keep it under 500 words' or 'Avoid technical jargon'"
-                value={constraints}
-                onChange={(e) => setConstraints(e.target.value)}
-              />
+            {/* Generate Prompt Button */}
+            <Button 
+              onClick={handleGeneratePrompt}
+              className="w-full" 
+              size="lg"
+              disabled={!promptObjective.trim()}
+            >
+              <Brain className="mr-2 h-4 w-4" />
+              Generate Optimized Prompt
+            </Button>
+          </TabsContent>
+          
+          <TabsContent value="examples" className="pt-4 animate-fade-in">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {EXAMPLE_PROMPTS.map((example, index) => (
+                <Card 
+                  key={index} 
+                  className="cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => useExamplePrompt(example.prompt)}
+                >
+                  <CardHeader className="py-4">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4 text-primary" />
+                      <CardTitle className="text-base">{example.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground truncate">{example.prompt}</p>
+                  </CardContent>
+                  <CardFooter className="pt-0 pb-3">
+                    <Button variant="ghost" size="sm" className="w-full text-xs">
+                      Use This Example
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
             </div>
-          </div>
-        </div>
-        
-        {/* Example Prompts */}
-        <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
-          <h3 className="font-medium text-sm mb-2 flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            Example Prompts (Click to use)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {EXAMPLE_PROMPTS.map((example, index) => (
-              <button 
-                key={index}
-                onClick={() => useExamplePrompt(example.prompt)}
-                className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors flex items-center gap-2"
-              >
-                <MessageSquare className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>{example.title}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        {/* Generate Prompt Button */}
-        <Button 
-          onClick={handleGeneratePrompt}
-          className="w-full" 
-          size="lg"
-          disabled={!promptObjective.trim()}
-        >
-          <Brain className="mr-2 h-4 w-4" />
-          Generate Optimized Prompt
-        </Button>
+          </TabsContent>
+        </Tabs>
         
         {/* Results Section */}
         {optimizedPrompt && (

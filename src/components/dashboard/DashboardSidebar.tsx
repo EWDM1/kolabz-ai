@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, ListChecks, Settings, LogOut, CreditCard } from "lucide-react";
+import { LayoutGrid, MessageSquare, CreditCard, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DashboardSidebarProps {
@@ -19,29 +19,29 @@ export const DashboardSidebar = ({
         <nav className="space-y-1">
           <button
             onClick={() => handleNavigation("/dashboard")}
-            className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
+            className={`flex w-full items-center space-x-3 px-3 py-3 rounded-md text-left ${
               activePage === 'dashboard' 
                 ? 'bg-primary/10 text-primary font-medium' 
                 : 'text-muted-foreground hover:bg-muted'
             }`}
           >
-            <LayoutDashboard className="h-5 w-5" />
+            <LayoutGrid className="h-5 w-5" />
             <span>My Dashboard</span>
           </button>
           <button
             onClick={() => handleNavigation("/my-prompts")}
-            className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
+            className={`flex w-full items-center space-x-3 px-3 py-3 rounded-md text-left ${
               activePage === 'prompts' 
                 ? 'bg-primary/10 text-primary font-medium' 
                 : 'text-muted-foreground hover:bg-muted'
             }`}
           >
-            <ListChecks className="h-5 w-5" />
+            <MessageSquare className="h-5 w-5" />
             <span>My Prompts</span>
           </button>
           <button
             onClick={() => handleNavigation("/manage-subscription")}
-            className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
+            className={`flex w-full items-center space-x-3 px-3 py-3 rounded-md text-left ${
               activePage === 'subscription' 
                 ? 'bg-primary/10 text-primary font-medium' 
                 : 'text-muted-foreground hover:bg-muted'
@@ -52,7 +52,7 @@ export const DashboardSidebar = ({
           </button>
           <button
             onClick={() => handleNavigation("/my-settings")}
-            className={`flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left ${
+            className={`flex w-full items-center space-x-3 px-3 py-3 rounded-md text-left ${
               activePage === 'settings' 
                 ? 'bg-primary/10 text-primary font-medium' 
                 : 'text-muted-foreground hover:bg-muted'
@@ -63,7 +63,7 @@ export const DashboardSidebar = ({
           </button>
           <button
             onClick={handleLogout}
-            className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
+            className="flex items-center space-x-3 px-3 py-3 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
           >
             <LogOut className="h-5 w-5" />
             <span>Logout</span>
@@ -75,7 +75,7 @@ export const DashboardSidebar = ({
         <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
           SUBSCRIPTION
         </h4>
-        <div className="bg-primary/10 rounded-md p-3">
+        <div className="bg-primary/5 rounded-md p-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Pro Plan</span>
             <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
