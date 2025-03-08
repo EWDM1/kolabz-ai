@@ -49,8 +49,7 @@ const App = () => (
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/my-dashboard" element={<MyDashboard />} />
-                  {/* Redirect /dashboard to /my-dashboard for backward compatibility */}
-                  <Route path="/dashboard" element={<Navigate to="/my-dashboard" replace />} />
+                  {/* Remove /dashboard route completely */}
                   <Route path="/my-prompts" element={<MyPrompts />} />
                   <Route path="/manage-subscription" element={<ManageSubscription />} />
                   <Route path="/change-plan" element={<ChangePlan />} />
