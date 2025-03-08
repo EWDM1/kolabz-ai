@@ -10,6 +10,7 @@ import { DeleteConfirmationDialog } from "@/components/admin/user-management/Del
 import { cn } from "@/lib/utils";
 import { useSidebarState } from "@/hooks/use-sidebar-state";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { AdminUser } from "@/components/admin/user-management/types";
 
 const UserManagement = () => {
   const navigate = useNavigate();
