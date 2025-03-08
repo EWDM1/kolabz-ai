@@ -26,7 +26,6 @@ const Pricing = () => {
       id: "pro",
       highlighted: true,
       savings: t("pricing.savings.pro", "$20/year"),
-      isAvailable: true,
     },
     {
       name: t("pricing.team.name", "Team"),
@@ -39,17 +38,14 @@ const Pricing = () => {
         { text: t("pricing.features.custom", "Custom templates"), included: true },
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
-      ctaText: t("pricing.cta.coming_soon", "Coming Soon"),
+      ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
       id: "team",
       highlighted: false,
       savings: t("pricing.savings.team", "$48/year"),
-      isAvailable: false,
     },
   ];
 
-  const handlePlanSelection = (planId: string, isAvailable: boolean) => {
-    if (!isAvailable) return;
-    
+  const handlePlanSelection = (planId: string) => {
     navigate("/checkout", { 
       state: { 
         planId: planId,
@@ -102,16 +98,11 @@ const Pricing = () => {
                 plan.highlighted
                   ? "border-primary shadow-xl relative transform md:-translate-y-4"
                   : "border-border shadow-sm hover:shadow-md"
-              } ${!plan.isAvailable ? "opacity-80" : ""}`}
+              }`}
             >
               {plan.highlighted && (
                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold py-1 px-3 rounded-bl">
                   {t("pricing.most_popular", "Most Popular")}
-                </div>
-              )}
-              {!plan.isAvailable && (
-                <div className="absolute top-0 right-0 bg-muted-foreground text-background text-xs font-bold py-1 px-3 rounded-bl">
-                  {t("hero.comingSoon", "Coming Soon")}
                 </div>
               )}
               <div className="p-6 md:p-8 bg-card">
@@ -137,8 +128,7 @@ const Pricing = () => {
                     plan.highlighted ? "bg-primary hover:bg-primary/90" : ""
                   }`}
                   variant={plan.highlighted ? "default" : "outline"}
-                  onClick={() => handlePlanSelection(plan.id, plan.isAvailable)}
-                  disabled={!plan.isAvailable}
+                  onClick={() => handlePlanSelection(plan.id)}
                 >
                   {plan.ctaText}
                 </Button>
