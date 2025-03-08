@@ -14,12 +14,19 @@ const PromptOptimizerPreview = ({ scrollToSection }: PromptOptimizerPreviewProps
   const { theme } = useTheme();
   const { t } = useLanguage();
   
+  const handleGetStarted = () => {
+    scrollToSection('pricing');
+  };
+  
   return (
     <div className="bg-card rounded-xl shadow-lg border border-border p-6 animate-fade-in relative">
-      {/* Overlay to make component non-interactive */}
-      <div className="absolute inset-0 bg-background/50 backdrop-blur-[1px] rounded-xl z-10 flex items-center justify-center">
-        <div className="bg-primary/10 text-primary font-medium rounded-full px-4 py-2">
-          {t("hero.comingSoon", "Coming Soon")}
+      {/* Semi-transparent overlay with clickable button */}
+      <div 
+        className="absolute inset-0 bg-background/50 backdrop-blur-[1px] rounded-xl z-10 flex items-center justify-center cursor-pointer"
+        onClick={handleGetStarted}
+      >
+        <div className="bg-primary text-primary-foreground font-medium rounded-full px-6 py-3 hover:bg-primary/90 transition-colors">
+          {t("hero.getStarted", "Get Started")}
         </div>
       </div>
       
