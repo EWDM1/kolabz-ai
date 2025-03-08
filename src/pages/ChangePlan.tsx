@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -127,8 +128,8 @@ const ChangePlan = () => {
       features: [
         { text: t("pricing.features.everything", "Everything in Pro"), included: true },
         { text: t("pricing.features.save_prompts_elite", "Save Up to 300 prompts"), included: true },
-        { text: t("pricing.features.workspaces", "Team workspaces"), included: true },
-        { text: t("pricing.features.collab_features", "Collaboration features"), included: true },
+        { text: t("pricing.features.ai_assistant", "AI writing assistant"), included: true },
+        { text: t("pricing.features.advanced_customization", "Advanced customization options"), included: true },
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
       savings: t("pricing.savings.elite", "$48/year"),
