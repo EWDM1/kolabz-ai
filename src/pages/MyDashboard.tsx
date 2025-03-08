@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { HelpCircle, LogOut } from "lucide-react";
+import { HelpCircle, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { useToast } from "@/hooks/use-toast";
@@ -55,18 +55,21 @@ const MyDashboard = () => {
           <div className="flex items-center space-x-2">
             <ThemeToggle />
             <LanguageSelector />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              aria-label="Logout"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
             <div className="flex items-center space-x-2 cursor-pointer ml-2">
-              <span className="text-sm font-medium hidden md:inline-block">
-                {user?.name || "John Doe"}
-              </span>
+              <Link to="/my-settings" className="flex items-center space-x-2 hover:text-primary transition-colors">
+                <User className="h-5 w-5" />
+                <span className="text-sm font-medium hidden md:inline-block">
+                  {user?.name || "John Doe"}
+                </span>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                aria-label="Logout"
+              >
+                <LogOut className="h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
@@ -91,8 +94,8 @@ const MyDashboard = () => {
             </p>
             
             <div className="flex justify-center w-full">
-              {/* Made the PromptOptimizerTool container wider by changing to w-full */}
-              <div className="w-full max-w-5xl">
+              {/* Made the PromptOptimizerTool container wider by changing to w-full and max-w-6xl */}
+              <div className="w-full max-w-6xl">
                 <PromptOptimizerTool />
               </div>
             </div>

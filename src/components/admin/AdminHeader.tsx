@@ -66,13 +66,15 @@ const AdminHeader = ({ onMenuToggle }: { onMenuToggle: () => void }) => {
           </Button>
 
           <div className="flex items-center gap-1">
-            <div className="hidden md:block text-right mr-1">
+            <Link to="/admin/settings" className="hidden md:block text-right mr-1 hover:text-primary transition-colors">
               <div className="text-sm font-medium truncate max-w-[100px] xl:max-w-[150px]">{user?.name}</div>
               <div className="text-xs text-muted-foreground truncate max-w-[100px] xl:max-w-[150px]">{user?.role}</div>
-            </div>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <User className="h-5 w-5" />
-            </Button>
+            </Link>
+            <Link to="/admin/settings">
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <User className="h-5 w-5" />
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon" onClick={logout}>
               <LogOut className="h-5 w-5" />
             </Button>
