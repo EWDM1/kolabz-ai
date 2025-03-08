@@ -51,11 +51,6 @@ const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromp
 
   return (
     <div className="mt-6 space-y-4">
-      <h3 className="font-bold flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-primary" />
-        Optimized Prompt:
-      </h3>
-      
       <PromptDisplay 
         isEditing={isEditing}
         optimizedPrompt={optimizedPrompt}
