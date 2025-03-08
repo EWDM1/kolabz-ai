@@ -18,6 +18,8 @@ export const useCheckout = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<any>(null);
   const [stripeReady, setStripeReady] = useState(false);
+  const [planDetails, setPlanDetails] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   // Extract plan details from location state or saved state
   const getSavedState = () => {
@@ -35,6 +37,76 @@ export const useCheckout = () => {
   const planId = state?.planId || getSavedState()?.planId || "pro";
   const isAnnual = state?.isAnnual !== undefined ? state?.isAnnual : 
                   getSavedState()?.isAnnual !== undefined ? getSavedState()?.isAnnual : true;
+
+  // Fetch plan details from database
+  useEffect(() => {
+    const fetchPlanDetails = async () => {
+      setLoading(true);
+      try {
+        // Get plan details from the subscription_plans table
+        const { data, error } = await supabase
+          .from('subscription_plans')
+          .select('*')
+          .eq('name', planId.charAt(0).toUpperCase() + planId.slice(1))
+          .eq('active', true)
+          .maybeSingle();
+          
+        if (error) throw error;
+        
+        if (data) {
+          setPlanDetails({
+            id: data.id,
+            name: data.name,
+            price: isAnnual ? formatCurrency(data.price_annual) : formatCurrency(data.price_monthly),
+            period: isAnnual ? "year" : "month",
+            description: data.description,
+            trialDays: data.trial_days,
+            stripePriceId: isAnnual ? data.stripe_price_id_annual : data.stripe_price_id_monthly
+          });
+        } else {
+          // Fall back to hardcoded plans if not found in database
+          setPlanDetails(fallbackPlanDetails[planId as keyof typeof fallbackPlanDetails]);
+        }
+      } catch (error) {
+        console.error("Error fetching plan details:", error);
+        // Fall back to hardcoded plans
+        setPlanDetails(fallbackPlanDetails[planId as keyof typeof fallbackPlanDetails]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPlanDetails();
+  }, [planId, isAnnual]);
+
+  // Format currency for display
+  const formatCurrency = (amount: number, currency: string = 'usd') => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2
+    });
+    
+    return formatter.format(amount / 100);
+  };
+
+  // Fallback plan details
+  const fallbackPlanDetails = {
+    pro: {
+      name: t("pricing.pro.name", "Pro"),
+      price: isAnnual ? "$100" : "$10",
+      period: isAnnual ? "year" : "month",
+      description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
+      trialDays: 7
+    },
+    elite: {
+      name: t("pricing.elite.name", "Elite"),
+      price: isAnnual ? "$240" : "$24",
+      period: isAnnual ? "year" : "month",
+      description: t("pricing.elite.description", "Ideal for power users and small teams"),
+      trialDays: 7
+    },
+  };
 
   // Save checkout state for login redirect
   const saveCheckoutState = () => {
@@ -67,23 +139,6 @@ export const useCheckout = () => {
     checkStripeConfig();
   }, []);
 
-  const planDetails = {
-    pro: {
-      name: t("pricing.pro.name", "Pro"),
-      price: isAnnual ? "$100" : "$10",
-      period: isAnnual ? "year" : "month",
-      description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
-    },
-    elite: {
-      name: t("pricing.elite.name", "Elite"),
-      price: isAnnual ? "$240" : "$24",
-      period: isAnnual ? "year" : "month",
-      description: t("pricing.elite.description", "Ideal for power users and small teams"),
-    },
-  };
-
-  const selectedPlan = planDetails[planId as keyof typeof planDetails];
-
   const handlePaymentSuccess = (paymentMethodObj: any) => {
     setPaymentMethod(paymentMethodObj);
     toast({
@@ -101,8 +156,13 @@ export const useCheckout = () => {
   };
 
   const createSubscription = async (userId: string, paymentMethodId: string) => {
-    // Calculate end date based on annual/monthly
-    const daysToAdd = isAnnual ? 365 : 30;
+    // Calculate trial end date
+    const trialDays = planDetails?.trialDays || 7;
+    const trialEndDate = new Date();
+    trialEndDate.setDate(trialEndDate.getDate() + trialDays);
+    
+    // Calculate billing period end date (after trial)
+    const daysToAdd = isAnnual ? 365 + trialDays : 30 + trialDays;
     const endDate = new Date();
     endDate.setDate(endDate.getDate() + daysToAdd);
     
@@ -113,7 +173,10 @@ export const useCheckout = () => {
         plan_id: planId,
         is_annual: isAnnual,
         payment_method_id: paymentMethodId,
-        current_period_end: endDate.toISOString()
+        trial_end_date: trialEndDate.toISOString(),
+        current_period_start: trialEndDate.toISOString(), // Billing starts after trial
+        current_period_end: endDate.toISOString(),
+        status: 'active'
       })
       .select()
       .single();
@@ -155,7 +218,7 @@ export const useCheckout = () => {
       // Notify user of success
       toast({
         title: t("checkout.subscription_active", "Subscription active"),
-        description: t("checkout.welcome_message", "Welcome to Kolabz! Your subscription is now active."),
+        description: t("checkout.free_trial_message", `Welcome to Kolabz! Your subscription is now active with a ${planDetails?.trialDays || 7}-day free trial.`),
       });
       
       // Navigate to dashboard
@@ -175,11 +238,12 @@ export const useCheckout = () => {
   return {
     planId,
     isAnnual,
-    selectedPlan,
+    selectedPlan: planDetails,
     isProcessing,
     paymentMethod,
     stripeReady,
     isTestMode,
+    loading,
     saveCheckoutState,
     handlePaymentSuccess,
     handlePaymentError,

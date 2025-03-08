@@ -11,6 +11,7 @@ interface PlanDetails {
   price: string;
   period: string;
   description: string;
+  trialDays?: number;
 }
 
 interface CheckoutSummaryProps {
@@ -66,10 +67,19 @@ const CheckoutSummary = ({
             <span>{selectedPlan.price}</span>
           </div>
 
+          {selectedPlan.trialDays && selectedPlan.trialDays > 0 && (
+            <Alert variant="default" className="bg-primary/10 border-primary/20">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <AlertDescription className="text-primary-foreground">
+                {t("checkout.free_trial", "You'll get a {{days}}-day free trial. No charge until the trial ends.", { days: selectedPlan.trialDays })}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="text-sm text-muted-foreground">
             {isAnnual ? 
-              t("checkout.billed_annually_today", "You'll be billed today, and annually thereafter") : 
-              t("checkout.billed_monthly_today", "You'll be billed today, and monthly thereafter")
+              t("checkout.billed_annually_after_trial", "You'll be billed after your free trial ends, and annually thereafter") : 
+              t("checkout.billed_monthly_after_trial", "You'll be billed after your free trial ends, and monthly thereafter")
             }
           </div>
 
@@ -85,7 +95,7 @@ const CheckoutSummary = ({
               ) : (
                 <>
                   <Sparkles className="mr-2 h-4 w-4" />
-                  {t("checkout.complete_purchase", "Complete purchase")}
+                  {t("checkout.start_free_trial", "Start Free Trial")}
                 </>
               )}
             </Button>

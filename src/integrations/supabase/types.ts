@@ -158,6 +158,54 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          currency: string
+          description: string | null
+          features: Json | null
+          id: string
+          name: string
+          price_annual: number
+          price_monthly: number
+          stripe_price_id_annual: string | null
+          stripe_price_id_monthly: string | null
+          trial_days: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          name: string
+          price_annual: number
+          price_monthly: number
+          stripe_price_id_annual?: string | null
+          stripe_price_id_monthly?: string | null
+          trial_days?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          currency?: string
+          description?: string | null
+          features?: Json | null
+          id?: string
+          name?: string
+          price_annual?: number
+          price_monthly?: number
+          stripe_price_id_annual?: string | null
+          stripe_price_id_monthly?: string | null
+          trial_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -168,6 +216,7 @@ export type Database = {
           payment_method_id: string | null
           plan_id: string
           status: string
+          trial_end_date: string | null
           updated_at: string
           user_id: string
         }
@@ -180,6 +229,7 @@ export type Database = {
           payment_method_id?: string | null
           plan_id: string
           status?: string
+          trial_end_date?: string | null
           updated_at?: string
           user_id: string
         }
@@ -192,6 +242,7 @@ export type Database = {
           payment_method_id?: string | null
           plan_id?: string
           status?: string
+          trial_end_date?: string | null
           updated_at?: string
           user_id?: string
         }

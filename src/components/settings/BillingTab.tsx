@@ -59,6 +59,32 @@ const BillingTab = ({
     
     fetchSubscription();
   }, [user]);
+
+  // Check if subscription is in trial period
+  const isInTrialPeriod = () => {
+    if (!subscription || !subscription.trial_end_date) return false;
+    
+    const trialEndDate = new Date(subscription.trial_end_date);
+    const now = new Date();
+    
+    return now < trialEndDate;
+  };
+  
+  // Calculate days remaining in trial
+  const getDaysRemainingInTrial = () => {
+    if (!subscription || !subscription.trial_end_date) return 0;
+    
+    const trialEndDate = new Date(subscription.trial_end_date);
+    const now = new Date();
+    
+    // Return 0 if trial has ended
+    if (now > trialEndDate) return 0;
+    
+    const diffTime = Math.abs(trialEndDate.getTime() - now.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays;
+  };
   
   if (loadingSubscription) {
     return (
@@ -129,13 +155,29 @@ const BillingTab = ({
               {t("subscription.status.active", "Active")}
             </span>
           </div>
+          
+          {isInTrialPeriod() && (
+            <Alert className="mb-4 bg-primary/10 border-primary/20">
+              <AlertTitle className="text-primary-foreground">
+                {t("subscription.free_trial", "Free Trial")}
+              </AlertTitle>
+              <AlertDescription className="text-primary-foreground">
+                {t("subscription.trial_remaining", "You have {{days}} days remaining in your free trial", { days: getDaysRemainingInTrial() })}
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <p className="text-sm text-muted-foreground mb-4">
-            {t("subscription.next_billing", "Next billing date")}: {
-              subscription.current_period_end ? 
-              new Date(subscription.current_period_end).toLocaleDateString() : 
-              "N/A"
+            {isInTrialPeriod() 
+              ? t("subscription.trial_until", "Free trial until: {{date}}", { 
+                  date: new Date(subscription.trial_end_date).toLocaleDateString() 
+                })
+              : t("subscription.next_billing", "Next billing date: {{date}}", { 
+                  date: new Date(subscription.current_period_end).toLocaleDateString() 
+                })
             }
           </p>
+          
           <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="outline" onClick={onManageSubscription}>
               {t("subscription.manage", "Manage Subscription")}
