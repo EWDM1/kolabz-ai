@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Brain, ChevronDown, ChevronUp, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -97,7 +96,6 @@ const PromptOptimizerForm = ({
     if (onClearForm) {
       onClearForm();
     } else {
-      // Default clear behavior if no handler is provided
       setLlm("gpt-4");
       setSpecialty("");
       setTone("");
@@ -107,15 +105,13 @@ const PromptOptimizerForm = ({
       setSpecificQuestions("");
       setConstraints("");
       
-      // Clear local storage
       localStorage.removeItem("kolabz_last_optimized_prompt");
       localStorage.removeItem("kolabz_prompt_form_state");
     }
     
     toast({
       title: "Form Cleared",
-      description: "All form fields have been reset and saved data cleared",
-      variant: "success"
+      description: "All form fields have been reset and saved data cleared"
     });
   };
 
