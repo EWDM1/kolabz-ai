@@ -8,7 +8,9 @@ import {
   BookOpen, 
   MessageSquare, 
   Brain,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/ThemeProvider";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const LLM_OPTIONS = [
   { value: "gpt-4", label: "GPT-4" },
@@ -93,6 +96,7 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const [specificQuestions, setSpecificQuestions] = useState("");
   const [constraints, setConstraints] = useState("");
   const [activeTab, setActiveTab] = useState("build");
+  const [showAdvanced, setShowAdvanced] = useState(false);
   
   // Output state
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
@@ -214,61 +218,64 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
               />
             </div>
             
-            {/* Two column layout for other settings */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Column 1: Main settings */}
-              <div className="space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="specialty-select">Area of Specialty</Label>
-                  <Select value={specialty} onValueChange={setSpecialty}>
-                    <SelectTrigger id="specialty-select" className="w-full">
-                      <SelectValue placeholder="Select specialty area" />
-                    </SelectTrigger>
-                    <SelectContent position="popper" className="w-full bg-popover">
-                      {SPECIALTY_OPTIONS.map(option => (
-                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-1.5">
-                  <Label htmlFor="tone-select">Tone</Label>
-                  <Select value={tone} onValueChange={setTone}>
-                    <SelectTrigger id="tone-select" className="w-full">
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent position="popper" className="w-full bg-popover">
-                      {TONE_OPTIONS.map(option => (
-                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div className="space-y-1.5">
-                  <Label htmlFor="detail-select">Detail Level</Label>
-                  <Select value={detailLevel} onValueChange={setDetailLevel}>
-                    <SelectTrigger id="detail-select" className="w-full">
-                      <SelectValue placeholder="Select detail level" />
-                    </SelectTrigger>
-                    <SelectContent position="popper" className="w-full bg-popover">
-                      {DETAIL_OPTIONS.map(option => (
-                        <SelectItem key={option.value} value={option.value} className="cursor-pointer">
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+            {/* Three column layout for main settings */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="specialty-select">Area of Specialty</Label>
+                <Select value={specialty} onValueChange={setSpecialty}>
+                  <SelectTrigger id="specialty-select" className="w-full">
+                    <SelectValue placeholder="Select specialty" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" className="w-full bg-popover">
+                    {SPECIALTY_OPTIONS.map(option => (
+                      <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
-              {/* Column 2: Additional context */}
-              <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="tone-select">Tone</Label>
+                <Select value={tone} onValueChange={setTone}>
+                  <SelectTrigger id="tone-select" className="w-full">
+                    <SelectValue placeholder="Select tone" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" className="w-full bg-popover">
+                    {TONE_OPTIONS.map(option => (
+                      <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-1.5">
+                <Label htmlFor="detail-select">Detail Level</Label>
+                <Select value={detailLevel} onValueChange={setDetailLevel}>
+                  <SelectTrigger id="detail-select" className="w-full">
+                    <SelectValue placeholder="Select detail level" />
+                  </SelectTrigger>
+                  <SelectContent position="popper" className="w-full bg-popover">
+                    {DETAIL_OPTIONS.map(option => (
+                      <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            {/* Advanced Options (Collapsible) */}
+            <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced} className="w-full border rounded-md p-2">
+              <CollapsibleTrigger className="flex items-center justify-between w-full text-sm font-medium py-2 px-2 hover:bg-muted/50 rounded">
+                <span>Advanced Options</span>
+                {showAdvanced ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </CollapsibleTrigger>
+              <CollapsibleContent className="pt-3 space-y-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="context-input">Context (Optional)</Label>
                   <Input
@@ -299,8 +306,8 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
                     onChange={(e) => setConstraints(e.target.value)}
                   />
                 </div>
-              </div>
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
             
             {/* Generate Prompt Button */}
             <Button 
