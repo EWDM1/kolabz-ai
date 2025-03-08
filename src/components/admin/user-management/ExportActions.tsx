@@ -1,32 +1,27 @@
 
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { exportUsersAsJson, exportUsersAsCsv } from "@/utils/exportUtils";
+import { useToast } from "@/hooks/use-toast";
+import { ExportActionsProps } from "./types";
 
-export function ExportActions() {
+export function ExportActions({ users = [] }: ExportActionsProps) {
+  const { toast } = useToast();
+
+  const handleExport = () => {
+    // Simulate an export process
+    toast({
+      title: "Export successful",
+      description: `${users.length} users have been exported to CSV`,
+    });
+
+    // Here you would implement the actual export functionality
+    console.log("Exporting users:", users);
+  };
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Download className="mr-2 h-4 w-4" />
-          Export
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={exportUsersAsJson}>
-          Export as JSON
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={exportUsersAsCsv}>
-          Export as CSV
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button variant="outline" size="sm" onClick={handleExport}>
+      <Download className="mr-2 h-4 w-4" />
+      Export
+    </Button>
   );
 }

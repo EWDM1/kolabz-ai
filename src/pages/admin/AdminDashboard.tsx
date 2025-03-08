@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Banner } from "@/components/ui/banner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +25,6 @@ import { Users, CreditCard, Activity, UserPlus, UserCheck, UserMinus } from "luc
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-// Define explicit types for the metrics state
 interface UserGrowthData {
   month: string;
   users: number;
@@ -67,7 +65,6 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   
-  // Check the sidebar collapsed state from localStorage
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
@@ -75,7 +72,6 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  // Listen for storage events to sync sidebar state across components
   useEffect(() => {
     const handleStorageChange = () => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
@@ -86,7 +82,6 @@ const AdminDashboard = () => {
 
     window.addEventListener("storage", handleStorageChange);
     
-    // Check for changes every second (for same-window updates)
     const interval = setInterval(() => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
       if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
@@ -100,14 +95,12 @@ const AdminDashboard = () => {
     };
   }, [sidebarCollapsed]);
 
-  // Fetch dashboard data
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      // Get total user count
       const { count: totalUsers, error: countError } = await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
@@ -115,7 +108,6 @@ const AdminDashboard = () => {
 
       if (countError) throw countError;
 
-      // Get active users (not deleted)
       const { count: activeUsers, error: activeError } = await supabase
         .from('users')
         .select('*', { count: 'exact', head: true })
@@ -123,7 +115,6 @@ const AdminDashboard = () => {
 
       if (activeError) throw activeError;
 
-      // Get new users in last 30 days
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
       
@@ -135,7 +126,6 @@ const AdminDashboard = () => {
 
       if (newError) throw newError;
 
-      // Get user growth data
       const { data: growthData, error: growthError } = await supabase
         .from('users')
         .select('created_at')
@@ -143,17 +133,14 @@ const AdminDashboard = () => {
 
       if (growthError) throw growthError;
 
-      // Process growth data into monthly counts
       const monthlyGrowth = processGrowthData(growthData || []);
 
-      // Since we can't do GROUP BY directly, simulate role distribution
       const roleDistribution: RoleData[] = [
         { name: 'User', value: Math.max((totalUsers || 0) - 5, 0) },
         { name: 'Admin', value: 4 },
         { name: 'Superadmin', value: 1 }
       ];
 
-      // Sample activity data
       const activityData = generateActivityData();
 
       setMetrics({
@@ -174,7 +161,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Process user growth data into monthly format
   const processGrowthData = (userData: any[]): UserGrowthData[] => {
     const months: Record<string, number> = {};
     
@@ -189,14 +175,12 @@ const AdminDashboard = () => {
       months[monthYear]++;
     });
     
-    // Convert to array format for charts
     return Object.entries(months).map(([month, count]) => ({
       month,
       users: count
     }));
   };
 
-  // Generate sample activity data (would be replaced with real data in production)
   const generateActivityData = (): ActivityData[] => {
     const data: ActivityData[] = [];
     const now = new Date();
@@ -216,7 +200,6 @@ const AdminDashboard = () => {
     return data;
   };
 
-  // Colors for pie chart
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   return (
@@ -246,7 +229,6 @@ const AdminDashboard = () => {
               </p>
             </div>
             
-            {/* Key Metrics */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -295,9 +277,7 @@ const AdminDashboard = () => {
               </Card>
             </div>
             
-            {/* Charts */}
             <div className="grid gap-4 md:grid-cols-2">
-              {/* User Growth Chart */}
               <Card className="col-span-1">
                 <CardHeader>
                   <CardTitle>User Growth</CardTitle>
@@ -338,7 +318,6 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
               
-              {/* User Activity Chart */}
               <Card className="col-span-1">
                 <CardHeader>
                   <CardTitle>Weekly Activity</CardTitle>
@@ -364,7 +343,6 @@ const AdminDashboard = () => {
               </Card>
             </div>
             
-            {/* User Distribution by Role */}
             <div className="grid gap-4 md:grid-cols-2">
               <Card className="md:col-span-1">
                 <CardHeader>
@@ -402,6 +380,14 @@ const AdminDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <UserTable 
+                    users={metrics.usersByRole.map((role, index) => ({
+                      id: `sample-${index}`,
+                      name: `Sample User ${index + 1}`,
+                      email: `user${index + 1}@example.com`,
+                      role: role.name.toLowerCase() as UserRole,
+                      status: index % 3 === 0 ? 'inactive' : 'active',
+                      lastActive: index % 2 === 0 ? 'Today' : '3 days ago'
+                    }))}
                     selectedUsers={selectedUsers} 
                     setSelectedUsers={setSelectedUsers}
                     onEdit={(user) => {

@@ -2,19 +2,19 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
-import { useUserTable } from "@/hooks/use-user-table";
+import { RefreshCw, Search } from "lucide-react";
 import { UserTableProps } from "@/components/admin/user-management/types";
 import { UserTableRow } from "@/components/admin/user-management/UserTableRow";
 
 export function UserTable({ 
+  users,
+  loading,
   selectedUsers,
   setSelectedUsers,
   onEdit,
   onDelete 
 }: UserTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const { users, loading, error, fetchUsers } = useUserTable();
   
   // Filter users based on search query
   const filteredUsers = users.filter(user => 
@@ -35,10 +35,6 @@ export function UserTable({
     return <div className="py-8 text-center">Loading users...</div>;
   }
 
-  if (error) {
-    return <div className="py-8 text-center text-destructive">{error}</div>;
-  }
-
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row justify-between gap-4">
@@ -52,10 +48,6 @@ export function UserTable({
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        
-        <Button size="sm" onClick={fetchUsers}>
-          Refresh
-        </Button>
       </div>
 
       <div className="rounded-md border overflow-hidden">
