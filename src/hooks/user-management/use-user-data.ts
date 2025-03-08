@@ -11,8 +11,7 @@ const mockUsers: AdminUser[] = [
     email: 'john@example.com',
     role: 'admin',
     status: 'active',
-    lastActive: '2023-04-15T10:00:00Z',
-    createdAt: '2023-01-01T00:00:00Z'
+    lastActive: '2023-04-15T10:00:00Z'
   },
   {
     id: '2',
@@ -20,17 +19,15 @@ const mockUsers: AdminUser[] = [
     email: 'jane@example.com',
     role: 'user',
     status: 'active',
-    lastActive: '2023-04-14T15:30:00Z',
-    createdAt: '2023-01-15T00:00:00Z'
+    lastActive: '2023-04-14T15:30:00Z'
   },
   {
     id: '3',
     name: 'Bob Johnson',
     email: 'bob@example.com',
-    role: 'moderator',
+    role: 'user', // Changed from moderator to match AdminUser type
     status: 'inactive',
-    lastActive: '2023-03-25T08:15:00Z',
-    createdAt: '2023-02-10T00:00:00Z'
+    lastActive: '2023-03-25T08:15:00Z'
   }
 ];
 

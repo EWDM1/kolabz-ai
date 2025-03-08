@@ -1,19 +1,15 @@
 
-import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUserManagementPage } from "@/hooks/use-user-management-page";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { UserFiltersPanel } from "@/components/admin/user-management/UserFiltersPanel";
 import { UserTableSection } from "@/components/admin/user-management/UserTableSection";
 import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
-import { cn } from "@/lib/utils";
 import { useSidebarState } from "@/hooks/use-sidebar-state";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { AdminUser } from "@/components/admin/user-management/types";
 
 const UserManagement = () => {
-  const navigate = useNavigate();
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
   
   const {
@@ -46,6 +42,14 @@ const UserManagement = () => {
     handleDeleteUser(user.id);
   };
 
+  // Map filter values to the expected format by UserFiltersPanel
+  const panelFilterValues = {
+    name: filterValues.name || '',
+    email: filterValues.email || '',
+    role: filterValues.role,
+    status: filterValues.status
+  };
+
   return (
     <AdminLayout 
       title="User Management" 
@@ -64,8 +68,8 @@ const UserManagement = () => {
         {filterVisible && (
           <div className="animate-slide-up">
             <UserFiltersPanel 
-              filterValues={filterValues}
-              onFilterChange={handleFilterChange}
+              filterValues={panelFilterValues}
+              onFilterChange={(field, value) => handleFilterChange(field as keyof typeof filterValues, value)}
               onResetFilters={resetFilters}
             />
           </div>

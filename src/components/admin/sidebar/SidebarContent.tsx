@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -20,6 +20,7 @@ export interface SidebarContentProps {
 
 export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('');
 
   useEffect(() => {

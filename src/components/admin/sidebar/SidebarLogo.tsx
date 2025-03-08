@@ -16,7 +16,7 @@ export const SidebarLogo = ({ isCollapsed, toggleCollapse, onClose }: SidebarLog
   return (
     <div className="flex h-16 items-center border-b border-border px-3">
       <Link 
-        to="/AdminDashboard" 
+        to="/admin" 
         className={cn(
           "flex items-center gap-2",
           isCollapsed && "justify-center"
