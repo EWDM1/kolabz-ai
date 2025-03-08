@@ -1,12 +1,13 @@
 
-import { LayoutGrid, MessageSquare, CreditCard, Settings, LogOut } from "lucide-react";
+import { LayoutGrid, MessageSquare, CreditCard, Settings, LogOut, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage } from "@/components/LanguageContext";
 
 interface DashboardSidebarProps {
   handleNavigation: (path: string) => void;
   handleLogout: () => void;
-  activePage?: 'dashboard' | 'prompts' | 'subscription' | 'settings';
+  activePage?: 'dashboard' | 'prompts' | 'subscription' | 'settings' | 'help';
 }
 
 export const DashboardSidebar = ({ 
@@ -15,6 +16,7 @@ export const DashboardSidebar = ({
   activePage = 'dashboard'
 }: DashboardSidebarProps) => {
   const { theme } = useTheme();
+  const { t } = useLanguage();
   
   // Colors based on theme
   const bgColor = theme === 'light' ? 'bg-gray-50' : 'bg-[#0F1623]';
@@ -43,7 +45,7 @@ export const DashboardSidebar = ({
             }`}
           >
             <LayoutGrid className="h-5 w-5" />
-            <span>My Dashboard</span>
+            <span>{t("sidebar.dashboard", "My Dashboard")}</span>
           </button>
           <button
             onClick={() => handleNavigation("/my-prompts")}
@@ -54,7 +56,7 @@ export const DashboardSidebar = ({
             }`}
           >
             <MessageSquare className="h-5 w-5" />
-            <span>My Prompts</span>
+            <span>{t("sidebar.prompts", "My Prompts")}</span>
           </button>
           <button
             onClick={() => handleNavigation("/manage-subscription")}
@@ -65,7 +67,7 @@ export const DashboardSidebar = ({
             }`}
           >
             <CreditCard className="h-5 w-5" />
-            <span>Subscription</span>
+            <span>{t("sidebar.subscription", "Subscription")}</span>
           </button>
           <button
             onClick={() => handleNavigation("/my-settings")}
@@ -76,31 +78,44 @@ export const DashboardSidebar = ({
             }`}
           >
             <Settings className="h-5 w-5" />
-            <span>Settings</span>
+            <span>{t("sidebar.settings", "Settings")}</span>
+          </button>
+          <button
+            onClick={() => handleNavigation("/help-support")}
+            className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
+              activePage === 'help' 
+                ? `${activeBgColor} ${activeTextColor} font-medium` 
+                : `${hoverBgColor} ${hoverTextColor}`
+            }`}
+          >
+            <HelpCircle className="h-5 w-5" />
+            <span>{t("sidebar.help", "Help & Support")}</span>
           </button>
           <button
             onClick={handleLogout}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${hoverBgColor} ${hoverTextColor}`}
           >
             <LogOut className="h-5 w-5" />
-            <span>Logout</span>
+            <span>{t("sidebar.logout", "Logout")}</span>
           </button>
         </nav>
       </div>
 
       <div className={`p-4 border-t ${borderColor}`}>
         <h4 className={`text-xs uppercase tracking-wider mb-3 ${textColor}`}>
-          SUBSCRIPTION
+          {t("sidebar.subscription_heading", "SUBSCRIPTION")}
         </h4>
         <div className={`${cardBgColor} rounded-md p-4`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Pro Plan</span>
+            <span className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>
+              {t("sidebar.plan", "Pro Plan")}
+            </span>
             <span className={`text-xs px-3 py-1 ${theme === 'light' ? 'bg-primary/10 text-primary' : 'bg-[#2A6B85] text-[#33C3F0]'} rounded-full`}>
-              Active
+              {t("sidebar.active", "Active")}
             </span>
           </div>
           <div className={`text-xs ${textColor} mb-4`}>
-            Next billing on Aug 12, 2023
+            {t("sidebar.next_billing", "Next billing on Aug 12, 2023")}
           </div>
           <Button 
             variant="outline" 
@@ -108,7 +123,7 @@ export const DashboardSidebar = ({
             className={`w-full ${textColor} border-${btnBorderColor} ${btnBgColor} ${btnHoverBgColor} ${btnHoverTextColor}`}
             onClick={() => handleNavigation("/manage-subscription")}
           >
-            Manage Subscription
+            {t("sidebar.manage", "Manage Subscription")}
           </Button>
         </div>
       </div>

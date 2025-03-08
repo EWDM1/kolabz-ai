@@ -1,3 +1,4 @@
+
 const enTranslations = {
   "nav.features": "Features",
   "nav.pricing": "Pricing",
@@ -75,6 +76,36 @@ const enTranslations = {
   "footer.description": "Kolabz helps you craft perfect prompts for any AI model, enhancing your productivity and creativity.",
   "footer.copyright": "© 2024 Kolabz. All rights reserved.",
   "footer.tagline": "Made with care for creators everywhere",
+  
+  // Help & Support translations
+  "help.title": "Help & Support",
+  "help.description": "Need assistance? We're here to help you with any questions or issues you may have.",
+  "help.documentation.title": "Documentation",
+  "help.documentation.subtitle": "Comprehensive guides and resources",
+  "help.documentation.description": "Browse our detailed documentation for step-by-step guides on using our platform.",
+  "help.documentation.link": "View Documentation",
+  "help.contact.title": "Contact Support",
+  "help.contact.subtitle": "Get help from our team",
+  "help.contact.description": "Reach out to our support team directly for personalized assistance.",
+  "help.contact.link": "Contact Support",
+  "help.community.title": "Community Forum",
+  "help.community.subtitle": "Connect with other users",
+  "help.community.description": "Join discussions, share experiences, and learn from other community members.",
+  "help.community.link": "Visit Forum",
+  "help.videos.title": "Video Tutorials",
+  "help.videos.subtitle": "Learn with visual guides",
+  "help.videos.description": "Watch tutorials on how to make the most of our prompt optimization tools.",
+  "help.videos.link": "Watch Tutorials",
+  "help.faq.title": "Frequently Asked Questions",
+  "help.faq.subtitle": "Quick answers to common questions",
+  "help.faq.q1": "How do I optimize my prompts?",
+  "help.faq.a1": "Use our Prompt Optimizer tool on your dashboard. Enter your base prompt, select your target AI model, and our system will suggest improvements.",
+  "help.faq.q2": "Can I upgrade my subscription plan?",
+  "help.faq.a2": "Yes, you can upgrade your plan at any time from the Subscription page in your account.",
+  "help.faq.q3": "How do I save my optimized prompts?",
+  "help.faq.a3": "All optimized prompts are automatically saved to your account. You can access them anytime from the My Prompts section.",
+  "logout.title": "Logged out",
+  "logout.description": "You have been successfully logged out",
   
   // Dataset Builder translations
   "dataset.builder_title": "AI Prompt Dataset Builder",
