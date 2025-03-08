@@ -1,4 +1,3 @@
-
 const esTranslations = {
   "nav.features": "Características",
   "nav.pricing": "Precios",
@@ -65,6 +64,36 @@ const esTranslations = {
   "footer.description": "Kolabz te ayuda a crear prompts perfectos para cualquier modelo de IA, mejorando tu productividad y creatividad.",
   "footer.copyright": "© 2024 Kolabz. Todos los derechos reservados.",
   "footer.tagline": "Hecho con cuidado para creadores de todo el mundo",
+  
+  // Help & Support translations
+  "help.title": "Ayuda y Soporte",
+  "help.description": "¿Necesitas ayuda? Estamos aquí para ayudarte con cualquier pregunta o problema que puedas tener.",
+  "help.documentation.title": "Documentación",
+  "help.documentation.subtitle": "Guías y recursos completos",
+  "help.documentation.description": "Consulta nuestra documentación detallada para obtener guías paso a paso sobre cómo usar nuestra plataforma.",
+  "help.documentation.link": "Ver Documentación",
+  "help.contact.title": "Contactar con Soporte",
+  "help.contact.subtitle": "Obtén ayuda de nuestro equipo",
+  "help.contact.description": "Ponte en contacto con nuestro equipo de soporte directamente para obtener asistencia personalizada.",
+  "help.contact.link": "Contactar con Soporte",
+  "help.community.title": "Foro de la Comunidad",
+  "help.community.subtitle": "Conecta con otros usuarios",
+  "help.community.description": "Únete a debates, comparte experiencias y aprende de otros miembros de la comunidad.",
+  "help.community.link": "Visitar el Foro",
+  "help.videos.title": "Video Tutoriales",
+  "help.videos.subtitle": "Aprende con guías visuales",
+  "help.videos.description": "Mira tutoriales sobre cómo aprovechar al máximo nuestras herramientas de optimización de prompts.",
+  "help.videos.link": "Ver Tutoriales",
+  "help.faq.title": "Preguntas Frecuentes",
+  "help.faq.subtitle": "Respuestas rápidas a preguntas comunes",
+  "help.faq.q1": "¿Cómo optimizo mis prompts?",
+  "help.faq.a1": "Utiliza nuestra herramienta Prompt Optimizer en tu panel de control. Introduce tu prompt base, selecciona tu modelo de IA objetivo y nuestro sistema te sugerirá mejoras.",
+  "help.faq.q2": "¿Puedo actualizar mi plan de suscripción?",
+  "help.faq.a2": "Sí, puedes actualizar tu plan en cualquier momento desde la página de Suscripción en tu cuenta.",
+  "help.faq.q3": "¿Cómo guardo mis prompts optimizados?",
+  "help.faq.a3": "Todos los prompts optimizados se guardan automáticamente en tu cuenta. Puedes acceder a ellos en cualquier momento desde la sección Mis Prompts.",
+  "logout.title": "Cerrado sesión",
+  "logout.description": "Has cerrado sesión con éxito",
   
   // Dataset Builder translations
   "dataset.builder_title": "Constructor de Conjuntos de Datos para Prompts de IA",
@@ -171,7 +200,26 @@ const esTranslations = {
   "tools.title": "Herramientas de Prompting",
   "tools.description": "Herramientas especializadas para ayudarte a crear prompts perfectos y organizar tu conocimiento de IA.",
   "tools.universal_prompt": "Prompt Universal",
-  "tools.datasets": "Conjuntos de Datos"
+  "tools.datasets": "Conjuntos de Datos",
+  "pricing.pro.name": "Pro",
+  "pricing.pro.description": "Perfecto para creadores y profesionales individuales",
+  "pricing.elite.name": "Elite",
+  "pricing.elite.description": "Ideal para usuarios avanzados y equipos pequeños",
+  "pricing.features.unlimited_opt": "Optimizaciones de prompts ilimitadas",
+  "pricing.features.save_prompts": "Guarda hasta 100 prompts",
+  "pricing.features.save_prompts_elite": "Guarda hasta 300 prompts",
+  "pricing.features.all_templates": "Acceso a todas las plantillas",
+  "pricing.features.export": "Exportación con 1 clic a cualquier plataforma",
+  "pricing.features.priority": "Soporte prioritario",
+  "pricing.features.everything": "Todo lo incluido en Pro",
+  "pricing.features.workspaces": "Espacios de trabajo en equipo",
+  "pricing.features.collab_features": "Funciones de colaboración",
+  "pricing.features.custom": "Plantillas personalizadas",
+  "pricing.features.dedicated": "Soporte dedicado",
+  "pricing.cta.subscribe": "Suscribirse Ahora",
+  "pricing.cta.coming_soon": "Próximamente",
+  "pricing.savings.pro": "$20/año",
+  "pricing.savings.elite": "$48/año"
 };
 
 export default esTranslations;

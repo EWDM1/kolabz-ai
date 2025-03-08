@@ -29,21 +29,21 @@ const Pricing = () => {
       isAvailable: true,
     },
     {
-      name: t("pricing.team.name", "Team"),
+      name: t("pricing.elite.name", "Elite"),
       price: { monthly: "$24", annual: "$240" },
-      description: t("pricing.team.description", "Ideal for teams and businesses"),
+      description: t("pricing.elite.description", "Ideal for power users and small teams"),
       features: [
         { text: t("pricing.features.everything", "Everything in Pro"), included: true },
+        { text: t("pricing.features.save_prompts_elite", "Save Up to 300 Prompts"), included: true },
         { text: t("pricing.features.workspaces", "Team workspaces"), included: true },
         { text: t("pricing.features.collab_features", "Collaboration features"), included: true },
-        { text: t("pricing.features.custom", "Custom templates"), included: true },
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
-      ctaText: t("pricing.cta.coming_soon", "Coming Soon"),
-      id: "team",
+      ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
+      id: "elite",
       highlighted: false,
-      savings: t("pricing.savings.team", "$48/year"),
-      isAvailable: false,
+      savings: t("pricing.savings.elite", "$48/year"),
+      isAvailable: true,
     },
   ];
 

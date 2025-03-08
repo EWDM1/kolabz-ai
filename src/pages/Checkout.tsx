@@ -65,11 +65,11 @@ const Checkout = () => {
       period: isAnnual ? "year" : "month",
       description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
     },
-    team: {
-      name: t("pricing.team.name", "Team"),
+    elite: {
+      name: t("pricing.elite.name", "Elite"),
       price: isAnnual ? "$240" : "$24",
       period: isAnnual ? "year" : "month",
-      description: t("pricing.team.description", "Ideal for teams and businesses"),
+      description: t("pricing.elite.description", "Ideal for power users and small teams"),
     },
   };
 

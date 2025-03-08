@@ -46,11 +46,9 @@ const ChangePlan = () => {
   const { isAdmin, isSuperAdmin, user } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
   
-  // Admin check for test mode visibility
   const canAccessTestMode = isAdmin || isSuperAdmin;
 
   useEffect(() => {
-    // Log test mode status on component mount
     console.log("Stripe test mode is", testMode ? "enabled" : "disabled");
   }, [testMode]);
 
@@ -84,7 +82,6 @@ const ChangePlan = () => {
     setLoading(true);
     
     try {
-      // Call the Stripe service to change the plan
       const result = await changeSubscriptionPlan(selectedPlan, isAnnual);
       
       if (result.success) {
@@ -93,7 +90,6 @@ const ChangePlan = () => {
           description: `You have successfully switched to the ${selectedPlan === 'pro' ? 'Pro' : 'Team'} plan.`,
         });
         
-        // Navigate back to subscription management
         navigate("/manage-subscription");
       }
     } catch (error) {
@@ -116,7 +112,7 @@ const ChangePlan = () => {
       description: t("pricing.pro.description", "Perfect for individual creators and professionals"),
       features: [
         { text: t("pricing.features.unlimited_opt", "Unlimited prompt optimizations"), included: true },
-        { text: t("pricing.features.unlimited_lib", "Unlimited prompt library"), included: true },
+        { text: t("pricing.features.unlimited_lib", "Save Up to 100 prompts"), included: true },
         { text: t("pricing.features.all_templates", "Access to all templates"), included: true },
         { text: t("pricing.features.export", "1-click export to any platform"), included: true },
         { text: t("pricing.features.priority", "Priority support"), included: false },
@@ -124,18 +120,18 @@ const ChangePlan = () => {
       savings: t("pricing.savings.pro", "$20/year"),
     },
     {
-      id: "team",
-      name: t("pricing.team.name", "Team"),
+      id: "elite",
+      name: t("pricing.elite.name", "Elite"),
       price: { monthly: "$24", annual: "$240" },
-      description: t("pricing.team.description", "Ideal for teams and businesses"),
+      description: t("pricing.elite.description", "Ideal for power users and small teams"),
       features: [
         { text: t("pricing.features.everything", "Everything in Pro"), included: true },
+        { text: t("pricing.features.save_prompts_elite", "Save Up to 300 prompts"), included: true },
         { text: t("pricing.features.workspaces", "Team workspaces"), included: true },
         { text: t("pricing.features.collab_features", "Collaboration features"), included: true },
-        { text: t("pricing.features.custom", "Custom templates"), included: true },
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
-      savings: t("pricing.savings.team", "$48/year"),
+      savings: t("pricing.savings.elite", "$48/year"),
     },
   ];
 

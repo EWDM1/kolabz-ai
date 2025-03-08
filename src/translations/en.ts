@@ -1,4 +1,3 @@
-
 const enTranslations = {
   "nav.features": "Features",
   "nav.pricing": "Pricing",
@@ -212,7 +211,27 @@ const enTranslations = {
   "tools.title": "Prompting Tools",
   "tools.description": "Specialized tools to help you craft perfect prompts and organize your AI knowledge.",
   "tools.universal_prompt": "Universal Prompt",
-  "tools.datasets": "Datasets"
+  "tools.datasets": "Datasets",
+  
+  "pricing.pro.name": "Pro",
+  "pricing.pro.description": "Perfect for individual creators and professionals",
+  "pricing.elite.name": "Elite",
+  "pricing.elite.description": "Ideal for power users and small teams",
+  "pricing.features.unlimited_opt": "Unlimited prompt optimizations",
+  "pricing.features.save_prompts": "Save Up to 100 Prompts",
+  "pricing.features.save_prompts_elite": "Save Up to 300 Prompts",
+  "pricing.features.all_templates": "Access to all templates",
+  "pricing.features.export": "1-click export to any platform",
+  "pricing.features.priority": "Priority support",
+  "pricing.features.everything": "Everything in Pro",
+  "pricing.features.workspaces": "Team workspaces",
+  "pricing.features.collab_features": "Collaboration features",
+  "pricing.features.custom": "Custom templates",
+  "pricing.features.dedicated": "Dedicated support",
+  "pricing.cta.subscribe": "Subscribe Now",
+  "pricing.cta.coming_soon": "Coming Soon",
+  "pricing.savings.pro": "$20/year",
+  "pricing.savings.elite": "$48/year",
 };
 
 export default enTranslations;
