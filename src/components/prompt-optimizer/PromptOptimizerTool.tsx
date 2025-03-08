@@ -112,7 +112,7 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
       
       <CardFooter className="border-t border-border pt-4">
         <div className="text-xs text-muted-foreground">
-          Optimized for {llm} using DeepSeek AI
+          Optimized for {llm}
         </div>
       </CardFooter>
     </Card>

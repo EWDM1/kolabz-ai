@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { LayoutDashboard, MessageSquare, CreditCard, Settings, HelpCircle } from "lucide-react";
 import Header from "@/components/Header";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface SidebarLayoutProps {
   children: ReactNode;
@@ -22,14 +23,16 @@ interface SidebarLayoutProps {
 }
 
 const SidebarLayout = ({ children, activeMenuItem }: SidebarLayoutProps) => {
+  const { theme } = useTheme();
+  
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full flex-col bg-background">
+      <div className={`flex min-h-screen w-full flex-col ${theme === 'light' ? 'bg-gray-50' : 'bg-background'}`}>
         <Header />
         
         <div className="flex flex-1">
-          <Sidebar>
-            <SidebarHeader className="border-b border-border p-4">
+          <Sidebar className={theme === 'light' ? 'border-r border-gray-200' : ''}>
+            <SidebarHeader className={`border-b ${theme === 'light' ? 'border-gray-200' : 'border-border'} p-4`}>
               <div className="flex items-center">
                 <span className="font-semibold text-lg">My Account</span>
               </div>
@@ -74,7 +77,7 @@ const SidebarLayout = ({ children, activeMenuItem }: SidebarLayoutProps) => {
               </SidebarGroup>
             </SidebarContent>
             
-            <SidebarFooter className="border-t border-border p-4">
+            <SidebarFooter className={`border-t ${theme === 'light' ? 'border-gray-200' : 'border-border'} p-4`}>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild isActive={activeMenuItem === "help"}>

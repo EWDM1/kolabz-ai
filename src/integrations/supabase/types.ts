@@ -69,6 +69,30 @@ export type Database = {
         }
         Relationships: []
       }
+      prompt_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          model: string | null
+          prompt: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          model?: string | null
+          prompt: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          model?: string | null
+          prompt?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       role_features: {
         Row: {
           created_at: string | null
@@ -103,6 +127,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      saved_prompts: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

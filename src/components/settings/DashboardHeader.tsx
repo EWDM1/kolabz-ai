@@ -16,7 +16,7 @@ const DashboardHeader = ({ userName, onLogout }: DashboardHeaderProps) => {
   const { theme } = useTheme();
   
   return (
-    <header className="sticky top-0 z-40 bg-background border-b border-border">
+    <header className={`sticky top-0 z-40 ${theme === 'light' ? 'bg-white' : 'bg-background'} border-b border-border`}>
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <Link to="/" className="flex items-center">
           {theme === 'dark' ? (

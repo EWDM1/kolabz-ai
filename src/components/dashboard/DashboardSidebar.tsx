@@ -1,6 +1,7 @@
 
 import { LayoutGrid, MessageSquare, CreditCard, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/ThemeProvider";
 
 interface DashboardSidebarProps {
   handleNavigation: (path: string) => void;
@@ -13,16 +14,32 @@ export const DashboardSidebar = ({
   handleLogout,
   activePage = 'dashboard'
 }: DashboardSidebarProps) => {
+  const { theme } = useTheme();
+  
+  // Colors based on theme
+  const bgColor = theme === 'light' ? 'bg-gray-50' : 'bg-[#0F1623]';
+  const textColor = theme === 'light' ? 'text-gray-600' : 'text-[#8E9196]';
+  const hoverBgColor = theme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-[#19212F]';
+  const hoverTextColor = theme === 'light' ? 'hover:text-primary' : 'hover:text-[#33C3F0]';
+  const activeBgColor = theme === 'light' ? 'bg-gray-100' : 'bg-[#19212F]';
+  const activeTextColor = theme === 'light' ? 'text-primary' : 'text-[#33C3F0]';
+  const borderColor = theme === 'light' ? 'border-gray-200' : 'border-[#1A1F2C]';
+  const cardBgColor = theme === 'light' ? 'bg-white' : 'bg-[#19212F]';
+  const btnBorderColor = theme === 'light' ? 'border-gray-200' : 'border-[#1A1F2C]';
+  const btnBgColor = theme === 'light' ? 'bg-transparent' : 'bg-transparent';
+  const btnHoverBgColor = theme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-[#1A1F2C]';
+  const btnHoverTextColor = theme === 'light' ? 'hover:text-primary' : 'hover:text-[#33C3F0]';
+  
   return (
-    <div className="bg-[#0F1623] rounded-lg shadow-sm sticky top-24 text-[#8E9196]">
+    <div className={`${bgColor} rounded-lg shadow-sm sticky top-24 ${textColor}`}>
       <div className="p-4">
         <nav className="space-y-2">
           <button
             onClick={() => handleNavigation("/my-dashboard")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'dashboard' 
-                ? 'bg-[#19212F] text-[#33C3F0] font-medium' 
-                : 'hover:bg-[#19212F] hover:text-[#33C3F0]'
+                ? `${activeBgColor} ${activeTextColor} font-medium` 
+                : `${hoverBgColor} ${hoverTextColor}`
             }`}
           >
             <LayoutGrid className="h-5 w-5" />
@@ -32,8 +49,8 @@ export const DashboardSidebar = ({
             onClick={() => handleNavigation("/my-prompts")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'prompts' 
-                ? 'bg-[#19212F] text-[#33C3F0] font-medium' 
-                : 'hover:bg-[#19212F] hover:text-[#33C3F0]'
+                ? `${activeBgColor} ${activeTextColor} font-medium` 
+                : `${hoverBgColor} ${hoverTextColor}`
             }`}
           >
             <MessageSquare className="h-5 w-5" />
@@ -43,8 +60,8 @@ export const DashboardSidebar = ({
             onClick={() => handleNavigation("/manage-subscription")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'subscription' 
-                ? 'bg-[#19212F] text-[#33C3F0] font-medium' 
-                : 'hover:bg-[#19212F] hover:text-[#33C3F0]'
+                ? `${activeBgColor} ${activeTextColor} font-medium` 
+                : `${hoverBgColor} ${hoverTextColor}`
             }`}
           >
             <CreditCard className="h-5 w-5" />
@@ -54,8 +71,8 @@ export const DashboardSidebar = ({
             onClick={() => handleNavigation("/my-settings")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'settings' 
-                ? 'bg-[#19212F] text-[#33C3F0] font-medium' 
-                : 'hover:bg-[#19212F] hover:text-[#33C3F0]'
+                ? `${activeBgColor} ${activeTextColor} font-medium` 
+                : `${hoverBgColor} ${hoverTextColor}`
             }`}
           >
             <Settings className="h-5 w-5" />
@@ -63,7 +80,7 @@ export const DashboardSidebar = ({
           </button>
           <button
             onClick={handleLogout}
-            className="flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left hover:bg-[#19212F] hover:text-[#33C3F0]"
+            className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${hoverBgColor} ${hoverTextColor}`}
           >
             <LogOut className="h-5 w-5" />
             <span>Logout</span>
@@ -71,24 +88,24 @@ export const DashboardSidebar = ({
         </nav>
       </div>
 
-      <div className="p-4 border-t border-[#1A1F2C]">
-        <h4 className="text-xs uppercase tracking-wider mb-3 text-[#8E9196]">
+      <div className={`p-4 border-t ${borderColor}`}>
+        <h4 className={`text-xs uppercase tracking-wider mb-3 ${textColor}`}>
           SUBSCRIPTION
         </h4>
-        <div className="bg-[#19212F] rounded-md p-4">
+        <div className={`${cardBgColor} rounded-md p-4`}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-white">Pro Plan</span>
-            <span className="text-xs px-3 py-1 bg-[#2A6B85] text-[#33C3F0] rounded-full">
+            <span className={`text-sm font-medium ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Pro Plan</span>
+            <span className={`text-xs px-3 py-1 ${theme === 'light' ? 'bg-primary/10 text-primary' : 'bg-[#2A6B85] text-[#33C3F0]'} rounded-full`}>
               Active
             </span>
           </div>
-          <div className="text-xs text-[#8E9196] mb-4">
+          <div className={`text-xs ${textColor} mb-4`}>
             Next billing on Aug 12, 2023
           </div>
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full text-[#8E9196] border-[#1A1F2C] bg-transparent hover:bg-[#1A1F2C] hover:text-[#33C3F0]"
+            className={`w-full ${textColor} border-${btnBorderColor} ${btnBgColor} ${btnHoverBgColor} ${btnHoverTextColor}`}
             onClick={() => handleNavigation("/manage-subscription")}
           >
             Manage Subscription
