@@ -9,7 +9,7 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuLink,
+  SidebarMenuButton,
   SidebarGroup,
   SidebarTrigger,
   SidebarProvider
@@ -47,28 +47,36 @@ const HelpSupport = () => {
               <SidebarGroup>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuLink className="flex items-center gap-3" href="/my-dashboard">
-                      <LayoutDashboard size={18} />
-                      <span>Dashboard</span>
-                    </SidebarMenuLink>
+                    <SidebarMenuButton asChild>
+                      <Link to="/my-dashboard" className="flex items-center gap-3">
+                        <LayoutDashboard size={18} />
+                        <span>Dashboard</span>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuLink className="flex items-center gap-3" href="/my-prompts">
-                      <MessageSquare size={18} />
-                      <span>My Prompts</span>
-                    </SidebarMenuLink>
+                    <SidebarMenuButton asChild>
+                      <Link to="/my-prompts" className="flex items-center gap-3">
+                        <MessageSquare size={18} />
+                        <span>My Prompts</span>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuLink className="flex items-center gap-3" href="/manage-subscription">
-                      <CreditCard size={18} />
-                      <span>Subscription</span>
-                    </SidebarMenuLink>
+                    <SidebarMenuButton asChild>
+                      <Link to="/manage-subscription" className="flex items-center gap-3">
+                        <CreditCard size={18} />
+                        <span>Subscription</span>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuLink className="flex items-center gap-3" href="/my-settings">
-                      <Settings size={18} />
-                      <span>Settings</span>
-                    </SidebarMenuLink>
+                    <SidebarMenuButton asChild>
+                      <Link to="/my-settings" className="flex items-center gap-3">
+                        <Settings size={18} />
+                        <span>Settings</span>
+                      </Link>
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroup>
@@ -77,10 +85,12 @@ const HelpSupport = () => {
             <SidebarFooter className="border-t border-border p-4">
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuLink className="flex items-center gap-3" active href="/help-support">
-                    <HelpCircle size={18} />
-                    <span>Help & Support</span>
-                  </SidebarMenuLink>
+                  <SidebarMenuButton asChild isActive>
+                    <Link to="/help-support" className="flex items-center gap-3">
+                      <HelpCircle size={18} />
+                      <span>Help & Support</span>
+                    </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarFooter>
