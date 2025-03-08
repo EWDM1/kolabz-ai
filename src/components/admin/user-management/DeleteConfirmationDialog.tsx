@@ -18,7 +18,7 @@ export interface DeleteConfirmationDialogProps {
   isMultiple?: boolean;
   title?: string;
   description?: string;
-  count?: number; // Add this property for backward compatibility
+  count?: number;
 }
 
 export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({

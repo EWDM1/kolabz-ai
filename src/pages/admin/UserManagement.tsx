@@ -1,5 +1,4 @@
 
-import { Button } from "@/components/ui/button";
 import { useUserManagementPage } from "@/hooks/use-user-management-page";
 import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
 import { UserFiltersPanel } from "@/components/admin/user-management/UserFiltersPanel";
@@ -42,14 +41,6 @@ const UserManagement = () => {
     handleDeleteUser(user.id);
   };
 
-  // Map filter values to the expected format by UserFiltersPanel
-  const panelFilterValues = {
-    name: filterValues.name || '',
-    email: filterValues.email || '',
-    role: filterValues.role,
-    status: filterValues.status
-  };
-
   return (
     <AdminLayout 
       title="User Management" 
@@ -68,7 +59,12 @@ const UserManagement = () => {
         {filterVisible && (
           <div className="animate-slide-up">
             <UserFiltersPanel 
-              filterValues={panelFilterValues}
+              filterValues={{
+                name: filterValues.name || '',
+                email: filterValues.email || '',
+                role: filterValues.role,
+                status: filterValues.status
+              }}
               onFilterChange={(field, value) => handleFilterChange(field as keyof typeof filterValues, value)}
               onResetFilters={resetFilters}
             />

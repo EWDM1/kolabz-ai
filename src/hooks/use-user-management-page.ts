@@ -1,13 +1,10 @@
 
 import { useUserData } from './user-management/use-user-data';
 import { useUserSelection } from './user-management/use-user-selection';
-import { useUserFilters, FilterValues } from './user-management/use-user-filters';
+import { useUserFilters } from './user-management/use-user-filters';
 import { useUserActions } from './user-management/use-user-actions';
-import { useDeleteDialog, DeleteDialogData } from './user-management/use-delete-dialog';
+import { useDeleteDialog } from './user-management/use-delete-dialog';
 import { useSidebarState } from './use-sidebar-state';
-
-export { type FilterValues } from './user-management/use-user-filters';
-export { type DeleteDialogData } from './user-management/use-delete-dialog';
 
 export const useUserManagementPage = () => {
   const { users, loading, fetchUsers } = useUserData();
@@ -17,10 +14,10 @@ export const useUserManagementPage = () => {
     handleFilterChange, 
     resetFilters, 
     filterVisible, 
-    toggleFilterVisible: handleFilterClick, 
+    toggleFilterVisible, 
     filterUsers 
   } = useUserFilters();
-  const { handleEditUser, navigate } = useUserActions();
+  const { handleEditUser } = useUserActions();
   const { 
     deleteDialogOpen, 
     deleteDialogData, 
@@ -45,10 +42,9 @@ export const useUserManagementPage = () => {
     filterValues,
     handleFilterChange,
     resetFilters,
-    handleResetFilters: resetFilters,
     filterVisible,
-    toggleFilterVisible: handleFilterClick,
-    handleFilterClick,
+    toggleFilterVisible,
+    handleFilterClick: toggleFilterVisible,
     filterUsers,
     
     // Actions
@@ -65,9 +61,6 @@ export const useUserManagementPage = () => {
     // Sidebar
     sidebarOpen,
     setSidebarOpen,
-    sidebarCollapsed,
-    
-    // Navigation
-    navigate
+    sidebarCollapsed
   };
 };

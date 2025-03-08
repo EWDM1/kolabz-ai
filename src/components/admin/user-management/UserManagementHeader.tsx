@@ -1,22 +1,22 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Filter } from "lucide-react";
 
 export interface UserManagementHeaderProps {
   selectedCount: number;
   onDelete: () => void;
   onRefresh: () => Promise<void> | void;
-  toggleFilterVisible?: () => void; // Making this optional
-  onDeleteSelected?: () => void; // Making this optional
+  onDeleteSelected?: () => void;
+  toggleFilterVisible?: () => void;
 }
 
 export const UserManagementHeader: React.FC<UserManagementHeaderProps> = ({
   selectedCount,
   onDelete,
   onRefresh,
-  toggleFilterVisible,
-  onDeleteSelected
+  onDeleteSelected,
+  toggleFilterVisible
 }) => {
   // Use the appropriate handler based on what was passed
   const handleDeleteClick = onDeleteSelected || onDelete;
@@ -41,6 +41,7 @@ export const UserManagementHeader: React.FC<UserManagementHeaderProps> = ({
         </Button>
         {toggleFilterVisible && (
           <Button variant="outline" onClick={toggleFilterVisible}>
+            <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
         )}

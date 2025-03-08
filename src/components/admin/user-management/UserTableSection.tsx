@@ -1,7 +1,7 @@
 
 import { UserTable } from "@/components/admin/UserTable";
 import { AdminUser } from "@/components/admin/user-management/types";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 interface UserTableSectionProps {
   users: AdminUser[];
@@ -21,13 +21,15 @@ export function UserTableSection({
   onDelete
 }: UserTableSectionProps) {
   return (
-    <UserTable
-      users={users}
-      loading={loading}
-      selectedUsers={selectedUsers}
-      setSelectedUsers={setSelectedUsers}
-      onEdit={onEdit}
-      onDelete={onDelete}
-    />
+    <div className="p-4">
+      <UserTable
+        users={users}
+        loading={loading}
+        selectedUsers={selectedUsers}
+        setSelectedUsers={setSelectedUsers}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </div>
   );
 }

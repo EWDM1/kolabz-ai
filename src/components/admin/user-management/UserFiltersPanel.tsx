@@ -21,20 +21,15 @@ export interface FilterValues {
 
 export interface UserFiltersPanelProps {
   filterValues: FilterValues;
-  onFilterChange: (field: keyof FilterValues, value: string) => void;
+  onFilterChange: (field: string, value: string) => void;
   onResetFilters: () => void;
-  handleResetFilters?: () => void; // Make this optional for backward compatibility
 }
 
 export const UserFiltersPanel: React.FC<UserFiltersPanelProps> = ({
   filterValues,
   onFilterChange,
-  onResetFilters,
-  handleResetFilters
+  onResetFilters
 }) => {
-  // Use the appropriate handler
-  const resetHandler = handleResetFilters || onResetFilters;
-  
   return (
     <Card className="mb-6">
       <CardHeader className="pb-3">
@@ -72,7 +67,7 @@ export const UserFiltersPanel: React.FC<UserFiltersPanelProps> = ({
               <SelectItem value="">All roles</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
               <SelectItem value="user">User</SelectItem>
-              <SelectItem value="guest">Guest</SelectItem>
+              <SelectItem value="superadmin">Super Admin</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -94,7 +89,7 @@ export const UserFiltersPanel: React.FC<UserFiltersPanelProps> = ({
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline" onClick={resetHandler} className="ml-auto">
+        <Button variant="outline" onClick={onResetFilters} className="ml-auto">
           Reset Filters
         </Button>
       </CardFooter>
