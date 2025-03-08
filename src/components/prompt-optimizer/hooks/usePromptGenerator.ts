@@ -22,7 +22,14 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
 
   const generatePrompt = async (params: GeneratePromptParams) => {
     const { promptObjective } = params;
-    if (!promptObjective.trim()) return;
+    if (!promptObjective.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a prompt objective",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setIsGenerating(true);
     setError("");
@@ -53,10 +60,17 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
       }
     } catch (err: any) {
       console.error("Error generating prompt:", err);
-      setError(err.message || "Failed to generate prompt");
+      
+      // Custom error message for the 402 Payment Required error
+      let errorMessage = err.message || "Failed to generate prompt";
+      if (errorMessage.includes("402") || errorMessage.includes("payment")) {
+        errorMessage = "The DeepSeek API requires payment or has reached its limit. Please check the API key or try again later.";
+      }
+      
+      setError(errorMessage);
       toast({
         title: "Error",
-        description: err.message || "Failed to generate prompt",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -70,4 +84,3 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
     error
   };
 };
-
