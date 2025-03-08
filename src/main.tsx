@@ -1,4 +1,3 @@
-
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
@@ -53,11 +52,23 @@ const router = createBrowserRouter([
         element: <MyDashboard />,
       },
       {
+        path: 'my-dashboard',
+        element: <MyDashboard />,
+      },
+      {
         path: 'prompts',
         element: <MyPrompts />,
       },
       {
+        path: 'my-prompts',
+        element: <MyPrompts />,
+      },
+      {
         path: 'settings',
+        element: <MySettings />,
+      },
+      {
+        path: 'my-settings',
         element: <MySettings />,
       },
       {
