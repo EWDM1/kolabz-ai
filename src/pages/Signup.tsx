@@ -1,9 +1,10 @@
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
 import { useLanguage } from "@/components/LanguageContext";
 
 const Signup = () => {
+  const location = useLocation();
   const { t } = useLanguage();
 
   return (

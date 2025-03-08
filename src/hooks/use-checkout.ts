@@ -6,6 +6,9 @@ import { useLanguage } from "@/components/LanguageContext";
 import { isTestMode, getPublishableKey, isStripeConfigured } from "@/integrations/stripe/stripeConfig";
 import { supabase } from "@/integrations/supabase/client";
 
+// Local storage key for checkout state
+const CHECKOUT_STATE_KEY = "kolabz_checkout_state";
+
 export const useCheckout = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -16,9 +19,35 @@ export const useCheckout = () => {
   const [paymentMethod, setPaymentMethod] = useState<any>(null);
   const [stripeReady, setStripeReady] = useState(false);
 
-  // Extract plan details from location state or default to pro plan
-  const planId = state?.planId || "pro";
-  const isAnnual = state?.isAnnual !== undefined ? state?.isAnnual : true;
+  // Extract plan details from location state or saved state
+  const getSavedState = () => {
+    const savedState = localStorage.getItem(CHECKOUT_STATE_KEY);
+    if (savedState) {
+      try {
+        return JSON.parse(savedState);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+  
+  const planId = state?.planId || getSavedState()?.planId || "pro";
+  const isAnnual = state?.isAnnual !== undefined ? state?.isAnnual : 
+                  getSavedState()?.isAnnual !== undefined ? getSavedState()?.isAnnual : true;
+
+  // Save checkout state for login redirect
+  const saveCheckoutState = () => {
+    localStorage.setItem(CHECKOUT_STATE_KEY, JSON.stringify({
+      planId,
+      isAnnual
+    }));
+  };
+
+  // Clear saved checkout state after successful checkout
+  const clearCheckoutState = () => {
+    localStorage.removeItem(CHECKOUT_STATE_KEY);
+  };
 
   // Check if Stripe is configured
   useEffect(() => {
@@ -37,18 +66,6 @@ export const useCheckout = () => {
     
     checkStripeConfig();
   }, []);
-
-  useEffect(() => {
-    // If no plan was selected, redirect to pricing
-    if (!state || !state.planId) {
-      toast({
-        title: t("checkout.no_plan_selected", "No plan selected"),
-        description: t("checkout.please_select_plan", "Please select a subscription plan first"),
-        variant: "destructive",
-      });
-      navigate("/");
-    }
-  }, [state, navigate, toast, t]);
 
   const planDetails = {
     pro: {
@@ -83,6 +100,32 @@ export const useCheckout = () => {
     });
   };
 
+  const createSubscription = async (userId: string, paymentMethodId: string) => {
+    // Calculate end date based on annual/monthly
+    const daysToAdd = isAnnual ? 365 : 30;
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + daysToAdd);
+    
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .insert({
+        user_id: userId,
+        plan_id: planId,
+        is_annual: isAnnual,
+        payment_method_id: paymentMethodId,
+        current_period_end: endDate.toISOString()
+      })
+      .select()
+      .single();
+      
+    if (error) {
+      console.error("Error creating subscription:", error);
+      throw new Error("Failed to create subscription");
+    }
+      
+    return data;
+  };
+
   const handleCheckout = async () => {
     if (!paymentMethod) {
       toast({
@@ -103,25 +146,13 @@ export const useCheckout = () => {
         throw new Error("User not authenticated");
       }
       
-      // In a real implementation, you would call your backend API to create a subscription
-      // For demo, we'll create a record in a subscriptions table
+      // Create subscription in database
+      await createSubscription(user.id, paymentMethod.id);
       
-      const subscriptionData = {
-        user_id: user.id,
-        plan_id: planId,
-        is_annual: isAnnual,
-        payment_method_id: paymentMethod.id,
-        status: 'active',
-        current_period_end: new Date(Date.now() + (isAnnual ? 365 : 30) * 24 * 60 * 60 * 1000).toISOString(),
-      };
+      // Clear saved checkout state
+      clearCheckoutState();
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Log the subscription data that would be created
-      console.log("Creating subscription:", subscriptionData);
-      
-      // Simulated successful subscription
+      // Notify user of success
       toast({
         title: t("checkout.subscription_active", "Subscription active"),
         description: t("checkout.welcome_message", "Welcome to Kolabz! Your subscription is now active."),
@@ -148,7 +179,8 @@ export const useCheckout = () => {
     isProcessing,
     paymentMethod,
     stripeReady,
-    isTestMode: isTestMode,
+    isTestMode,
+    saveCheckoutState,
     handlePaymentSuccess,
     handlePaymentError,
     handleCheckout

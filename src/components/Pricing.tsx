@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthContext";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const plans = [
     {
@@ -47,9 +48,15 @@ const Pricing = () => {
     },
   ];
 
+  const checkUserSubscription = async () => {
+    // For authenticated users, we could check if they already have a subscription
+    // This is where you would add logic to fetch and check subscription status
+  };
+
   const handlePlanSelection = (planId: string, isAvailable: boolean) => {
     if (!isAvailable) return;
     
+    // Navigate to checkout with selected plan
     navigate("/checkout", { 
       state: { 
         planId: planId,

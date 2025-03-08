@@ -1,8 +1,12 @@
 
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthForm from "@/components/AuthForm";
+import { useLanguage } from "@/components/LanguageContext";
 
 const Login = () => {
+  const location = useLocation();
+  const { t } = useLanguage();
+  
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">

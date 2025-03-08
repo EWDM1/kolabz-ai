@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ interface AuthFormProps {
 
 const AuthForm = ({ mode }: AuthFormProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register, isAdmin } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,9 @@ const AuthForm = ({ mode }: AuthFormProps) => {
     password: "",
   });
   const [formError, setFormError] = useState("");
+
+  // Get return URL from location state, if provided
+  const returnUrl = location.state?.returnUrl || "/dashboard";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -69,13 +73,28 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       if (mode === "login") {
         const success = await login(formData.email, formData.password);
         if (success) {
-          // Navigate based on user role
-          navigate(isAdmin ? "/admin" : "/dashboard");
+          // Navigate based on returnUrl or user role
+          navigate(isAdmin ? "/admin" : returnUrl);
+        } else {
+          setFormError("Invalid email or password");
         }
       } else {
         const success = await register(formData.email, formData.password, formData.name);
         if (success) {
-          navigate("/dashboard");
+          if (returnUrl === "/checkout") {
+            // For checkout flow, go directly to checkout
+            navigate(returnUrl);
+          } else {
+            // Default redirect
+            navigate("/dashboard");
+          }
+          
+          toast({
+            title: "Account created",
+            description: "Your account has been successfully created.",
+          });
+        } else {
+          setFormError("Registration failed. Email may already be in use.");
         }
       }
     } catch (error) {
