@@ -161,7 +161,7 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
       >
         <div className="flex h-16 items-center border-b border-border px-3">
           <Link 
-            to="/admin" 
+            to="/AdminDashboard" 
             className={cn(
               "flex items-center gap-2",
               isCollapsed && "justify-center"
@@ -216,8 +216,8 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             <SidebarItem
               icon={<LayoutDashboard className="h-5 w-5" />}
               label="Dashboard"
-              href="/admin/dashboard"
-              isActive={path === "/admin" || path === "/admin/dashboard"}
+              href="/AdminDashboard"
+              isActive={path === "/admin" || path === "/AdminDashboard"}
               onClick={onClose}
               isCollapsed={isCollapsed}
             />

@@ -57,8 +57,8 @@ const App = () => (
                   <Route path="/my-settings" element={<MySettings />} />
                   
                   {/* Admin Routes */}
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route path="/AdminDashboard" element={<AdminDashboard />} />
+                  <Route path="/admin" element={<Navigate to="/AdminDashboard" replace />} />
                   <Route path="/admin/users" element={<UserManagement />} />
                   <Route path="/admin/users/filter" element={<UserFilter />} />
                   <Route path="/admin/users/edit/:id" element={<EditUser />} />
