@@ -1,8 +1,10 @@
 
-import { useState } from "react";
 import { PromptCard } from "./PromptCard";
 import { PromptListHeader } from "./PromptListHeader";
 import { EmptyPromptState } from "./EmptyPromptState";
+import { usePromptSelection } from "./components/PromptSelection";
+import { usePromptFilter } from "./components/PromptFilter";
+import { exportPrompts } from "./components/PromptExport";
 import { Prompt } from "./types";
 
 interface PromptListProps {
@@ -36,76 +38,18 @@ export const PromptList = ({
   toggleFavorite,
   handleDeletePrompt
 }: PromptListProps) => {
-  const [selectedPrompts, setSelectedPrompts] = useState<number[]>([]);
   
-  const getFilteredPrompts = () => {
-    let filtered = [...prompts];
-    
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (prompt) =>
-          prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          prompt.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          prompt.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-    
-    if (currentCategory !== "all") {
-      filtered = filtered.filter(prompt => 
-        prompt.tags.includes(currentCategory)
-      );
-    }
-    
-    switch (activeFilter) {
-      case "favorites":
-        filtered = filtered.filter(prompt => prompt.favorite);
-        break;
-      case "gpt4":
-        filtered = filtered.filter(prompt => prompt.model === "GPT-4");
-        break;
-      case "claude":
-        filtered = filtered.filter(prompt => prompt.model === "Claude");
-        break;
-    }
-    
-    switch (sortBy) {
-      case "recent":
-        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        break;
-      case "oldest":
-        filtered.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        break;
-      case "alphabetical":
-        filtered.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-    }
-    
-    return filtered;
-  };
-  
-  const filteredPrompts = getFilteredPrompts();
-  
-  const togglePromptSelection = (id: number) => {
-    setSelectedPrompts(prev => 
-      prev.includes(id) 
-        ? prev.filter(promptId => promptId !== id)
-        : [...prev, id]
-    );
-  };
-  
-  const handleSelectAll = () => {
-    if (selectedPrompts.length === filteredPrompts.length) {
-      setSelectedPrompts([]);
-    } else {
-      setSelectedPrompts(filteredPrompts.map(p => p.id));
-    }
-  };
+  // Use the custom hooks for filtering and selection
+  const { filteredPrompts, hasFilters } = usePromptFilter({
+    prompts,
+    searchQuery,
+    activeFilter,
+    sortBy,
+    currentCategory
+  });
   
   const handleBulkDelete = () => {
-    if (selectedPrompts.length === 0) return;
-    
     setPrompts(prompts.filter(prompt => !selectedPrompts.includes(prompt.id)));
-    setSelectedPrompts([]);
   };
   
   const handleExport = () => {
@@ -113,18 +57,18 @@ export const PromptList = ({
       ? prompts.filter(p => selectedPrompts.includes(p.id)) 
       : filteredPrompts;
       
-    const exportData = JSON.stringify(promptsToExport, null, 2);
-    const blob = new Blob([exportData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "my-prompts.json";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportPrompts(promptsToExport);
   };
   
-  const hasFilters = Boolean(searchQuery || activeFilter !== "all" || currentCategory !== "all");
+  const { 
+    selectedPrompts, 
+    togglePromptSelection, 
+    handleSelectAll 
+  } = usePromptSelection({ 
+    filteredPrompts, 
+    onBulkDelete: handleBulkDelete, 
+    onExport: handleExport 
+  });
   
   return (
     <div className="bg-card rounded-lg border border-border shadow-sm">
