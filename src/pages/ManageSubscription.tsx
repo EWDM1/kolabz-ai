@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
@@ -12,8 +12,12 @@ import {
   cancelSubscription, 
   formatCardDetails
 } from "@/integrations/stripe/stripeService";
+import { HelpCircle, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
-import { SubscriptionHeader } from "@/components/dashboard/SubscriptionHeader";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { CurrentPlanCard } from "@/components/subscription/CurrentPlanCard";
 import { PaymentMethodCard } from "@/components/subscription/PaymentMethodCard";
@@ -25,8 +29,9 @@ const ManageSubscription = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
-  const { isAdmin, isSuperAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin, user } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
+  const { theme } = useTheme();
   
   // Admin check for test mode visibility
   const canAccessTestMode = isAdmin || isSuperAdmin;
@@ -135,12 +140,54 @@ const ManageSubscription = () => {
 
   return (
     <div className="min-h-screen bg-background/95">
-      <SubscriptionHeader 
-        handleNavigation={handleNavigation}
-        canAccessTestMode={canAccessTestMode}
-        testMode={testMode}
-        handleToggleTestMode={handleToggleTestMode}
-      />
+      {/* Dashboard header */}
+      <header className="sticky top-0 z-40 bg-background border-b border-border">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link to="/" className="flex items-center">
+            {theme === 'dark' ? (
+              <img 
+                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
+                alt="Kolabz Logo" 
+                className="h-8" 
+              />
+            )}
+          </Link>
+
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+            <LanguageSelector />
+            {canAccessTestMode && (
+              <Button
+                variant={testMode ? "outline" : "ghost"}
+                size="sm"
+                onClick={handleToggleTestMode}
+                className={testMode ? "border-orange-300 text-orange-600" : ""}
+              >
+                {testMode ? "Test Mode" : "Live Mode"}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer ml-2">
+              <span className="text-sm font-medium hidden md:inline-block">
+                {user?.name || "John Doe"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
@@ -178,6 +225,19 @@ const ManageSubscription = () => {
             
             {/* FAQ Card */}
             <FAQCard />
+            
+            {/* Help & Support Footer */}
+            <div className="mt-8 pt-6 border-t border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Need help?</span>
+                </div>
+                <Button variant="link" size="sm" asChild>
+                  <Link to="/help-support">Visit Help & Support</Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

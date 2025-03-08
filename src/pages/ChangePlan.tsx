@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  LayoutDashboard,
-  ListChecks,
-  Settings,
-  LogOut,
-  User,
-  ArrowLeft,
   Check,
   CreditCard,
   Sparkles,
   AlertCircle,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  LogOut,
+  HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +25,8 @@ import { useTheme } from "@/components/ThemeProvider";
 import { Separator } from "@/components/ui/separator";
 import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { 
   isTestMode, 
   toggleStripeTestMode 
@@ -45,7 +43,7 @@ const ChangePlan = () => {
   const [isAnnual, setIsAnnual] = useState(true);
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
-  const { isAdmin, isSuperAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin, user } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
   
   // Admin check for test mode visibility
@@ -161,19 +159,31 @@ const ChangePlan = () => {
             )}
           </Link>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <ThemeToggle />
-
-            <div 
-              className="flex items-center space-x-2 cursor-pointer" 
-              onClick={() => handleNavigation("/my-settings")}
+            <LanguageSelector />
+            {canAccessTestMode && (
+              <Button 
+                variant={testMode ? "outline" : "ghost"}
+                size="sm" 
+                onClick={handleToggleTestMode}
+                className={testMode ? "border-orange-300 text-orange-600" : ""}
+              >
+                {testMode ? "Test Mode" : "Live Mode"}
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
             >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer ml-2">
               <span className="text-sm font-medium hidden md:inline-block">
-                John Doe
+                {user?.name || "John Doe"}
               </span>
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                <User className="h-4 w-4" />
-              </div>
             </div>
           </div>
         </div>
@@ -182,71 +192,16 @@ const ChangePlan = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
-            <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
-              <div className="p-4">
-                <nav className="space-y-1">
-                  <button
-                    onClick={() => handleNavigation("/dashboard")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <LayoutDashboard className="h-5 w-5" />
-                    <span>Dashboard</span>
-                  </button>
-                  <button
-                    onClick={() => handleNavigation("/my-prompts")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <ListChecks className="h-5 w-5" />
-                    <span>My Prompts</span>
-                  </button>
-                  <button
-                    onClick={() => handleNavigation("/my-settings")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    <span>Logout</span>
-                  </button>
-                </nav>
-              </div>
-
-              <div className="p-4 border-t border-border">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                  SUBSCRIPTION
-                </h4>
-                <div className="bg-primary/10 rounded-md p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Pro Plan</span>
-                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
-                      Active
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-3">
-                    Next billing on Aug 12, 2023
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-xs bg-card"
-                    onClick={() => handleNavigation("/manage-subscription")}
-                  >
-                    Manage Subscription
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <DashboardSidebar 
+              handleNavigation={handleNavigation}
+              handleLogout={handleLogout}
+              activePage="subscription"
+            />
           </div>
 
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
             <div className="flex items-center justify-between mb-6">
               <Button variant="ghost" size="sm" onClick={() => navigate("/manage-subscription")} className="gap-1">
-                <ArrowLeft className="h-4 w-4" />
                 Back to Subscription
               </Button>
               
@@ -404,6 +359,18 @@ const ChangePlan = () => {
                   support@kolabz.com
                 </a>
               </p>
+            </div>
+            
+            <div className="mt-8 pt-6 border-t border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <HelpCircle className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm text-muted-foreground">Need help?</span>
+                </div>
+                <Button variant="link" size="sm" asChild>
+                  <Link to="/help-support">Visit Help & Support</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

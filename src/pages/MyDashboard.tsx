@@ -90,9 +90,11 @@ const MyDashboard = () => {
               Welcome back, {user?.name || "John Doe"}! Optimize your AI prompts with our tools.
             </p>
             
-            <div className="flex justify-center">
-              {/* Prompt Optimizer Tool */}
-              <PromptOptimizerTool />
+            <div className="flex justify-center w-full">
+              {/* Made the PromptOptimizerTool container wider by changing to w-full */}
+              <div className="w-full max-w-5xl">
+                <PromptOptimizerTool />
+              </div>
             </div>
             
             {/* Help & Support Footer */}

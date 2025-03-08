@@ -43,6 +43,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { useAuth } from "@/components/AuthContext";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 interface Prompt {
   id: number;
@@ -57,6 +60,7 @@ interface Prompt {
 const MyPrompts = () => {
   const { toast } = useToast();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const navigate = useNavigate();
   
   const [searchQuery, setSearchQuery] = useState("");
@@ -169,18 +173,18 @@ const MyPrompts = () => {
     prompts.flatMap(prompt => prompt.tags)
   )).sort();
   
+  const handleNavigation = (path: string) => {
+    window.location.href = path;
+  };
+  
   const handleLogout = () => {
     toast({
       title: "Logged out",
       description: "You have been successfully logged out",
     });
-    navigate("/login");
+    window.location.href = "/login";
   };
 
-  const handleNavigation = (path: string) => {
-    navigate(path);
-  };
-  
   const toggleFavorite = (id: number) => {
     setPrompts(prompts.map(prompt => 
       prompt.id === id 
@@ -289,19 +293,21 @@ const MyPrompts = () => {
             )}
           </Link>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <ThemeToggle />
-
-            <div 
-              className="flex items-center space-x-2 cursor-pointer" 
-              onClick={() => handleNavigation("/my-settings")}
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
             >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer ml-2">
               <span className="text-sm font-medium hidden md:inline-block">
-                John Doe
+                {user?.name || "John Doe"}
               </span>
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                <User className="h-4 w-4" />
-              </div>
             </div>
           </div>
         </div>
@@ -310,82 +316,18 @@ const MyPrompts = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
-            <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
-              <div className="p-4">
-                <nav className="space-y-1">
-                  <button
-                    onClick={() => handleNavigation("/my-dashboard")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <LayoutDashboard className="h-5 w-5" />
-                    <span>Dashboard</span>
-                  </button>
-                  <button
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
-                  >
-                    <ListChecks className="h-5 w-5" />
-                    <span>My Prompts</span>
-                  </button>
-                  <button
-                    onClick={() => handleNavigation("/my-settings")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    <span>Logout</span>
-                  </button>
-                </nav>
-              </div>
-
-              <div className="p-4 border-t border-border">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                  SUBSCRIPTION
-                </h4>
-                <div className="bg-muted rounded-md p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Pro Plan</span>
-                    <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-                      Active
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-3">
-                    Next billing on Aug 12, 2023
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-xs"
-                    onClick={() => handleNavigation("/manage-subscription")}
-                  >
-                    Manage Subscription
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <DashboardSidebar 
+              handleNavigation={handleNavigation}
+              handleLogout={handleLogout}
+              activePage="prompts"
+            />
           </div>
 
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold">My Prompts</h1>
-                <p className="text-muted-foreground">
-                  Browse, search and manage your saved prompts
-                </p>
-              </div>
-              <Button 
-                onClick={handleCreateNewPrompt}
-                className="hidden sm:flex"
-              >
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Create New Prompt
-              </Button>
-            </div>
+            <h1 className="text-2xl font-bold mb-2">My Prompts</h1>
+            <p className="text-muted-foreground mb-6">
+              Manage and organize your saved prompts
+            </p>
             
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
               <div className="md:col-span-3 space-y-6">
@@ -718,6 +660,18 @@ const MyPrompts = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      
+      <div className="mt-8 pt-6 border-t border-border">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <HelpCircle className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Need help?</span>
+          </div>
+          <Button variant="link" size="sm" asChild>
+            <Link to="/help-support">Visit Help & Support</Link>
+          </Button>
         </div>
       </div>
     </div>

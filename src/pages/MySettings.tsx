@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import {
   User,
   Settings,
@@ -13,9 +12,7 @@ import {
   Palette,
   Save,
   CheckCircle,
-  Search,
-  LayoutDashboard,
-  ListChecks,
+  HelpCircle,
   LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -40,11 +37,15 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useAuth } from "@/components/AuthContext";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 
 const MySettings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const { user } = useAuth();
   
   // Form states
   const [fullName, setFullName] = useState("John Doe");
@@ -142,7 +143,7 @@ const MySettings = () => {
       {/* Dashboard header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <button onClick={() => handleNavigation("/")} className="flex items-center">
+          <Link to="/" className="flex items-center">
             {theme === 'dark' ? (
               <img 
                 src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
@@ -156,103 +157,42 @@ const MySettings = () => {
                 className="h-8" 
               />
             )}
-          </button>
+          </Link>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative w-64 hidden md:block">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="pl-8"
-              />
-            </div>
-
+          <div className="flex items-center space-x-2">
             <ThemeToggle />
-
-            <div className="flex items-center space-x-2">
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer ml-2">
               <span className="text-sm font-medium hidden md:inline-block">
-                John Doe
+                {user?.name || "John Doe"}
               </span>
-              <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
-                <User className="h-4 w-4" />
-              </div>
             </div>
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-12 gap-4 lg:gap-8">
+        <div className="grid grid-cols-12 gap-8">
           {/* Sidebar */}
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
-            <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
-              <div className="p-4">
-                <nav className="space-y-1">
-                  <button
-                    onClick={() => handleNavigation("/dashboard")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <LayoutDashboard className="h-5 w-5" />
-                    <span>Dashboard</span>
-                  </button>
-                  <button
-                    onClick={() => handleNavigation("/my-prompts")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
-                  >
-                    <ListChecks className="h-5 w-5" />
-                    <span>My Prompts</span>
-                  </button>
-                  <button
-                    onClick={() => handleNavigation("/my-settings")}
-                    className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
-                  >
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted w-full text-left"
-                  >
-                    <LogOut className="h-5 w-5" />
-                    <span>Logout</span>
-                  </button>
-                </nav>
-              </div>
-
-              <div className="p-4 border-t border-border">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                  SUBSCRIPTION
-                </h4>
-                <div className="bg-muted rounded-md p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Pro Plan</span>
-                    <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-                      Active
-                    </span>
-                  </div>
-                  <div className="text-xs text-muted-foreground mb-3">
-                    Next billing on Aug 12, 2023
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full text-xs" 
-                    onClick={handleManageSubscription}
-                  >
-                    Manage Subscription
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <DashboardSidebar 
+              handleNavigation={handleNavigation}
+              handleLogout={handleLogout}
+              activePage="settings"
+            />
           </div>
 
           {/* Main content */}
           <div className="col-span-12 md:col-span-9 lg:col-span-10">
-            <div className="flex items-center mb-6">
-              <Settings className="h-6 w-6 mr-2 text-primary" />
-              <h1 className="text-2xl font-bold">My Settings</h1>
-            </div>
+            <h1 className="text-2xl font-bold mb-6">My Settings</h1>
 
             <Tabs defaultValue="account" className="space-y-6">
               <TabsList className="bg-background border">
@@ -668,3 +608,4 @@ const MySettings = () => {
 };
 
 export default MySettings;
+
