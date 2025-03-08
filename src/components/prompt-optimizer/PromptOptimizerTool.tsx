@@ -8,7 +8,8 @@ import {
   MessageSquare, 
   Brain,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/components/ThemeProvider";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { supabase } from "@/integrations/supabase/client";
 
 const LLM_OPTIONS = [
   { value: "gpt-4", label: "GPT-4" },
@@ -98,29 +100,62 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
   const [optimizedPrompt, setOptimizedPrompt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editablePrompt, setEditablePrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState("");
 
   const useExamplePrompt = (example: string) => {
     setPromptObjective(example);
     setActiveTab("build");
   };
 
-  const handleGeneratePrompt = () => {
-    const specialtyText = specialty ? SPECIALTY_OPTIONS.find(opt => opt.value === specialty)?.label || specialty : "";
-    const toneText = tone ? TONE_OPTIONS.find(opt => opt.value === tone)?.label || tone : "";
-    const detailText = detailLevel ? DETAIL_OPTIONS.find(opt => opt.value === detailLevel)?.label || detailLevel : "";
-    
-    const formattedPrompt = `[Role] Act as a ${specialtyText || "knowledgeable"} expert${toneText ? ` with a ${toneText} tone` : ""}.
+  const handleGeneratePrompt = async () => {
+    if (!promptObjective.trim()) return;
 
-[Context] ${context || "Provide comprehensive information that is accurate and helpful."}
+    setIsGenerating(true);
+    setError("");
 
-[Task] ${promptObjective}
+    try {
+      const { data, error } = await supabase.functions.invoke("optimize-prompt", {
+        body: {
+          llm,
+          specialty,
+          tone,
+          detailLevel,
+          promptObjective,
+          context,
+          specificQuestions,
+          constraints
+        }
+      });
 
-[Format] Provide a ${detailText || "detailed"} response that addresses all aspects of the request${specificQuestions ? ` including answers to these specific questions:\n- ${specificQuestions.split("\n").join("\n- ")}` : ""}.
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(error.message || "Failed to generate prompt");
+      }
 
-${constraints ? `[Constraints] ${constraints}` : ""}`;
-
-    setOptimizedPrompt(formattedPrompt);
-    setEditablePrompt(formattedPrompt);
+      if (data && data.optimizedPrompt) {
+        setOptimizedPrompt(data.optimizedPrompt);
+        setEditablePrompt(data.optimizedPrompt);
+        toast({
+          title: "Success!",
+          description: "Your optimized prompt has been generated"
+        });
+      } else if (data && data.error) {
+        throw new Error(data.error);
+      } else {
+        throw new Error("No response from the server");
+      }
+    } catch (err: any) {
+      console.error("Error generating prompt:", err);
+      setError(err.message || "Failed to generate prompt");
+      toast({
+        title: "Error",
+        description: err.message || "Failed to generate prompt",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleCopyPrompt = () => {
@@ -294,11 +329,26 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
               onClick={handleGeneratePrompt}
               className="w-full" 
               size="lg"
-              disabled={!promptObjective.trim()}
+              disabled={!promptObjective.trim() || isGenerating}
             >
-              <Brain className="mr-2 h-4 w-4" />
-              Generate Optimized Prompt
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Brain className="mr-2 h-4 w-4" />
+                  Generate Optimized Prompt
+                </>
+              )}
             </Button>
+            
+            {error && (
+              <div className="text-sm text-destructive mt-2 p-2 bg-destructive/10 rounded-md">
+                {error}
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="examples" className="pt-4 animate-fade-in">
@@ -388,7 +438,7 @@ ${constraints ? `[Constraints] ${constraints}` : ""}`;
       
       <CardFooter className="border-t border-border pt-4">
         <div className="text-xs text-muted-foreground">
-          Optimized for {LLM_OPTIONS.find(opt => opt.value === llm)?.label || llm}
+          Optimized for {LLM_OPTIONS.find(opt => opt.value === llm)?.label || llm} using DeepSeek AI
         </div>
       </CardFooter>
     </Card>
