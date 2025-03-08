@@ -40,7 +40,7 @@ const HeroContent = ({ scrollToSection }: HeroContentProps) => {
 
       <div className="flex items-center text-sm text-muted-foreground">
         <span className="mr-2">★★★★★</span>
-        <span>{t("hero.testimonial", "Trusted by 10,000+ creators and businesses")}</span>
+        <span>{t("hero.testimonial", "Trusted by 5,000+ creators and businesses")}</span>
       </div>
     </div>
   );
