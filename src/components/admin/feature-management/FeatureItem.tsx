@@ -19,6 +19,10 @@ export function FeatureItem({
   activeRole, 
   onToggle 
 }: FeatureItemProps) {
+  // Super admin always has access to all features
+  const isSuperAdmin = activeRole === 'superadmin';
+  const displayEnabled = isSuperAdmin ? true : isEnabled;
+  
   return (
     <div 
       key={feature.id} 
@@ -39,12 +43,13 @@ export function FeatureItem({
           <>
             <Switch
               id={`feature-${feature.id}`}
-              checked={isEnabled}
+              checked={displayEnabled}
               onCheckedChange={(enabled) => onToggle(feature.id, enabled)}
-              disabled={activeRole === 'superadmin'} // Superadmin always has all features
+              disabled={isSuperAdmin} // Superadmin always has all features enabled
+              aria-label={`Toggle ${feature.name} for ${activeRole} role`}
             />
             <Label htmlFor={`feature-${feature.id}`}>
-              {isEnabled ? 'Enabled' : 'Disabled'}
+              {displayEnabled ? 'Enabled' : 'Disabled'}
             </Label>
           </>
         )}

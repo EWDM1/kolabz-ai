@@ -17,6 +17,7 @@ export function useFeatureManagement() {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log("Fetching features...");
         // Fetch all features
         const { data: featuresData, error: featuresError } = await supabase
           .from('features')
@@ -24,14 +25,24 @@ export function useFeatureManagement() {
           .order('category', { ascending: true })
           .order('name', { ascending: true });
 
-        if (featuresError) throw featuresError;
+        if (featuresError) {
+          console.error('Features query error:', featuresError);
+          throw featuresError;
+        }
+
+        console.log("Features data:", featuresData);
 
         // Fetch all role permissions
         const { data: roleFeatureData, error: roleFeatureError } = await supabase
           .from('role_features')
           .select('*');
 
-        if (roleFeatureError) throw roleFeatureError;
+        if (roleFeatureError) {
+          console.error('Role features query error:', roleFeatureError);
+          throw roleFeatureError;
+        }
+
+        console.log("Role features data:", roleFeatureData);
 
         setFeatures(featuresData || []);
         setRoleFeatures(roleFeatureData || []);
@@ -56,19 +67,25 @@ export function useFeatureManagement() {
     setUpdating(prev => ({ ...prev, [featureId]: true }));
     
     try {
+      console.log(`Toggling feature ${featureId} for role ${activeRole} to ${enabled}`);
+      
       // Find the role_feature record
       const roleFeature = roleFeatures.find(rf => 
         rf.feature_id === featureId && rf.role === activeRole
       );
       
       if (roleFeature) {
+        console.log("Updating existing role_feature:", roleFeature);
         // Update existing record
         const { error } = await supabase
           .from('role_features')
           .update({ enabled, updated_at: new Date().toISOString() })
           .eq('id', roleFeature.id);
           
-        if (error) throw error;
+        if (error) {
+          console.error("Error updating role_feature:", error);
+          throw error;
+        }
         
         // Update local state
         setRoleFeatures(current => 
@@ -77,21 +94,26 @@ export function useFeatureManagement() {
           )
         );
       } else {
-        // Create new record - using the proper type casting for role
+        console.log("Creating new role_feature");
+        // Create new record
         const { data, error } = await supabase
           .from('role_features')
           .insert({
             feature_id: featureId,
-            role: activeRole as UserRole, // Cast to the expected enum type
+            role: activeRole,
             enabled
           })
           .select()
           .single();
           
-        if (error) throw error;
+        if (error) {
+          console.error("Error creating role_feature:", error);
+          throw error;
+        }
         
         // Add to local state
         if (data) {
+          console.log("New role_feature created:", data);
           setRoleFeatures(current => [...current, data]);
         }
       }
@@ -118,6 +140,12 @@ export function useFeatureManagement() {
     const roleFeature = roleFeatures.find(
       rf => rf.feature_id === featureId && rf.role === activeRole
     );
+    
+    // For superadmin role, always return true
+    if (activeRole === 'superadmin') {
+      return true;
+    }
+    
     return roleFeature ? roleFeature.enabled : false;
   };
 
