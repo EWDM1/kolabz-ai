@@ -162,19 +162,15 @@ const BillingTab = ({
                 {t("subscription.free_trial", "Free Trial")}
               </AlertTitle>
               <AlertDescription className="text-primary-foreground">
-                {t("subscription.trial_remaining", "You have {{days}} days remaining in your free trial", { days: getDaysRemainingInTrial() })}
+                {t("subscription.trial_remaining", `You have ${getDaysRemainingInTrial()} days remaining in your free trial`)}
               </AlertDescription>
             </Alert>
           )}
           
           <p className="text-sm text-muted-foreground mb-4">
             {isInTrialPeriod() 
-              ? t("subscription.trial_until", "Free trial until: {{date}}", { 
-                  date: new Date(subscription.trial_end_date).toLocaleDateString() 
-                })
-              : t("subscription.next_billing", "Next billing date: {{date}}", { 
-                  date: new Date(subscription.current_period_end).toLocaleDateString() 
-                })
+              ? t("subscription.trial_until", `Free trial until: ${new Date(subscription.trial_end_date).toLocaleDateString()}`) 
+              : t("subscription.next_billing", `Next billing date: ${new Date(subscription.current_period_end).toLocaleDateString()}`)
             }
           </p>
           

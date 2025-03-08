@@ -71,7 +71,7 @@ const CheckoutSummary = ({
             <Alert variant="default" className="bg-primary/10 border-primary/20">
               <Sparkles className="h-4 w-4 text-primary" />
               <AlertDescription className="text-primary-foreground">
-                {t("checkout.free_trial", "You'll get a {{days}}-day free trial. No charge until the trial ends.", { days: selectedPlan.trialDays })}
+                {t("checkout.free_trial", `You'll get a ${selectedPlan.trialDays}-day free trial. No charge until the trial ends.`)}
               </AlertDescription>
             </Alert>
           )}
