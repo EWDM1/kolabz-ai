@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .from('users')
             .select('*')
             .eq('id', sessionData.session.user.id)
-            .single();
+            .maybeSingle();
             
           const { data: rolesData } = await supabase
             .from('user_roles')
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .from('users')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
             
           const { data: rolesData } = await supabase
             .from('user_roles')

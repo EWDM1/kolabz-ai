@@ -52,9 +52,9 @@ serve(async (req) => {
       .from('subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
     
-    if (subscriptionError && !subscriptionData) {
+    if (subscriptionError || !subscriptionData) {
       return new Response(
         JSON.stringify({ error: 'No subscription found for this user' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
