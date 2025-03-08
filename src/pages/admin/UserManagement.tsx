@@ -74,7 +74,7 @@ const UserManagement = () => {
             <UserFiltersPanel 
               filterValues={filterValues}
               onFilterChange={handleFilterChange}
-              onResetFilters={resetFilters} // Fix: Changed handleResetFilters to onResetFilters
+              onResetFilters={resetFilters}
             />
           )}
           

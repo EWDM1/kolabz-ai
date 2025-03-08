@@ -1,4 +1,3 @@
-
 import { UserRole } from "@/components/admin/feature-management/types";
 
 export interface AdminUser {
@@ -17,7 +16,7 @@ export interface UserTableProps {
   selectedUsers: string[];
   setSelectedUsers: (users: string[]) => void;
   onEdit?: (user: AdminUser) => void;
-  onDelete?: (userId: string) => void;
+  onDelete?: (user: AdminUser) => void;
 }
 
 export interface UserManagementHeaderProps {

@@ -10,7 +10,7 @@ interface UserTableRowProps {
   isSelected: boolean;
   onSelect: (userId: string) => void;
   onEdit?: (user: AdminUser) => void;
-  onDelete?: (userId: string) => void;
+  onDelete?: (user: AdminUser) => void;
 }
 
 export function UserTableRow({ 
@@ -57,7 +57,7 @@ export function UserTableRow({
               variant="ghost"
               size="sm"
               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
-              onClick={() => onDelete(user.id)}
+              onClick={() => onDelete(user)}
             >
               <Trash className="h-4 w-4" />
               <span className="sr-only">Delete</span>
