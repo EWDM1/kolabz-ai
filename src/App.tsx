@@ -26,6 +26,7 @@ import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Checkout from "./pages/Checkout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import FeatureManagement from "./pages/admin/FeatureManagement";
+import HelpSupport from "./pages/HelpSupport";
 
 // Reset default app CSS
 import "./App.css";
@@ -49,11 +50,11 @@ const App = () => (
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/my-dashboard" element={<MyDashboard />} />
-                  {/* Remove /dashboard route completely */}
                   <Route path="/my-prompts" element={<MyPrompts />} />
                   <Route path="/manage-subscription" element={<ManageSubscription />} />
                   <Route path="/change-plan" element={<ChangePlan />} />
                   <Route path="/my-settings" element={<MySettings />} />
+                  <Route path="/help-support" element={<HelpSupport />} />
                   
                   {/* Admin Routes */}
                   <Route path="/AdminDashboard" element={<AdminDashboard />} />
