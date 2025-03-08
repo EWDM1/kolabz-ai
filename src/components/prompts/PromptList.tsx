@@ -3,16 +3,7 @@ import { useState } from "react";
 import { PromptCard } from "./PromptCard";
 import { PromptListHeader } from "./PromptListHeader";
 import { EmptyPromptState } from "./EmptyPromptState";
-
-interface Prompt {
-  id: number;
-  title: string;
-  content: string;
-  model: string;
-  date: string;
-  tags: string[];
-  favorite?: boolean;
-}
+import { Prompt } from "./types";
 
 interface PromptListProps {
   prompts: Prompt[];
@@ -133,7 +124,7 @@ export const PromptList = ({
     document.body.removeChild(link);
   };
   
-  const hasFilters = searchQuery || activeFilter !== "all" || currentCategory !== "all";
+  const hasFilters = Boolean(searchQuery || activeFilter !== "all" || currentCategory !== "all");
   
   return (
     <div className="bg-card rounded-lg border border-border shadow-sm">
