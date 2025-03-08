@@ -15,10 +15,10 @@ export const getStripe = () => {
     const key = getPublishableKeySync();
     
     if (!key) {
-      console.error('Stripe publishable key is not available');
-      // Still return a Stripe instance with empty key to avoid breaking the app
-      // It will show an error in the UI later
-      stripePromise = loadStripe('');
+      // Instead of error, just log a warning - this allows the app to continue loading
+      console.warn('Stripe publishable key is not available. Stripe functionality will be limited.');
+      // Return null instead of an empty key instance, which will be handled gracefully by the app
+      return null;
     } else {
       stripePromise = loadStripe(key);
     }

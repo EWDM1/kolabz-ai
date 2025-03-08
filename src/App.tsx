@@ -15,22 +15,35 @@ import "./App.css";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="light" storageKey="kolabz-theme">
-      <LanguageProvider>
-        <TooltipProvider>
-          <AuthProvider>
-            <Elements stripe={getStripe()}>
-              <Toaster />
-              <Sonner />
-              <Outlet />
-            </Elements>
-          </AuthProvider>
-        </TooltipProvider>
-      </LanguageProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const stripePromise = getStripe();
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="light" storageKey="kolabz-theme">
+        <LanguageProvider>
+          <TooltipProvider>
+            <AuthProvider>
+              {stripePromise ? (
+                <Elements stripe={stripePromise}>
+                  <Toaster />
+                  <Sonner />
+                  <Outlet />
+                </Elements>
+              ) : (
+                // Fallback when Stripe is not configured
+                <>
+                  <Toaster />
+                  <Sonner />
+                  <Outlet />
+                </>
+              )}
+            </AuthProvider>
+          </TooltipProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
