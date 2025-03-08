@@ -1,52 +1,61 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UserTable } from "@/components/admin/UserTable";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import { UserTable } from "@/components/admin/UserTable";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/components/AuthContext";
-import { useUserManagement } from "@/hooks/use-user-management";
-import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
-import { DataActions } from "@/components/admin/user-management/DataActions";
 import { DeleteConfirmationDialog } from "@/components/admin/user-management/DeleteConfirmationDialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { UserManagementHeader } from "@/components/admin/user-management/UserManagementHeader";
+import { ImportActions } from "@/components/admin/user-management/ImportActions";
+import { ExportActions } from "@/components/admin/user-management/ExportActions";
+import { DataActions } from "@/components/admin/user-management/DataActions";
+import { useUserTable } from "@/hooks/use-user-table";
+import { useUserManagement } from "@/hooks/use-user-management";
+import { useAuth } from "@/components/AuthContext";
+import { cn } from "@/lib/utils";
+import { UserRole } from "@/components/admin/feature-management/types";
+import { AdminUser } from "@/components/admin/user-management/types";
 
+// Move this to the types file if needed
 interface FilterValues {
-  name: string;
-  email: string;
-  role: string;
-  status: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  status?: string;
 }
 
 const UserManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [filterValues, setFilterValues] = useState<FilterValues>({
-    name: "",
-    email: "",
-    role: "",
-    status: ""
-  });
-  const { user } = useAuth();
+  const [filterValues, setFilterValues] = useState<FilterValues>({});
+  const { users, loading, error, fetchUsers } = useUserTable(filterValues);
+  const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
   
-  const { 
-    selectedUsers, 
-    setSelectedUsers, 
-    handleEditUser, 
-    handleDeleteUser, 
-    handleDeleteSelected, 
+  const {
+    selectedUsers,
+    setSelectedUsers,
+    handleEditUser,
+    handleDeleteUser,
+    handleDeleteSelected,
     deleteDialogOpen,
     closeDeleteDialog,
     confirmDeleteUser,
     deleteDialogData
-  } = useUserManagement(user);
+  } = useUserManagement(currentUser);
 
+  // Check the sidebar collapsed state from localStorage
   useEffect(() => {
     const savedState = localStorage.getItem("adminSidebarCollapsed");
     if (savedState !== null) {
@@ -54,6 +63,7 @@ const UserManagement = () => {
     }
   }, []);
 
+  // Listen for storage events to sync sidebar state across components
   useEffect(() => {
     const handleStorageChange = () => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
@@ -64,6 +74,7 @@ const UserManagement = () => {
 
     window.addEventListener("storage", handleStorageChange);
     
+    // Check for changes every second (for same-window updates)
     const interval = setInterval(() => {
       const savedState = localStorage.getItem("adminSidebarCollapsed");
       if (savedState !== null && (savedState === "true") !== sidebarCollapsed) {
@@ -77,50 +88,19 @@ const UserManagement = () => {
     };
   }, [sidebarCollapsed]);
 
-  const handleFilterToggle = () => {
-    setShowFilters(!showFilters);
-  };
-
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFilterValues(prev => ({
+  // Handle filter changes
+  const handleFilterChange = (field: keyof FilterValues, value: string) => {
+    // Update the specific filter value
+    setFilterValues((prev) => ({
       ...prev,
-      [name]: value
+      [field]: value || undefined // Use undefined when value is empty to remove the filter
     }));
   };
 
-  const handleFilterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Applied filters:", filterValues);
-    // Here we would apply the filters to the user list
-    // This would involve passing these values to the UserTable component
-    setShowFilters(false);
+  // Reset filters
+  const handleResetFilters = () => {
+    setFilterValues({});
   };
-
-  const handleFilterReset = () => {
-    setFilterValues({
-      name: "",
-      email: "",
-      role: "",
-      status: ""
-    });
-  };
-
-  // Prepare dialog content based on whether it's single or multiple deletion
-  const getDialogContent = () => {
-    if (deleteDialogData.isMultiple) {
-      return {
-        title: "Delete Selected Users",
-        description: `Are you sure you want to delete ${selectedUsers.length} users? This action cannot be undone.`
-      };
-    }
-    return {
-      title: "Delete User",
-      description: "Are you sure you want to delete this user? This action cannot be undone."
-    };
-  };
-
-  const dialogContent = getDialogContent();
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -132,8 +112,8 @@ const UserManagement = () => {
         "px-4 md:px-6 lg:px-8"
       )}>
         <Banner
-          id="welcome-banner"
-          message={`👋 Welcome back, ${user?.name}! Here you can manage all platform users.`}
+          id="user-management-banner"
+          message="👤 Manage users, control access, and monitor activity."
           variant="rainbow"
           height="2.5rem"
         />
@@ -141,119 +121,139 @@ const UserManagement = () => {
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
         <main className="flex-1 overflow-y-auto py-6">
-          <div className="space-y-6 max-w-full">
-            <UserManagementHeader />
-            
-            <DataActions 
-              onFilter={handleFilterToggle}
-              onDeleteSelected={handleDeleteSelected}
+          <div className="space-y-6">
+            <UserManagementHeader
               selectedCount={selectedUsers.length}
+              onDelete={handleDeleteSelected}
+              onRefresh={fetchUsers}
             />
             
-            {showFilters && (
-              <Card className="mb-6">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle>Filter Users</CardTitle>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={handleFilterToggle}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleFilterSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Name</Label>
-                        <Input
-                          id="name"
-                          name="name"
-                          placeholder="Search by name"
-                          value={filterValues.name}
-                          onChange={handleFilterChange}
-                        />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          name="email"
-                          type="email"
-                          placeholder="Search by email"
-                          value={filterValues.email}
-                          onChange={handleFilterChange}
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="role">Role</Label>
-                        <select
-                          id="role"
-                          name="role"
-                          value={filterValues.role}
-                          onChange={handleFilterChange}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option value="">All Roles</option>
-                          <option value="admin">Admin</option>
-                          <option value="user">User</option>
-                          <option value="superadmin">Super Admin</option>
-                        </select>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label htmlFor="status">Status</Label>
-                        <select
-                          id="status"
-                          name="status"
-                          value={filterValues.status}
-                          onChange={handleFilterChange}
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option value="">All Statuses</option>
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end gap-2">
-                      <Button type="button" variant="outline" onClick={handleFilterReset}>
-                        Reset Filters
-                      </Button>
-                      <Button type="submit">
-                        Apply Filters
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
-            )}
-            
-            <UserTable 
-              selectedUsers={selectedUsers} 
-              setSelectedUsers={setSelectedUsers} 
-              onEdit={handleEditUser}
-              onDelete={handleDeleteUser}
-              filters={filterValues}
-            />
+            <Tabs defaultValue="all">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <TabsList>
+                  <TabsTrigger value="all">All Users</TabsTrigger>
+                  <TabsTrigger value="active">Active</TabsTrigger>
+                  <TabsTrigger value="inactive">Inactive</TabsTrigger>
+                </TabsList>
 
-            <DeleteConfirmationDialog
-              isOpen={deleteDialogOpen}
-              onClose={closeDeleteDialog}
-              onConfirm={confirmDeleteUser}
-              title={dialogContent.title}
-              description={dialogContent.description}
-            />
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <ImportActions onImportComplete={fetchUsers} />
+                  <ExportActions users={users} />
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate("/admin/users/edit/new")}
+                  >
+                    Add User
+                  </Button>
+                </div>
+              </div>
+
+              <div className="border rounded-md p-4 mb-6">
+                <h3 className="font-medium mb-3">Filters</h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <Input
+                      placeholder="Filter by name"
+                      value={filterValues.name || ''}
+                      onChange={(e) => handleFilterChange('name', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      placeholder="Filter by email"
+                      value={filterValues.email || ''}
+                      onChange={(e) => handleFilterChange('email', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Select
+                      value={filterValues.role || ''}
+                      onValueChange={(value) => handleFilterChange('role', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Filter by role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All roles</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="superadmin">Superadmin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Select
+                      value={filterValues.status || ''}
+                      onValueChange={(value) => handleFilterChange('status', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All statuses</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="inactive">Inactive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleResetFilters}
+                  >
+                    Reset Filters
+                  </Button>
+                </div>
+              </div>
+
+              <TabsContent value="all">
+                <DataActions />
+                <UserTable
+                  users={users}
+                  loading={loading}
+                  selectedUsers={selectedUsers}
+                  setSelectedUsers={setSelectedUsers}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeleteUser}
+                />
+              </TabsContent>
+              
+              <TabsContent value="active">
+                <DataActions />
+                <UserTable
+                  users={users.filter(user => user.status === 'active')}
+                  loading={loading}
+                  selectedUsers={selectedUsers}
+                  setSelectedUsers={setSelectedUsers}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeleteUser}
+                />
+              </TabsContent>
+              
+              <TabsContent value="inactive">
+                <DataActions />
+                <UserTable
+                  users={users.filter(user => user.status === 'inactive')}
+                  loading={loading}
+                  selectedUsers={selectedUsers}
+                  setSelectedUsers={setSelectedUsers}
+                  onEdit={handleEditUser}
+                  onDelete={handleDeleteUser}
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
       </div>
+      
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmDeleteUser}
+        isMultiple={deleteDialogData.isMultiple}
+      />
     </div>
   );
 };
