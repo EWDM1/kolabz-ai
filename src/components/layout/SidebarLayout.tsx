@@ -42,7 +42,7 @@ const SidebarLayout = ({ children, activeMenuItem }: SidebarLayoutProps) => {
                     <SidebarMenuButton asChild isActive={activeMenuItem === "dashboard"}>
                       <Link to="/my-dashboard" className="flex items-center gap-3">
                         <LayoutDashboard size={18} />
-                        <span>Dashboard</span>
+                        <span>My Dashboard</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

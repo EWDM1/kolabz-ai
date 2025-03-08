@@ -26,7 +26,7 @@ export const DashboardSidebar = ({
             }`}
           >
             <LayoutDashboard className="h-5 w-5" />
-            <span>Dashboard</span>
+            <span>My Dashboard</span>
           </button>
           <button
             onClick={() => handleNavigation("/my-prompts")}

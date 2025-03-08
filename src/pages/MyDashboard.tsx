@@ -28,11 +28,36 @@ import { useAuth } from "@/components/AuthContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const MyDashboard = () => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const { user } = useAuth();
+  
+  const [targetModel, setTargetModel] = useState("GPT-4");
+  const [promptBase, setPromptBase] = useState("");
+  const [optimizedPrompt, setOptimizedPrompt] = useState("");
+  
+  // Example prompt template when user clicks on an example
+  const useExamplePrompt = (example: string) => {
+    setPromptBase(example);
+    // In a real app, this would trigger the optimization
+    handleOptimizePrompt(example);
+  };
+  
+  // Function to optimize prompt (simulated)
+  const handleOptimizePrompt = (prompt: string) => {
+    // This would normally call an API to optimize the prompt
+    // For now, we'll just simulate the response
+    if (prompt.toLowerCase().includes("data visualization")) {
+      setOptimizedPrompt(`[Role] Act as a data visualization expert.\n[Context] Design for a business intelligence tool.\n[Task] Create a comprehensive data visualization dashboard with:\n- 4-5 key metrics as KPIs at the top\n- Time-series charts for trend analysis\n- Filtering capabilities by date range and categories\n- Mobile responsive design with accessibility features\n[Format] Provide mockup description and technical implementation details.`);
+    } else if (prompt.toLowerCase().includes("blog")) {
+      setOptimizedPrompt(`[Role] Act as a professional content writer.\n[Context] Writing for a business audience.\n[Task] Create a compelling blog post that:\n- Has an attention-grabbing headline\n- Includes 3-5 actionable insights\n- Uses data to support key points\n- Ends with a clear call-to-action\n[Format] Provide a full article with H2 and H3 subheadings.`);
+    } else {
+      setOptimizedPrompt(`[Role] Act as an expert in the requested field.\n[Context] Professional setting appropriate to the topic.\n[Task] Address the prompt with detailed, actionable information.\n[Format] Structured response with clear sections and examples.`);
+    }
+  };
   
   const handleLogout = () => {
     toast({
@@ -89,7 +114,7 @@ const MyDashboard = () => {
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left bg-primary/10 text-primary font-medium"
                   >
                     <LayoutDashboard className="h-5 w-5" />
-                    <span>Dashboard</span>
+                    <span>My Dashboard</span>
                   </button>
                   <Link
                     to="/my-prompts"
@@ -153,9 +178,9 @@ const MyDashboard = () => {
               Welcome back, {user?.name || "John Doe"}! Optimize your AI prompts with our tools.
             </p>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="flex justify-center">
               {/* Prompt Optimizer Tool Card */}
-              <Card className="col-span-1 lg:col-span-2 lg:col-span-1">
+              <Card className="max-w-3xl w-full">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
@@ -166,121 +191,112 @@ const MyDashboard = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className={`p-3 rounded-lg border ${
-                        theme === 'dark' 
-                          ? 'border-gray-700 bg-gray-800' 
-                          : 'border-gray-200 bg-gray-50'
-                      }`}>
-                        <div className="flex justify-between">
-                          <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Target Model</span>
-                          <span className="text-xs font-medium text-primary">GPT-4</span>
-                        </div>
-                        <div className="mt-1 font-medium text-sm text-foreground">Create a data visualization dashboard</div>
-                      </div>
-                      
-                      <div className={`p-3 rounded-lg border ${
-                        theme === 'dark' 
-                          ? 'border-gray-700' 
-                          : 'border-gray-200'
-                      }`}>
-                        <span className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Optimized Prompt</span>
-                        <div className="mt-1 text-sm leading-relaxed text-foreground">
-                          [Role] Act as a data visualization expert.<br />
-                          [Context] Design for a business intelligence tool.<br />
-                          [Task] Create a comprehensive data visualization dashboard with:<br />
-                          <ul className={`mt-1 pl-4 space-y-1 list-disc text-xs ${
-                            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-                          }`}>
-                            <li>4-5 key metrics as KPIs at the top</li>
-                            <li>Time-series charts for trend analysis</li>
-                            <li>Filtering capabilities by date range and categories</li>
-                            <li>Mobile responsive design with accessibility features</li>
-                          </ul>
-                          [Format] Provide mockup description and technical implementation details.
-                        </div>
+                  <div className="space-y-6">
+                    <div>
+                      <Label htmlFor="target-model">Target AI Model</Label>
+                      <Input 
+                        id="target-model"
+                        value={targetModel}
+                        onChange={(e) => setTargetModel(e.target.value)}
+                        placeholder="e.g., GPT-4, Claude, Gemini, etc."
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="prompt-base">Your Base Prompt</Label>
+                      <Textarea 
+                        id="prompt-base"
+                        value={promptBase}
+                        onChange={(e) => setPromptBase(e.target.value)}
+                        placeholder="Enter your prompt here. Be specific about what you want the AI to do."
+                        className="mt-1 min-h-[100px]"
+                      />
+                    </div>
+                    
+                    <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+                      <h3 className="font-medium text-sm mb-2">Example Prompts (Click to use)</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <button 
+                          onClick={() => useExamplePrompt("Create a data visualization dashboard for sales analytics")}
+                          className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                        >
+                          Create a data visualization dashboard
+                        </button>
+                        <button 
+                          onClick={() => useExamplePrompt("Write a blog post about productivity tips for remote workers")}
+                          className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                        >
+                          Write a blog post about productivity
+                        </button>
+                        <button 
+                          onClick={() => useExamplePrompt("Develop a marketing strategy for a new mobile app")}
+                          className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                        >
+                          Develop a marketing strategy
+                        </button>
+                        <button 
+                          onClick={() => useExamplePrompt("Create a Python script to analyze CSV data")}
+                          className="text-left text-sm p-2 rounded hover:bg-primary/10 transition-colors"
+                        >
+                          Create a Python script
+                        </button>
                       </div>
                     </div>
                     
-                    <div className="flex justify-end space-x-2">
-                      <button className={`px-3 py-1.5 text-xs font-medium rounded-md ${
-                        theme === 'dark'
-                          ? 'bg-gray-800 hover:bg-gray-700 text-gray-200'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                      } transition-colors`}>
-                        Copy
-                      </button>
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <button className="px-3 py-1.5 text-xs font-medium rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-                            Refine
-                          </button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Refine Your Prompt</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="model">Target Model</Label>
-                              <Input id="model" defaultValue="GPT-4" />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="prompt">Base Prompt</Label>
-                              <Input id="prompt" defaultValue="Create a data visualization dashboard" />
-                            </div>
-                            <div className="flex justify-end pt-2">
-                              <Button>Optimize</Button>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
+                    <Button 
+                      onClick={() => handleOptimizePrompt(promptBase)}
+                      className="w-full" 
+                      size="lg"
+                      disabled={!promptBase.trim()}
+                    >
+                      Optimize Prompt
+                    </Button>
+                    
+                    {optimizedPrompt && (
+                      <div className="mt-6 space-y-4">
+                        <h3 className="font-bold">Optimized Prompt:</h3>
+                        <div className={`p-4 rounded-lg border ${
+                          theme === 'dark' 
+                            ? 'border-gray-700 bg-gray-800/50' 
+                            : 'border-gray-200 bg-gray-50/80'
+                        }`}>
+                          <pre className="whitespace-pre-wrap text-sm">{optimizedPrompt}</pre>
+                        </div>
+                        
+                        <div className="flex justify-between">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              navigator.clipboard.writeText(optimizedPrompt);
+                              toast({
+                                title: "Copied!",
+                                description: "Prompt copied to clipboard",
+                              });
+                            }}
+                          >
+                            Copy to Clipboard
+                          </Button>
+                          
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {}}
+                          >
+                            Save Prompt
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
                 <CardFooter>
                   <Button variant="ghost" size="sm" className="w-full" asChild>
                     <Link to="/my-prompts">
-                      Create New Prompt
+                      View All Saved Prompts
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              {/* Account Overview Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Account Overview</CardTitle>
-                  <CardDescription>Manage your profile and subscription</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Plan</span>
-                    <span className="text-sm font-medium">
-                      {user?.subscription?.plan || "Pro Plan"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Prompts Created</span>
-                    <span className="text-sm font-medium">
-                      {user?.stats?.promptsCreated || "0"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Usage</span>
-                    <span className="text-sm font-medium">
-                      {user?.stats?.usage || "0%"}
-                    </span>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/my-settings">Settings</Link>
-                  </Button>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/manage-subscription">Subscription</Link>
                   </Button>
                 </CardFooter>
               </Card>
