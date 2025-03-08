@@ -1,7 +1,7 @@
-
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthContext";
 import { 
   isTestMode, 
   toggleStripeTestMode 
@@ -10,10 +10,12 @@ import {
   cancelSubscription, 
   formatCardDetails
 } from "@/integrations/stripe/stripeService";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useSubscription = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [testMode, setTestMode] = useState(isTestMode());
   
@@ -107,6 +109,50 @@ export const useSubscription = () => {
     });
   };
 
+  const openCustomerPortal = useCallback(async () => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Authentication required",
+        description: "You need to be logged in to manage your subscription",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { data: sessionToken, error } = await supabase.auth.getSession();
+      
+      if (error || !sessionToken.session) {
+        throw new Error("Failed to get authentication token");
+      }
+
+      const response = await supabase.functions.invoke('create-customer-portal-session', {
+        body: { returnUrl: window.location.origin + '/manage-subscription' },
+        headers: {
+          Authorization: `Bearer ${sessionToken.session.access_token}`
+        }
+      });
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      // Redirect to the Stripe Customer Portal
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error("Error opening customer portal:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to open customer portal",
+        description: "There was a problem connecting to Stripe. Please try again or contact support.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [user, toast]);
+
   return {
     loading,
     testMode,
@@ -115,6 +161,7 @@ export const useSubscription = () => {
     handleUpdateCard,
     handleCancelSubscription,
     handlePaymentError,
-    handleDownloadInvoice
+    handleDownloadInvoice,
+    openCustomerPortal
   };
 };

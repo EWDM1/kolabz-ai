@@ -1,7 +1,6 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
-import { CreditCard } from "lucide-react";
+import { CreditCard, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useSubscription } from "@/hooks/use-subscription";
 
 interface BillingTabProps {
   onManageSubscription: () => void;
@@ -22,6 +22,8 @@ const BillingTab = ({
   onChangePlan, 
   onUpdatePaymentMethod 
 }: BillingTabProps) => {
+  const { openCustomerPortal, loading } = useSubscription();
+  
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -44,12 +46,21 @@ const BillingTab = ({
           <p className="text-sm text-muted-foreground mb-4">
             Next billing date: August 12, 2023
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="outline" onClick={onManageSubscription}>
               Manage Subscription
             </Button>
             <Button variant="outline" onClick={onChangePlan}>
               Change Plan
+            </Button>
+            <Button 
+              variant="default" 
+              onClick={openCustomerPortal}
+              disabled={loading}
+              className="gap-2"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Stripe Billing Portal
             </Button>
           </div>
         </div>

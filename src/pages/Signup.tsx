@@ -7,6 +7,9 @@ const Signup = () => {
   const location = useLocation();
   const { t } = useLanguage();
 
+  // Check if we have a returnUrl in the location state
+  const returnUrl = location.state?.returnUrl || '/';
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
@@ -19,7 +22,7 @@ const Signup = () => {
         </Link>
         <div className="w-full max-w-md space-y-8">
           <div className="relative z-10 rounded-2xl border border-border bg-card p-8 shadow-sm">
-            <AuthForm mode="signup" />
+            <AuthForm mode="signup" redirectUrl={returnUrl} />
           </div>
         </div>
       </div>

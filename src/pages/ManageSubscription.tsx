@@ -6,6 +6,8 @@ import { SubscriptionLayout } from "@/components/subscription/SubscriptionLayout
 import { TestModeSection } from "@/components/subscription/TestModeSection";
 import { SubscriptionCardsGrid } from "@/components/subscription/SubscriptionCardsGrid";
 import { useSubscription } from "@/hooks/use-subscription";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
 
 const ManageSubscription = () => {
   const { t } = useLanguage();
@@ -23,7 +25,8 @@ const ManageSubscription = () => {
     handleUpdateCard,
     handleCancelSubscription,
     handlePaymentError,
-    handleDownloadInvoice
+    handleDownloadInvoice,
+    openCustomerPortal
   } = useSubscription();
 
   return (
@@ -37,6 +40,18 @@ const ManageSubscription = () => {
         onToggle={handleToggleTestMode} 
         canAccessTestMode={canAccessTestMode} 
       />
+      
+      {/* Stripe Customer Portal Button */}
+      <div className="flex justify-center mb-6">
+        <Button 
+          onClick={openCustomerPortal} 
+          disabled={loading} 
+          className="gap-2"
+        >
+          <ExternalLink className="h-4 w-4" />
+          {t("subscription.manage_in_stripe", "Manage Billing in Stripe Portal")}
+        </Button>
+      </div>
       
       {/* Subscription Cards */}
       <SubscriptionCardsGrid 
