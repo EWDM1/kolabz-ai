@@ -2,37 +2,52 @@
 import { useState, useCallback, useEffect } from 'react';
 import { AdminUser } from "@/components/admin/user-management/types";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+
+// Mocked data since we're not actually connecting to Supabase in this example
+const mockUsers: AdminUser[] = [
+  {
+    id: '1',
+    name: 'John Doe',
+    email: 'john@example.com',
+    role: 'admin',
+    status: 'active',
+    lastActive: '2023-04-15T10:00:00Z',
+    createdAt: '2023-01-01T00:00:00Z'
+  },
+  {
+    id: '2',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    role: 'user',
+    status: 'active',
+    lastActive: '2023-04-14T15:30:00Z',
+    createdAt: '2023-01-15T00:00:00Z'
+  },
+  {
+    id: '3',
+    name: 'Bob Johnson',
+    email: 'bob@example.com',
+    role: 'moderator',
+    status: 'inactive',
+    lastActive: '2023-03-25T08:15:00Z',
+    createdAt: '2023-02-10T00:00:00Z'
+  }
+];
 
 export const useUserData = () => {
   const { toast } = useToast();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch users from the database
+  // Fetch users function - currently mocked
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*, user_roles(role)')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Format the data for the AdminUser type
-      const formattedUsers: AdminUser[] = data.map((user: any) => ({
-        id: user.id,
-        name: user.name || 'Unnamed User',
-        email: user.email || '',
-        avatar: user.avatar_url || '',
-        role: user.user_roles?.role || 'user',
-        status: user.status || 'active',
-        lastActive: user.last_sign_in_at || user.created_at,
-        createdAt: user.created_at
-      }));
-
-      setUsers(formattedUsers);
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Set mock data
+      setUsers(mockUsers);
     } catch (error: any) {
       console.error('Error fetching users:', error);
       toast({

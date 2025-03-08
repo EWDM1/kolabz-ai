@@ -17,24 +17,24 @@ const UserManagement = () => {
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
   
   const {
-    users = [],
-    loading = false,
-    fetchUsers = () => {},
+    users,
+    loading,
+    fetchUsers,
     selectedUsers,
     setSelectedUsers,
     filterValues,
     handleFilterChange,
-    resetFilters = () => {},
-    handleFilterClick = () => {},
+    resetFilters,
+    handleFilterClick,
     filterVisible,
     filterUsers,
-    handleEditUser = () => {},
-    handleDeleteUser = () => {},
-    handleDeleteSelected = () => {},
-    deleteDialogOpen = false,
-    closeDeleteDialog = () => {},
-    confirmDeleteUser = async () => {},
-    deleteDialogData = { isMultiple: false },
+    handleEditUser,
+    handleDeleteUser,
+    handleDeleteSelected,
+    deleteDialogOpen,
+    closeDeleteDialog,
+    confirmDeleteUser,
+    deleteDialogData,
   } = useUserManagementPage();
 
   // We need to adapt the onEdit and onDelete functions to match the expected types

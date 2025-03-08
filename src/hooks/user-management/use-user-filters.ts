@@ -3,54 +3,71 @@ import { useState, useCallback } from 'react';
 import { AdminUser } from "@/components/admin/user-management/types";
 
 export interface FilterValues {
-  name: string;
-  email: string;
   role: string;
   status: string;
+  dateRange: {
+    from: Date | undefined;
+    to: Date | undefined;
+  };
 }
 
+const initialFilterValues: FilterValues = {
+  role: '',
+  status: '',
+  dateRange: {
+    from: undefined,
+    to: undefined
+  }
+};
+
 export const useUserFilters = () => {
-  const [filterValues, setFilterValues] = useState<FilterValues>({
-    name: '',
-    email: '',
-    role: '',
-    status: '',
-  });
+  const [filterValues, setFilterValues] = useState<FilterValues>(initialFilterValues);
   const [filterVisible, setFilterVisible] = useState(false);
 
-  const handleFilterChange = useCallback((field: keyof FilterValues, value: string) => {
+  const handleFilterChange = useCallback((key: keyof FilterValues, value: any) => {
     setFilterValues(prev => ({
       ...prev,
-      [field]: value
+      [key]: value
     }));
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFilterValues({
-      name: '',
-      email: '',
-      role: '',
-      status: '',
-    });
+    setFilterValues(initialFilterValues);
   }, []);
 
   const toggleFilterVisible = useCallback(() => {
     setFilterVisible(prev => !prev);
   }, []);
 
-  const filterUsers = useCallback((users: AdminUser[]): AdminUser[] => {
+  const filterUsers = useCallback((users: AdminUser[]) => {
     return users.filter(user => {
-      const nameMatch = !filterValues.name || 
-        user.name.toLowerCase().includes(filterValues.name.toLowerCase());
+      // Filter by role
+      if (filterValues.role && user.role !== filterValues.role) {
+        return false;
+      }
       
-      const emailMatch = !filterValues.email || 
-        user.email.toLowerCase().includes(filterValues.email.toLowerCase());
+      // Filter by status
+      if (filterValues.status && user.status !== filterValues.status) {
+        return false;
+      }
       
-      const roleMatch = !filterValues.role || user.role === filterValues.role;
+      // Filter by date (creation date)
+      const userCreatedDate = new Date(user.createdAt);
       
-      const statusMatch = !filterValues.status || user.status === filterValues.status;
+      if (filterValues.dateRange.from && userCreatedDate < filterValues.dateRange.from) {
+        return false;
+      }
       
-      return nameMatch && emailMatch && roleMatch && statusMatch;
+      if (filterValues.dateRange.to) {
+        const toDateEnd = new Date(filterValues.dateRange.to);
+        toDateEnd.setHours(23, 59, 59, 999);
+        
+        if (userCreatedDate > toDateEnd) {
+          return false;
+        }
+      }
+      
+      return true;
     });
   }, [filterValues]);
 
