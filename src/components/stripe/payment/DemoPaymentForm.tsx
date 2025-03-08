@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // Demo mode payment form that doesn't actually connect to Stripe
 export const DemoPaymentForm = ({ onSuccess }: { onSuccess: (paymentMethod: any) => void }) => {
@@ -23,7 +25,7 @@ export const DemoPaymentForm = ({ onSuccess }: { onSuccess: (paymentMethod: any)
       // Simulate processing delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Create a fake payment method object
+      // Create a fake payment method object for testing
       const fakePaymentMethod = {
         id: `pm_demo_${Math.random().toString(36).substring(2, 15)}`,
         type: 'card',
@@ -34,7 +36,7 @@ export const DemoPaymentForm = ({ onSuccess }: { onSuccess: (paymentMethod: any)
           exp_year: 2030
         },
         billing_details: {
-          name: 'Demo User'
+          name: 'Test User'
         }
       };
       
@@ -54,12 +56,21 @@ export const DemoPaymentForm = ({ onSuccess }: { onSuccess: (paymentMethod: any)
   
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <Alert variant="warning" className="mb-4">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Test Environment</AlertTitle>
+        <AlertDescription>
+          This is a test environment. No actual payments will be processed.
+          In production, you should configure the Stripe API keys.
+        </AlertDescription>
+      </Alert>
+      
       <div className="space-y-2">
         <Label htmlFor="card-element">Card details</Label>
         <div className="border rounded-md p-3 bg-background">
           <div className="p-2 border border-dashed rounded border-gray-300 dark:border-gray-600">
             <div className="h-8 flex items-center text-sm text-muted-foreground">
-              **** **** **** 4242 (Demo Card)
+              **** **** **** 4242 (Test Card)
             </div>
           </div>
         </div>
@@ -75,11 +86,11 @@ export const DemoPaymentForm = ({ onSuccess }: { onSuccess: (paymentMethod: any)
         }}
         disabled={processing}
       >
-        {processing ? "Processing..." : "Add Payment Method"}
+        {processing ? "Processing..." : "Add Test Payment Method"}
       </Button>
       
       <p className="text-xs text-muted-foreground text-center">
-        This is a demo payment form. No actual charges will be made.
+        For a live implementation, please configure your Stripe API keys in the Admin Dashboard.
       </p>
     </form>
   );

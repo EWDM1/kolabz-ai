@@ -12,46 +12,47 @@ export interface PromptExample {
   category: string;
 }
 
+// Updated examples that are more focused on best practices
 const EXAMPLE_PROMPTS: PromptExample[] = [
   {
-    title: "Market Research Report",
-    prompt: "Analyze the electric vehicle market trends in Europe for Q2 2023",
-    category: "Business"
+    title: "Structured Output",
+    prompt: "Generate a JSON response with the top 5 AI use cases in healthcare, including fields for name, description, and implementation difficulty (1-5).",
+    category: "Format"
   },
   {
-    title: "Content Marketing Strategy",
-    prompt: "Create a content calendar for a SaaS startup's product launch",
-    category: "Marketing"
+    title: "Chain of Thought",
+    prompt: "Solve this math problem step by step: If a store has a 30% off sale, and then offers an additional 15% off the discounted price, what is the total percentage discount?",
+    category: "Technique"
   },
   {
-    title: "Code Debugging Help",
-    prompt: "Fix this React useEffect hook that's causing infinite rendering",
+    title: "Role Definition",
+    prompt: "Act as an experienced cybersecurity expert and analyze potential vulnerabilities in this authentication flow: [describe flow]",
+    category: "Technique"
+  },
+  {
+    title: "Zero-Shot Learning",
+    prompt: "Without examples, classify the following customer feedback statement into positive, negative, or neutral, and explain your reasoning.",
+    category: "Technique"
+  },
+  {
+    title: "Few-Shot Learning",
+    prompt: "Task: Classify text as technical or non-technical\nExample 1: 'The API uses OAuth2 for authentication.' → Technical\nExample 2: 'I love the new website design!' → Non-technical\nClassify: 'The recursive function has exponential time complexity.'",
+    category: "Technique"
+  },
+  {
+    title: "Content Creation",
+    prompt: "Write a concise product description for a smart water bottle that tracks hydration and syncs with mobile apps. Target audience is health-conscious professionals aged 25-40.",
+    category: "Content"
+  },
+  {
+    title: "Code Generation",
+    prompt: "Create a React component for a responsive navigation bar that collapses into a hamburger menu on mobile devices. Use Tailwind CSS for styling.",
     category: "Development"
   },
   {
-    title: "Data Visualization Guide",
-    prompt: "Suggest the best charts to represent customer retention data",
-    category: "Analytics"
-  },
-  {
-    title: "Email Campaign Template",
-    prompt: "Write a welcome email sequence for new e-commerce customers",
-    category: "Marketing"
-  },
-  {
-    title: "Product Feature Analysis",
-    prompt: "Compare the top 3 AI assistants on the market based on features, pricing and usability",
-    category: "Business"
-  },
-  {
-    title: "API Documentation Example",
-    prompt: "Create an example documentation for a RESTful API endpoint that handles user authentication",
-    category: "Development"
-  },
-  {
-    title: "Data Mining Query",
-    prompt: "Write a prompt to extract key insights from customer feedback surveys",
-    category: "Analytics"
+    title: "Personalized Learning",
+    prompt: "I'm a beginner learning about machine learning. Explain how neural networks work in simple terms with an analogy that would help me understand the concept of backpropagation.",
+    category: "Education"
   }
 ];
 

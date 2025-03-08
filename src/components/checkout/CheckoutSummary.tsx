@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Sparkles } from "lucide-react";
+import { AlertTriangle, Sparkles } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface PlanDetails {
   name: string;
@@ -18,6 +19,7 @@ interface CheckoutSummaryProps {
   isProcessing: boolean;
   paymentMethod: any;
   onCheckout: () => void;
+  isTestMode?: boolean;
 }
 
 const CheckoutSummary = ({
@@ -25,7 +27,8 @@ const CheckoutSummary = ({
   isAnnual,
   isProcessing,
   paymentMethod,
-  onCheckout
+  onCheckout,
+  isTestMode = false
 }: CheckoutSummaryProps) => {
   const { t } = useLanguage();
   
@@ -36,6 +39,15 @@ const CheckoutSummary = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {isTestMode && (
+            <Alert variant="warning" className="mb-2">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>
+                {t("checkout.test_mode_alert", "This is a test checkout. No actual charges will be made.")}
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div className="flex items-center justify-between">
             <div>
               <h3 className="font-medium">{selectedPlan.name} {t("checkout.subscription", "Subscription")}</h3>

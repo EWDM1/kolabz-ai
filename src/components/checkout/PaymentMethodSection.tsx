@@ -1,10 +1,11 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield } from "lucide-react";
+import { AlertTriangle, Shield } from "lucide-react";
 import { PaymentMethodFormWrapper } from "@/components/stripe/PaymentMethodForm";
 import { useLanguage } from "@/components/LanguageContext";
 import { fetchStripeConfig } from "@/integrations/stripe/stripeConfig";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface PaymentMethodSectionProps {
   stripeReady: boolean;
@@ -57,15 +58,24 @@ const PaymentMethodSection = ({
               <p>{t("checkout.loading", "Loading payment configuration...")}</p>
             </div>
           ) : !configStatus.isConfigured ? (
-            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 text-sm rounded-md">
-              <p className="font-medium">{t("checkout.stripe_not_configured", "Stripe Not Configured")}</p>
-              <p>{t("checkout.demo_mode", "Checkout is running in demo mode. No actual charges will be made.")}</p>
-            </div>
+            <Alert variant="warning">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>{t("checkout.stripe_not_configured", "Stripe Not Configured")}</AlertTitle>
+              <AlertDescription>
+                {t("checkout.admin_setup_required", "The payment system requires configuration by an administrator.")}
+                <div className="mt-2 text-sm">
+                  {t("checkout.demo_mode", "Checkout is running in demo mode. No actual charges will be made.")}
+                </div>
+              </AlertDescription>
+            </Alert>
           ) : isTestMode ? (
-            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 text-sm rounded-md">
-              <p className="font-medium">{t("checkout.test_mode", "Test Mode")}</p>
-              <p>{t("checkout.test_card", "Use test card: 4242 4242 4242 4242, any future date, any CVC")}</p>
-            </div>
+            <Alert variant="info" className="mb-4">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>{t("checkout.test_mode", "Test Mode")}</AlertTitle>
+              <AlertDescription>
+                {t("checkout.test_card", "Use test card: 4242 4242 4242 4242, any future date, any CVC")}
+              </AlertDescription>
+            </Alert>
           ) : null}
           
           <PaymentMethodFormWrapper 

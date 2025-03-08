@@ -13,6 +13,7 @@ interface StripeSettingsContextType {
   };
   setSavedKeys: (keys: any) => void;
   handleModeToggle: () => Promise<void>;
+  refreshConfig: () => Promise<void>;
 }
 
 const StripeSettingsContext = createContext<StripeSettingsContextType | undefined>(undefined);
@@ -32,32 +33,35 @@ export const StripeSettingsProvider: React.FC<{ children: React.ReactNode }> = (
   });
 
   // Load saved settings from Supabase
+  const loadSettings = async () => {
+    try {
+      setLoading(true);
+      const config = await fetchStripeConfig();
+      
+      // Set test mode from config
+      setTestMode(config.isTestMode);
+      
+      // Update saved keys status
+      setSavedKeys({
+        stripePublishableKey: !!config.publishableKey,
+        stripeSecretKey: !!config.secretKey,
+        stripeWebhookSecret: !!config.webhookSecret
+      });
+    } catch (error) {
+      console.error("Error loading Stripe settings:", error);
+      toast({
+        variant: "destructive",
+        title: "Error loading settings",
+        description: "There was a problem loading your Stripe settings."
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const config = await fetchStripeConfig();
-        
-        // Set test mode from config
-        setTestMode(config.isTestMode);
-        
-        // Update saved keys status
-        setSavedKeys({
-          stripePublishableKey: !!config.publishableKey,
-          stripeSecretKey: !!config.secretKey,
-          stripeWebhookSecret: !!config.webhookSecret
-        });
-      } catch (error) {
-        console.error("Error loading Stripe settings:", error);
-        toast({
-          variant: "destructive",
-          title: "Error loading settings",
-          description: "There was a problem loading your Stripe settings."
-        });
-      }
-    };
-    
     loadSettings();
-  }, [toast]);
+  }, []);
   
   // Handle test/live mode toggle
   const handleModeToggle = async () => {
@@ -88,12 +92,17 @@ export const StripeSettingsProvider: React.FC<{ children: React.ReactNode }> = (
     }
   };
 
+  const refreshConfig = async () => {
+    await loadSettings();
+  };
+
   const value = {
     testMode,
     loading,
     savedKeys,
     setSavedKeys,
-    handleModeToggle
+    handleModeToggle,
+    refreshConfig
   };
 
   return (
