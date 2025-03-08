@@ -18,7 +18,7 @@ const UserManagement = () => {
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
   const { toast } = useToast();
   const [editMode, setEditMode] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   
