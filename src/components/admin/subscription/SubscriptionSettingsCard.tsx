@@ -81,7 +81,7 @@ export function SubscriptionSettingsCard({
           )}
 
           {isConnected && (
-            <Alert variant="success">
+            <Alert>
               <Check className="h-4 w-4" />
               <AlertTitle>Stripe connected</AlertTitle>
               <AlertDescription>

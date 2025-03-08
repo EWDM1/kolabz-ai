@@ -17,13 +17,13 @@ import {
   CreditCard
 } from "lucide-react";
 
-interface SidebarContentProps {
+export interface SidebarContentProps {
   onClose?: () => void;
+  isCollapsed?: boolean;
 }
 
-export const SidebarContent = ({ onClose }: SidebarContentProps) => {
+export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentProps) => {
   const location = useLocation();
-  const { isCollapsed } = useSidebarCollapse();
   const [activeItem, setActiveItem] = useState('');
 
   useEffect(() => {
@@ -53,82 +53,87 @@ export const SidebarContent = ({ onClose }: SidebarContentProps) => {
   
   return (
     <div className="flex flex-col h-full overflow-y-auto scrollbar-none">
-      <SidebarLogo collapsed={isCollapsed} />
+      <SidebarLogo 
+        isCollapsed={isCollapsed} 
+        toggleCollapse={() => {}} 
+        onClose={onClose || (() => {})} 
+      />
       
       <div className="flex-1 py-4">
         <SidebarItem 
           icon={<LayoutDashboard size={20} />} 
           label="Dashboard" 
-          to="/admin" 
-          active={activeItem === 'dashboard'}
-          collapsed={isCollapsed}
+          href="/admin" 
+          isActive={activeItem === 'dashboard'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
         
         <SidebarItem 
           icon={<Users size={20} />} 
           label="User Management" 
-          to="/admin/user-management" 
-          active={activeItem === 'users'}
-          collapsed={isCollapsed}
+          href="/admin/user-management" 
+          isActive={activeItem === 'users'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
         
         <SidebarItem 
           icon={<BarChart3 size={20} />} 
           label="Analytics" 
-          to="/admin/analytics" 
-          active={activeItem === 'analytics'}
-          collapsed={isCollapsed}
+          href="/admin/analytics" 
+          isActive={activeItem === 'analytics'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
         
         <SidebarItem 
           icon={<Puzzle size={20} />} 
           label="Feature Management" 
-          to="/admin/feature-management" 
-          active={activeItem === 'features'}
-          collapsed={isCollapsed}
+          href="/admin/feature-management" 
+          isActive={activeItem === 'features'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
         
         <SidebarItem 
           icon={<CreditCard size={20} />} 
           label="Subscriptions" 
-          to="/admin/subscription-management" 
-          active={activeItem === 'subscriptions'}
-          collapsed={isCollapsed}
+          href="/admin/subscription-management" 
+          isActive={activeItem === 'subscriptions'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
         
         <SidebarGroup 
-          title="Settings" 
-          collapsed={isCollapsed}
+          icon={<Settings size={20} />}
+          label="Settings" 
+          isCollapsed={isCollapsed}
         >
           <SidebarItem 
             icon={<Mail size={20} />} 
             label="Email Templates" 
-            to="/admin/email-manager" 
-            active={activeItem === 'emails'}
-            collapsed={isCollapsed}
+            href="/admin/email-manager" 
+            isActive={activeItem === 'emails'}
+            isCollapsed={isCollapsed}
             onClick={onClose}
           />
           
           <SidebarItem 
             icon={<Settings size={20} />} 
             label="Integrations" 
-            to="/admin/integrations-settings" 
-            active={activeItem === 'integrations'}
-            collapsed={isCollapsed}
+            href="/admin/integrations-settings" 
+            isActive={activeItem === 'integrations'}
+            isCollapsed={isCollapsed}
             onClick={onClose}
           />
           
           <SidebarItem 
             icon={<Zap size={20} />} 
             label="Stripe Settings" 
-            to="/admin/stripe-settings" 
-            active={activeItem === 'stripe-settings'}
-            collapsed={isCollapsed}
+            href="/admin/stripe-settings" 
+            isActive={activeItem === 'stripe-settings'}
+            isCollapsed={isCollapsed}
             onClick={onClose}
           />
         </SidebarGroup>
@@ -136,9 +141,9 @@ export const SidebarContent = ({ onClose }: SidebarContentProps) => {
         <SidebarItem 
           icon={<HelpCircle size={20} />} 
           label="Help & Support" 
-          to="/admin/help" 
-          active={activeItem === 'help'}
-          collapsed={isCollapsed}
+          href="/admin/help" 
+          isActive={activeItem === 'help'}
+          isCollapsed={isCollapsed}
           onClick={onClose}
         />
       </div>

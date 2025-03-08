@@ -110,17 +110,24 @@ export function PlanForm({
   const onSubmit = async (values: FormValues) => {
     try {
       setLoading(true);
-      // Filter out empty features
-      const filteredFeatures = values.features.filter(
-        feature => feature.text.trim() !== ""
-      );
+      // Filter out empty features and ensure text is defined
+      const filteredFeatures: PlanFeature[] = values.features
+        .filter(feature => feature.text && feature.text.trim() !== "")
+        .map(feature => ({
+          text: feature.text,
+          included: feature.included
+        }));
 
-      // Convert price values to cents
-      const planData = {
+      // Construct the plan data object
+      const planData: Partial<SubscriptionPlan> = {
         ...values,
-        features: filteredFeatures,
-        id: plan?.id // Include ID if editing an existing plan
+        features: filteredFeatures
       };
+      
+      // Include ID if editing an existing plan
+      if (plan?.id) {
+        planData.id = plan.id;
+      }
 
       await onSave(planData);
       onOpenChange(false);

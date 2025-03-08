@@ -4,7 +4,7 @@ import { ChevronLeft, PanelLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeProvider";
 
-interface SidebarLogoProps {
+export interface SidebarLogoProps {
   isCollapsed: boolean;
   toggleCollapse: () => void;
   onClose: () => void;

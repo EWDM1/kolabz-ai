@@ -10,7 +10,6 @@ import { useSidebarCollapse } from "./sidebar/useSidebarCollapse";
 
 const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const location = useLocation();
-  const path = location.pathname;
   const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 
   return (
@@ -36,7 +35,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         />
         
         <SidebarContent 
-          path={path} 
           isCollapsed={isCollapsed} 
           onClose={onClose} 
         />

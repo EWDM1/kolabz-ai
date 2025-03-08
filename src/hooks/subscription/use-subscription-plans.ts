@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 export interface PlanFeature {
   text: string;
@@ -30,6 +31,16 @@ export const useSubscriptionPlans = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   
+  // Helper function to convert database data to our interface format
+  const convertDbPlanToLocal = (dbPlan: any): SubscriptionPlan => {
+    return {
+      ...dbPlan,
+      features: Array.isArray(dbPlan.features) 
+        ? dbPlan.features 
+        : (dbPlan.features ? JSON.parse(JSON.stringify(dbPlan.features)) : [])
+    };
+  };
+  
   // Fetch all subscription plans
   const fetchPlans = async () => {
     try {
@@ -43,7 +54,9 @@ export const useSubscriptionPlans = () => {
       
       if (error) throw error;
       
-      setPlans(data || []);
+      // Convert the data to our interface format
+      const formattedPlans = data?.map(convertDbPlanToLocal) || [];
+      setPlans(formattedPlans);
     } catch (err: any) {
       console.error('Error fetching subscription plans:', err);
       setError(err.message || 'Failed to fetch subscription plans');
@@ -64,12 +77,18 @@ export const useSubscriptionPlans = () => {
       
       let result;
       
+      // Convert the features to a JSON format for the database
+      const dbPlan = {
+        ...plan,
+        features: plan.features ? JSON.stringify(plan.features) : null
+      };
+      
       if (plan.id) {
         // Update existing plan
         result = await supabase
           .from('subscription_plans')
           .update({
-            ...plan,
+            ...dbPlan,
             updated_at: new Date().toISOString()
           })
           .eq('id', plan.id)
@@ -80,7 +99,7 @@ export const useSubscriptionPlans = () => {
         result = await supabase
           .from('subscription_plans')
           .insert({
-            ...plan,
+            ...dbPlan,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           })
@@ -98,7 +117,7 @@ export const useSubscriptionPlans = () => {
       // Refresh plans
       fetchPlans();
       
-      return result.data;
+      return convertDbPlanToLocal(result.data);
     } catch (err: any) {
       console.error('Error saving subscription plan:', err);
       toast({

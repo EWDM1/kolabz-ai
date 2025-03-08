@@ -1,73 +1,67 @@
+import { useState, useCallback } from 'react';
+import { AdminUser } from "@/components/admin/user-management/types";
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useUserTable } from "@/hooks/use-user-table";
-import { useUserManagement } from "@/hooks/use-user-management";
-import { useAuth } from "@/components/AuthContext";
-import { useSidebarState } from "@/hooks/use-sidebar-state";
-import { FilterValues } from "@/hooks/user-management/use-user-filters";
+export interface FilterValues {
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+}
 
 export const useUserManagementPage = () => {
-  const [filterValues, setFilterValues] = useState<FilterValues>({});
-  const { users, loading, error, fetchUsers } = useUserTable(filterValues);
-  const { user: currentUser } = useAuth();
-  const navigate = useNavigate();
-  
-  const {
-    selectedUsers,
-    setSelectedUsers,
-    handleEditUser,
-    handleDeleteUser,
-    handleDeleteSelected,
-    deleteDialogOpen,
-    closeDeleteDialog,
-    confirmDeleteUser,
-    deleteDialogData
-  } = useUserManagement(currentUser);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [filterValues, setFilterValues] = useState<FilterValues>({
+    name: '',
+    email: '',
+    role: '',
+    status: '',
+  });
+  const [filterVisible, setFilterVisible] = useState(false);
 
-  const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
-
-  // Handle filter changes
-  const handleFilterChange = (field: keyof FilterValues, value: string) => {
-    // Update the specific filter value
-    setFilterValues((prev) => ({
+  const handleFilterChange = useCallback((field: keyof FilterValues, value: string) => {
+    setFilterValues(prev => ({
       ...prev,
-      [field]: value || undefined // Use undefined when value is empty to remove the filter
+      [field]: value
     }));
-  };
+  }, []);
 
-  // Reset filters
-  const handleResetFilters = () => {
-    setFilterValues({});
-  };
+  const resetFilters = useCallback(() => {
+    setFilterValues({
+      name: '',
+      email: '',
+      role: '',
+      status: '',
+    });
+  }, []);
 
-  // Handler for filter button
-  const handleFilterClick = () => {
-    // Scroll to filter section
-    document.querySelector('.border.rounded-md.p-4.mb-6')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const toggleFilterVisible = useCallback(() => {
+    setFilterVisible(prev => !prev);
+  }, []);
+
+  const filterUsers = useCallback((users: AdminUser[]): AdminUser[] => {
+    return users.filter(user => {
+      const nameMatch = !filterValues.name || 
+        user.name.toLowerCase().includes(filterValues.name.toLowerCase());
+      
+      const emailMatch = !filterValues.email || 
+        user.email.toLowerCase().includes(filterValues.email.toLowerCase());
+      
+      const roleMatch = !filterValues.role || user.role === filterValues.role;
+      
+      const statusMatch = !filterValues.status || user.status === filterValues.status;
+      
+      return nameMatch && emailMatch && roleMatch && statusMatch;
+    });
+  }, [filterValues]);
 
   return {
-    users,
-    loading,
-    error,
-    fetchUsers,
-    filterValues,
-    handleFilterChange,
-    handleResetFilters,
-    handleFilterClick,
     selectedUsers,
     setSelectedUsers,
-    handleEditUser,
-    handleDeleteUser,
-    handleDeleteSelected,
-    deleteDialogOpen,
-    closeDeleteDialog,
-    confirmDeleteUser,
-    deleteDialogData,
-    sidebarOpen,
-    setSidebarOpen,
-    sidebarCollapsed,
-    navigate
+    filterValues,
+    handleFilterChange,
+    resetFilters,
+    filterVisible,
+    toggleFilterVisible,
+    filterUsers,
   };
 };
