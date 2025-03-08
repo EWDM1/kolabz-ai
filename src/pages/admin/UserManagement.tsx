@@ -65,7 +65,7 @@ const UserManagement = () => {
       
       if (rolesError) throw rolesError;
       
-      const roles = rolesData.map(r => r.role);
+      const roles = rolesData?.map(r => r.role) || [];
       
       setUserData({
         ...userData,

@@ -1,24 +1,21 @@
 
-import { CheckCircle, XCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface UserStatusBadgeProps {
-  status: "active" | "inactive";
+  status: string;
 }
 
 export function UserStatusBadge({ status }: UserStatusBadgeProps) {
-  if (status === "inactive") {
-    return (
-      <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400">
-        <XCircle className="h-4 w-4" />
-        Inactive
-      </span>
-    );
-  }
+  const isActive = status === 'active';
   
+  const badgeClass = isActive
+    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+
   return (
-    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
-      <CheckCircle className="h-4 w-4" />
-      Active
-    </span>
+    <Badge className={cn("font-normal capitalize", badgeClass)}>
+      {status}
+    </Badge>
   );
 }

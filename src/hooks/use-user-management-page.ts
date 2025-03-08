@@ -26,6 +26,10 @@ export const useUserManagementPage = () => {
   } = useDeleteDialog(selectedUsers, fetchUsers);
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
 
+  const handleFilterClick = () => {
+    toggleFilterVisible();
+  };
+
   return {
     // User data
     users,
@@ -42,7 +46,7 @@ export const useUserManagementPage = () => {
     resetFilters,
     filterVisible,
     toggleFilterVisible,
-    handleFilterClick: toggleFilterVisible,
+    handleFilterClick,
     filterUsers,
     
     // Actions
