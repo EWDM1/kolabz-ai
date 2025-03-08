@@ -52,23 +52,11 @@ const router = createBrowserRouter([
         element: <MyDashboard />,
       },
       {
-        path: 'my-dashboard',
-        element: <MyDashboard />,
-      },
-      {
         path: 'prompts',
         element: <MyPrompts />,
       },
       {
-        path: 'my-prompts',
-        element: <MyPrompts />,
-      },
-      {
         path: 'settings',
-        element: <MySettings />,
-      },
-      {
-        path: 'my-settings',
         element: <MySettings />,
       },
       {
@@ -95,7 +83,7 @@ const router = createBrowserRouter([
         path: 'admin/users',
         element: <UserManagement />,
       },
-      // Keep user-management as an alias for users for backward compatibility
+      // Keep user-management as an alias for backward compatibility
       {
         path: 'admin/user-management',
         element: <UserManagement />,
