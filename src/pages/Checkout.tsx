@@ -1,6 +1,6 @@
 
 import { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCheckout } from "@/hooks/use-checkout";
@@ -24,8 +24,15 @@ const Checkout = () => {
     handleCheckout
   } = useCheckout();
 
+  // Redirect if no plan selected
+  useEffect(() => {
+    if (!selectedPlan) {
+      navigate("/");
+    }
+  }, [selectedPlan, navigate]);
+
   if (!selectedPlan) {
-    return null; // Will redirect via useEffect in useCheckout hook
+    return null;
   }
 
   return (
