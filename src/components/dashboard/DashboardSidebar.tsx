@@ -37,7 +37,7 @@ export const DashboardSidebar = ({
       <div className="p-4">
         <nav className="space-y-2">
           <button
-            onClick={() => handleNavigation("/my-dashboard")}
+            onClick={() => handleNavigation("/dashboard")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'dashboard' 
                 ? `${activeBgColor} ${activeTextColor} font-medium` 
@@ -48,7 +48,7 @@ export const DashboardSidebar = ({
             <span>{t("sidebar.dashboard", "My Dashboard")}</span>
           </button>
           <button
-            onClick={() => handleNavigation("/my-prompts")}
+            onClick={() => handleNavigation("/prompts")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'prompts' 
                 ? `${activeBgColor} ${activeTextColor} font-medium` 
@@ -70,7 +70,7 @@ export const DashboardSidebar = ({
             <span>{t("sidebar.subscription", "Subscription")}</span>
           </button>
           <button
-            onClick={() => handleNavigation("/my-settings")}
+            onClick={() => handleNavigation("/settings")}
             className={`flex w-full items-center space-x-3 px-4 py-3 rounded-md text-left ${
               activePage === 'settings' 
                 ? `${activeBgColor} ${activeTextColor} font-medium` 

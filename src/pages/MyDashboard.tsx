@@ -56,7 +56,7 @@ const MyDashboard = () => {
             <ThemeToggle />
             <LanguageSelector />
             <div className="flex items-center space-x-2 cursor-pointer ml-2">
-              <Link to="/my-settings" className="flex items-center space-x-2 hover:text-primary transition-colors">
+              <Link to="/settings" className="flex items-center space-x-2 hover:text-primary transition-colors">
                 <User className="h-5 w-5" />
                 <span className="text-sm font-medium hidden md:inline-block">
                   {user?.name || "John Doe"}
