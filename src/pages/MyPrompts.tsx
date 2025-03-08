@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -45,7 +44,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-// Types
 interface Prompt {
   id: number;
   title: string;
@@ -67,7 +65,6 @@ const MyPrompts = () => {
   const [selectedPrompts, setSelectedPrompts] = useState<number[]>([]);
   const [currentCategory, setCurrentCategory] = useState("all");
   
-  // Mock prompt data
   const [prompts, setPrompts] = useState<Prompt[]>([
     {
       id: 1,
@@ -121,11 +118,9 @@ const MyPrompts = () => {
     },
   ]);
   
-  // Filter and sort prompts based on active settings
   const getFilteredPrompts = () => {
     let filtered = [...prompts];
     
-    // Apply search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (prompt) =>
@@ -135,14 +130,12 @@ const MyPrompts = () => {
       );
     }
     
-    // Apply category filter
     if (currentCategory !== "all") {
       filtered = filtered.filter(prompt => 
         prompt.tags.includes(currentCategory)
       );
     }
     
-    // Apply additional filters
     switch (activeFilter) {
       case "favorites":
         filtered = filtered.filter(prompt => prompt.favorite);
@@ -155,7 +148,6 @@ const MyPrompts = () => {
         break;
     }
     
-    // Apply sorting
     switch (sortBy) {
       case "recent":
         filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -173,7 +165,6 @@ const MyPrompts = () => {
   
   const filteredPrompts = getFilteredPrompts();
   
-  // Get unique tags from all prompts for categories
   const allTags = Array.from(new Set(
     prompts.flatMap(prompt => prompt.tags)
   )).sort();
@@ -272,7 +263,6 @@ const MyPrompts = () => {
   const handleCreateNewPrompt = () => {
     navigate("/dashboard");
     
-    // In a real app, this would navigate to a create prompt page or open a modal
     toast({
       title: "Create new prompt",
       description: "Opening prompt creator...",
@@ -281,7 +271,6 @@ const MyPrompts = () => {
   
   return (
     <div className="min-h-screen bg-background/95">
-      {/* Dashboard header */}
       <header className="sticky top-0 z-40 bg-background border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center">
@@ -320,13 +309,12 @@ const MyPrompts = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
-          {/* Sidebar */}
           <div className="col-span-12 md:col-span-3 lg:col-span-2">
             <div className="bg-card rounded-lg shadow-sm border border-border sticky top-24">
               <div className="p-4">
                 <nav className="space-y-1">
                   <button
-                    onClick={() => handleNavigation("/dashboard")}
+                    onClick={() => handleNavigation("/my-dashboard")}
                     className="flex w-full items-center space-x-3 px-3 py-2 rounded-md text-left text-muted-foreground hover:bg-muted"
                   >
                     <LayoutDashboard className="h-5 w-5" />
@@ -382,7 +370,6 @@ const MyPrompts = () => {
             </div>
           </div>
 
-          {/* Main content */}
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -401,9 +388,7 @@ const MyPrompts = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-              {/* Categories & Filters Sidebar */}
               <div className="md:col-span-3 space-y-6">
-                {/* Mobile Create Button */}
                 <Button 
                   onClick={handleCreateNewPrompt}
                   className="w-full sm:hidden"
@@ -528,7 +513,6 @@ const MyPrompts = () => {
                 </Card>
               </div>
               
-              {/* Prompts Panel */}
               <div className="md:col-span-9">
                 <div className="bg-card rounded-lg border border-border shadow-sm">
                   <div className="p-4 border-b border-border">

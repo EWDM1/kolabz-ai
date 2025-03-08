@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
@@ -12,7 +12,7 @@ import { getStripe } from "@/integrations/stripe/stripeService";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
+import MyDashboard from "./pages/MyDashboard";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/admin/UserManagement";
 import UserFilter from "./pages/admin/UserFilter";
@@ -48,15 +48,17 @@ const App = () => (
                   <Route path="/login" element={<Login />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/my-dashboard" element={<MyDashboard />} />
+                  {/* Redirect /dashboard to /my-dashboard for backward compatibility */}
+                  <Route path="/dashboard" element={<Navigate to="/my-dashboard" replace />} />
                   <Route path="/my-prompts" element={<MyPrompts />} />
                   <Route path="/manage-subscription" element={<ManageSubscription />} />
                   <Route path="/change-plan" element={<ChangePlan />} />
                   <Route path="/my-settings" element={<MySettings />} />
                   
                   {/* Admin Routes */}
-                  <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                   <Route path="/admin/users" element={<UserManagement />} />
                   <Route path="/admin/users/filter" element={<UserFilter />} />
                   <Route path="/admin/users/edit/:id" element={<EditUser />} />

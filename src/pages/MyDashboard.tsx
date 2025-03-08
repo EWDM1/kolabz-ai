@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useRedirectForSuperAdmin } from '@/components/AuthContext';
 
-const Dashboard = () => {
+const MyDashboard = () => {
   // Use the custom hook for redirection logic
   useRedirectForSuperAdmin();
   
@@ -21,4 +21,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default MyDashboard;
