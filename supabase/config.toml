@@ -1,21 +1,31 @@
 
+# This is the main configuration file for Supabase CLI
+# For full documentation of available options, check https://supabase.com/docs/guides/cli/config
+
 project_id = "ftgtlhdocyixykjkbfpr"
+
 [api]
 enabled = true
-[analytics]
-enabled = false
+
+[db]
+# Don't use shadow migrations 
+port = 5432
+
+[studio]
+enabled = true
+port = 8000
+
 [auth]
 enabled = true
-[dev]
-port = 8000
-format = "yaml"
-[db]
-shadow = false
-pool_timeout_ms = 1000
-url = "nothing"
-[functions]
+
+[storage]
 enabled = true
+
 [realtime]
 enabled = false
-[storage]
+
+[analytics]
+enabled = false
+
+[functions]
 enabled = true
