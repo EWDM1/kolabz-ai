@@ -26,6 +26,7 @@ const MyDashboard = () => {
       description: "You have been successfully logged out",
     });
     // In a real app, this would call an auth logout function
+    window.location.href = "/login";
   };
 
   return (
