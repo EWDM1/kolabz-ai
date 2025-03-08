@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
+import PlanCard from "@/components/subscription/PlanCard";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -48,13 +51,8 @@ const Pricing = () => {
     },
   ];
 
-  const checkUserSubscription = async () => {
-    // For authenticated users, we could check if they already have a subscription
-    // This is where you would add logic to fetch and check subscription status
-  };
-
-  const handlePlanSelection = (planId: string, isAvailable: boolean) => {
-    if (!isAvailable) return;
+  const handlePlanSelection = (planId: string) => {
+    setSelectedPlan(planId);
     
     // Navigate to checkout with selected plan
     navigate("/checkout", { 
@@ -102,15 +100,19 @@ const Pricing = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className={`rounded-xl overflow-hidden border transition-all-200 ${
-                plan.highlighted
-                  ? "border-primary shadow-xl relative transform md:-translate-y-4"
-                  : "border-border shadow-sm hover:shadow-md"
-              } ${!plan.isAvailable ? "opacity-80" : ""}`}
-            >
+          {plans.map((plan) => (
+            <div key={plan.id} className={`${plan.highlighted ? "md:-mt-4" : ""}`}>
+              <PlanCard
+                id={plan.id}
+                name={plan.name}
+                price={plan.price}
+                description={plan.description}
+                features={plan.features}
+                savings={plan.savings}
+                isSelected={selectedPlan === plan.id}
+                isAnnual={isAnnual}
+                onSelect={handlePlanSelection}
+              />
               {plan.highlighted && (
                 <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold py-1 px-3 rounded-bl">
                   {t("pricing.most_popular", "Most Popular")}
@@ -121,51 +123,6 @@ const Pricing = () => {
                   {t("hero.comingSoon", "Coming Soon")}
                 </div>
               )}
-              <div className="p-6 md:p-8 bg-card">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-display font-bold">{plan.name}</h3>
-                  {plan.savings && isAnnual && (
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                      {t("pricing.save_amount", "Save")} {plan.savings}
-                    </span>
-                  )}
-                </div>
-                <div className="mb-6">
-                  <div className="flex items-baseline">
-                    <span className="text-3xl md:text-4xl font-display font-bold">
-                      {isAnnual ? plan.price.annual : plan.price.monthly}
-                    </span>
-                    <span className="text-muted-foreground ml-2">{isAnnual ? "/year" : "/month"}</span>
-                  </div>
-                  <p className="text-muted-foreground mt-2 text-sm">{plan.description}</p>
-                </div>
-                <Button
-                  className={`w-full mb-8 ${
-                    plan.highlighted ? "bg-primary hover:bg-primary/90" : ""
-                  }`}
-                  variant={plan.highlighted ? "default" : "outline"}
-                  onClick={() => handlePlanSelection(plan.id, plan.isAvailable)}
-                  disabled={!plan.isAvailable}
-                >
-                  {plan.ctaText}
-                </Button>
-                <ul className="space-y-4">
-                  {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-start">
-                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
-                        {feature.included ? (
-                          <Check className="h-4 w-4 text-primary" />
-                        ) : (
-                          <X className="h-4 w-4 text-muted-foreground/30" />
-                        )}
-                      </div>
-                      <span className={feature.included ? "" : "text-muted-foreground/50"}>
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           ))}
         </div>
