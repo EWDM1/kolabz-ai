@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -126,17 +127,12 @@ export const useUserManagement = (currentUser: any) => {
     }
   };
 
-  const handleFilter = () => {
-    navigate("/admin/users/filter");
-  };
-
   return {
     selectedUsers,
     setSelectedUsers,
     handleEditUser,
     handleDeleteUser,
     handleDeleteSelected,
-    handleFilter,
     deleteDialogOpen,
     closeDeleteDialog,
     confirmDeleteUser,

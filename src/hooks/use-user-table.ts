@@ -1,11 +1,19 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { AdminUser } from "@/components/admin/user-management/types";
 import { UserRole } from "@/components/admin/feature-management/types";
 
-export const useUserTable = () => {
+interface FilterValues {
+  name?: string;
+  email?: string;
+  role?: string;
+  status?: string;
+}
+
+export const useUserTable = (filters?: FilterValues) => {
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -78,7 +86,7 @@ export const useUserTable = () => {
         };
       });
       
-      setUsers(formattedUsers);
+      setAllUsers(formattedUsers);
     } catch (err) {
       console.error("Error fetching users:", err);
       setError("Failed to load users");
@@ -86,6 +94,40 @@ export const useUserTable = () => {
       setLoading(false);
     }
   };
+
+  // Apply filters to users
+  const filteredUsers = useMemo(() => {
+    if (!filters) return allUsers;
+    
+    return allUsers.filter(user => {
+      // Filter by name (case insensitive)
+      if (filters.name && !user.name.toLowerCase().includes(filters.name.toLowerCase())) {
+        return false;
+      }
+      
+      // Filter by email (case insensitive)
+      if (filters.email && !user.email.toLowerCase().includes(filters.email.toLowerCase())) {
+        return false;
+      }
+      
+      // Filter by role
+      if (filters.role && user.role !== filters.role) {
+        return false;
+      }
+      
+      // Filter by status
+      if (filters.status && user.status !== filters.status) {
+        return false;
+      }
+      
+      return true;
+    });
+  }, [allUsers, filters]);
+
+  // Update users when filters change
+  useEffect(() => {
+    setUsers(filteredUsers);
+  }, [filteredUsers]);
 
   useEffect(() => {
     fetchUsers();

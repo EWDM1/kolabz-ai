@@ -15,14 +15,12 @@ import Signup from "./pages/Signup";
 import MyDashboard from "./pages/MyDashboard";
 import NotFound from "./pages/NotFound";
 import UserManagement from "./pages/admin/UserManagement";
-import UserFilter from "./pages/admin/UserFilter";
 import EditUser from "./pages/admin/EditUser";
 import ManageSubscription from "./pages/ManageSubscription";
 import ChangePlan from "./pages/ChangePlan";
 import MyPrompts from "./pages/MyPrompts";
 import MySettings from "./pages/MySettings";
 import StripeSettings from "./pages/admin/StripeSettings";
-import IntegrationsSettings from "./pages/admin/IntegrationsSettings";
 import Checkout from "./pages/Checkout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import FeatureManagement from "./pages/admin/FeatureManagement";
@@ -60,11 +58,9 @@ const App = () => (
                   <Route path="/AdminDashboard" element={<AdminDashboard />} />
                   <Route path="/admin" element={<Navigate to="/AdminDashboard" replace />} />
                   <Route path="/admin/users" element={<UserManagement />} />
-                  <Route path="/admin/users/filter" element={<UserFilter />} />
                   <Route path="/admin/users/edit/:id" element={<EditUser />} />
                   <Route path="/admin/features" element={<FeatureManagement />} />
                   <Route path="/admin/stripe" element={<StripeSettings />} />
-                  <Route path="/admin/integrations" element={<IntegrationsSettings />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   PanelLeft,
   CreditCard,
-  Code,
   HelpCircle,
   LayoutDashboard,
   Sliders
@@ -225,7 +224,7 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               icon={<Users className="h-5 w-5" />}
               label="User Management"
               href="/admin/users"
-              isActive={path === "/admin/users"}
+              isActive={path.startsWith("/admin/users")}
               onClick={onClose}
               isCollapsed={isCollapsed}
             />
@@ -242,15 +241,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           {!isCollapsed && <div className="h-px bg-border" />}
           
           <SidebarItem
-            icon={<Code className="h-5 w-5" />}
-            label="External Integrations"
-            href="/admin/integrations"
-            isActive={path === "/admin/integrations"}
-            onClick={onClose}
-            isCollapsed={isCollapsed}
-          />
-          
-          <SidebarItem
             icon={<CreditCard className="h-5 w-5" />}
             label="Stripe Integration"
             href="/admin/stripe"
@@ -264,8 +254,8 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           <SidebarItem
             icon={<HelpCircle className="h-5 w-5" />}
             label="Help & Support"
-            href="/admin/help"
-            isActive={path === "/admin/help"}
+            href="/help-support"
+            isActive={path === "/help-support"}
             onClick={onClose}
             isCollapsed={isCollapsed}
           />
