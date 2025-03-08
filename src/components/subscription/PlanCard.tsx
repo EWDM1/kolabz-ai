@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,9 +40,9 @@ const PlanCard = ({
 }: PlanCardProps) => {
   return (
     <Card 
-      className={`${isSelected ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-primary/50'}`}
+      className={`h-full flex flex-col ${isSelected ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-primary/50'}`}
     >
-      <CardHeader>
+      <CardHeader className="flex-shrink-0">
         <div className="flex justify-between items-center">
           <CardTitle>{name}</CardTitle>
           {isAnnual && savings && (
@@ -64,7 +63,7 @@ const PlanCard = ({
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow">
         <ul className="space-y-3">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start">
@@ -82,7 +81,7 @@ const PlanCard = ({
           ))}
         </ul>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button 
           className="w-full"
           variant={isSelected ? "default" : "outline"}

@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 import { useAuth } from "@/components/AuthContext";
+import PlanCard from "@/components/subscription/PlanCard";
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -23,16 +26,13 @@ const Pricing = () => {
         { text: t("pricing.features.export", "1-click export to any platform"), included: true },
         { text: t("pricing.features.priority", "Priority support"), included: false },
       ],
-      ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
       id: "pro",
-      highlighted: true,
       savings: t("pricing.savings.pro", "$20/year"),
-      isAvailable: true,
     },
     {
       name: t("pricing.elite.name", "Elite"),
       price: { monthly: "$24", annual: "$240" },
-      description: t("pricing.elite.description", "Ideal for power users and small teams"),
+      description: t("pricing.elite.description", "Ideal for power users"),
       features: [
         { text: t("pricing.features.everything", "Everything in Pro"), included: true },
         { text: t("pricing.features.save_prompts_elite", "Save Up to 300 Prompts"), included: true },
@@ -40,22 +40,16 @@ const Pricing = () => {
         { text: t("pricing.features.advanced_customization", "Advanced customization options"), included: true },
         { text: t("pricing.features.dedicated", "Dedicated support"), included: true },
       ],
-      ctaText: t("pricing.cta.subscribe", "Subscribe Now"),
       id: "elite",
-      highlighted: false,
       savings: t("pricing.savings.elite", "$48/year"),
-      isAvailable: true,
     },
   ];
 
-  const checkUserSubscription = async () => {
-    // For authenticated users, we could check if they already have a subscription
-    // This is where you would add logic to fetch and check subscription status
+  const handleSelectPlan = (planId: string) => {
+    setSelectedPlanId(planId);
   };
 
-  const handlePlanSelection = (planId: string, isAvailable: boolean) => {
-    if (!isAvailable) return;
-    
+  const handleSubscribe = (planId: string) => {
     // Navigate to checkout with selected plan
     navigate("/checkout", { 
       state: { 
@@ -101,72 +95,20 @@ const Pricing = () => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {plans.map((plan, index) => (
-            <div
-              key={index}
-              className={`rounded-xl overflow-hidden border transition-all-200 ${
-                plan.highlighted
-                  ? "border-primary shadow-xl relative transform md:-translate-y-4"
-                  : "border-border shadow-sm hover:shadow-md"
-              } ${!plan.isAvailable ? "opacity-80" : ""}`}
-            >
-              {plan.highlighted && (
-                <div className="absolute top-0 right-0 bg-primary text-primary-foreground text-xs font-bold py-1 px-3 rounded-bl">
-                  {t("pricing.most_popular", "Most Popular")}
-                </div>
-              )}
-              {!plan.isAvailable && (
-                <div className="absolute top-0 right-0 bg-muted-foreground text-background text-xs font-bold py-1 px-3 rounded-bl">
-                  {t("hero.comingSoon", "Coming Soon")}
-                </div>
-              )}
-              <div className="p-6 md:p-8 bg-card">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-display font-bold">{plan.name}</h3>
-                  {plan.savings && isAnnual && (
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                      {t("pricing.save_amount", "Save")} {plan.savings}
-                    </span>
-                  )}
-                </div>
-                <div className="mb-6">
-                  <div className="flex items-baseline">
-                    <span className="text-3xl md:text-4xl font-display font-bold">
-                      {isAnnual ? plan.price.annual : plan.price.monthly}
-                    </span>
-                    <span className="text-muted-foreground ml-2">{isAnnual ? "/year" : "/month"}</span>
-                  </div>
-                  <p className="text-muted-foreground mt-2 text-sm">{plan.description}</p>
-                </div>
-                <Button
-                  className={`w-full mb-8 ${
-                    plan.highlighted ? "bg-primary hover:bg-primary/90" : ""
-                  }`}
-                  variant={plan.highlighted ? "default" : "outline"}
-                  onClick={() => handlePlanSelection(plan.id, plan.isAvailable)}
-                  disabled={!plan.isAvailable}
-                >
-                  {plan.ctaText}
-                </Button>
-                <ul className="space-y-4">
-                  {plan.features.map((feature, fIndex) => (
-                    <li key={fIndex} className="flex items-start">
-                      <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3">
-                        {feature.included ? (
-                          <Check className="h-4 w-4 text-primary" />
-                        ) : (
-                          <X className="h-4 w-4 text-muted-foreground/30" />
-                        )}
-                      </div>
-                      <span className={feature.included ? "" : "text-muted-foreground/50"}>
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {plans.map((plan) => (
+            <PlanCard
+              key={plan.id}
+              id={plan.id}
+              name={plan.name}
+              price={plan.price}
+              description={plan.description}
+              features={plan.features}
+              savings={plan.savings}
+              isSelected={selectedPlanId === plan.id}
+              isAnnual={isAnnual}
+              onSelect={() => handleSelectPlan(plan.id)}
+            />
           ))}
         </div>
 
