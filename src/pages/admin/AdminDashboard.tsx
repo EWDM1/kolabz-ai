@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { useLocation, Navigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
@@ -23,12 +22,6 @@ const AdminDashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user } = useAuth();
   const { metrics, loading } = useDashboardData();
-  const location = useLocation();
-  
-  // Redirect from /admin to /admin/dashboard
-  if (location.pathname === '/admin') {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
   
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
