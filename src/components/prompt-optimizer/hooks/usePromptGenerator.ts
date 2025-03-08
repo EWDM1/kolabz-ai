@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/AuthContext";
 import { SAVED_PROMPT_KEY } from "./usePromptForm";
 
 interface GeneratePromptParams {
@@ -17,6 +18,7 @@ interface GeneratePromptParams {
 
 export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,8 +54,11 @@ export const usePromptGenerator = (setOptimizedPrompt: (prompt: string) => void)
 
       if (data && data.optimizedPrompt) {
         setOptimizedPrompt(data.optimizedPrompt);
-        // Save to localStorage
-        localStorage.setItem(SAVED_PROMPT_KEY, data.optimizedPrompt);
+        
+        // Only save to localStorage if user is logged in
+        if (user) {
+          localStorage.setItem(SAVED_PROMPT_KEY, data.optimizedPrompt);
+        }
         
         toast({
           title: "Success!",

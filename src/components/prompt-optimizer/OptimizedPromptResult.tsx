@@ -1,6 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthContext";
 import PromptDisplay from "./components/PromptDisplay";
 import PromptActions from "./components/PromptActions";
 
@@ -11,8 +12,15 @@ interface OptimizedPromptResultProps {
 
 const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromptResultProps) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editablePrompt, setEditablePrompt] = useState(optimizedPrompt);
+
+  // Reset when user changes
+  useEffect(() => {
+    setIsEditing(false);
+    setEditablePrompt(optimizedPrompt);
+  }, [user, optimizedPrompt]);
 
   const handleCopyPrompt = () => {
     navigator.clipboard.writeText(isEditing ? editablePrompt : optimizedPrompt);
