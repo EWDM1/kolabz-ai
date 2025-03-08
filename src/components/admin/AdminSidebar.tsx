@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
-  Users, 
   Settings, 
   HelpCircle,
   Puzzle,
@@ -49,15 +48,6 @@ const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             label="Dashboard" 
             href="/admin" 
             isActive={location.pathname === "/admin"}
-            isCollapsed={isCollapsed}
-            onClick={onClose}
-          />
-          
-          <SidebarItem 
-            icon={<Users size={20} />} 
-            label="User Management" 
-            href="/admin/user-management" 
-            isActive={location.pathname.includes("/admin/user-management")}
             isCollapsed={isCollapsed}
             onClick={onClose}
           />

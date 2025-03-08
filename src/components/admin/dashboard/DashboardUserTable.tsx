@@ -16,7 +16,7 @@ export function DashboardUserTable({ roleData }: DashboardUserTableProps) {
 
   // Generate sample users based on role data
   const sampleUsers: AdminUser[] = roleData.flatMap((role, roleIndex) => 
-    Array.from({ length: Math.min(role.value, 2) }, (_, i) => ({
+    Array.from({ length: Math.min(role.value, 3) }, (_, i) => ({
       id: `sample-${roleIndex}-${i}`,
       name: `Sample ${role.name} ${i + 1}`,
       email: `${role.name.toLowerCase()}${i + 1}@example.com`,
@@ -27,14 +27,14 @@ export function DashboardUserTable({ roleData }: DashboardUserTableProps) {
   );
 
   return (
-    <Card className="md:col-span-1">
+    <Card className="md:col-span-2">
       <CardHeader>
         <CardTitle>User Management</CardTitle>
       </CardHeader>
       <CardContent>
         <UserTable 
           users={sampleUsers}
-          loading={false} // Add the missing loading prop
+          loading={false}
           selectedUsers={selectedUsers}
           setSelectedUsers={setSelectedUsers}
           onEdit={(user) => {

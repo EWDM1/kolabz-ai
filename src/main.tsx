@@ -22,7 +22,6 @@ import HelpSupport from './pages/HelpSupport'
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard'
-import UserManagement from './pages/admin/UserManagement'
 import FeatureManagement from './pages/admin/FeatureManagement'
 import IntegrationsSettings from './pages/admin/IntegrationsSettings'
 import StripeSettings from './pages/admin/StripeSettings'
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
       {
         path: 'admin',
         element: <AdminDashboard />,
-      },
-      {
-        path: 'admin/user-management',
-        element: <UserManagement />,
       },
       {
         path: 'admin/feature-management',

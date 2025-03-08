@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
-  Users, 
   Settings, 
   HelpCircle,
   Puzzle,
@@ -27,9 +26,7 @@ export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentP
     // Set the active item based on the current location
     const path = location.pathname;
     
-    if (path.includes('/admin/user-management')) {
-      setActiveItem('users');
-    } else if (path.includes('/admin/integrations')) {
+    if (path.includes('/admin/integrations')) {
       setActiveItem('integrations');
     } else if (path.includes('/admin/help')) {
       setActiveItem('help');
@@ -51,15 +48,6 @@ export const SidebarContent = ({ onClose, isCollapsed = false }: SidebarContentP
         label="Dashboard" 
         href="/admin" 
         isActive={activeItem === 'dashboard'}
-        isCollapsed={isCollapsed}
-        onClick={onClose}
-      />
-      
-      <SidebarItem 
-        icon={<Users size={20} />} 
-        label="User Management" 
-        href="/admin/user-management" 
-        isActive={activeItem === 'users'}
         isCollapsed={isCollapsed}
         onClick={onClose}
       />
