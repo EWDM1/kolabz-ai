@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Info, 
   Search, 
@@ -14,17 +16,23 @@ import {
   FileText,
   GraduationCap,
   Lightbulb,
-  VideoIcon,
+  Video,
   BookText,
   ClipboardList
 } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 
 const Help = () => {
+  const { toast } = useToast();
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, this would send the support request
     console.log("Support request submitted");
+    toast({
+      title: "Request Submitted",
+      description: "Your support request has been sent. We'll respond within 24 hours.",
+    });
   };
 
   return (
@@ -160,7 +168,7 @@ const Help = () => {
                   <div className="rounded-lg border p-4">
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <VideoIcon className="h-5 w-5 text-primary" />
+                        <Video className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <h3 className="font-medium">User Management Tutorial</h3>
@@ -173,7 +181,7 @@ const Help = () => {
                   <div className="rounded-lg border p-4">
                     <div className="flex items-center gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <VideoIcon className="h-5 w-5 text-primary" />
+                        <Video className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <h3 className="font-medium">Feature Management Guide</h3>
@@ -312,12 +320,12 @@ const Help = () => {
                   
                   <div className="space-y-2">
                     <label htmlFor="message" className="text-sm font-medium">Message</label>
-                    <textarea 
+                    <Textarea 
                       id="message" 
                       rows={5} 
-                      className="w-full min-h-[120px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="min-h-[120px]"
                       placeholder="Detailed description of your issue or question"
-                    ></textarea>
+                    />
                   </div>
                   
                   <div className="flex justify-between items-center">
