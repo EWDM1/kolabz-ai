@@ -46,10 +46,8 @@ const Hero = () => {
             </p>
 
             <div className="flex flex-wrap gap-4 mb-8">
-              <Button size="lg" asChild>
-                <Link to="/signup">
-                  {t("hero.getStarted", "Get Started")}
-                </Link>
+              <Button size="lg" onClick={() => scrollToSection('pricing')}>
+                {t("hero.getStarted", "Get Started")}
               </Button>
               <Button size="lg" variant="outline" onClick={() => scrollToSection('pricing')}>
                 {t("hero.pricing", "See Pricing")}
@@ -100,14 +98,13 @@ const Hero = () => {
                 </div>
               </div>
               
-              <Link to="/signup">
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                >
-                  {t("hero.optimize", "Try Prompt Optimizer")}
-                </Button>
-              </Link>
+              <Button 
+                className="w-full" 
+                size="lg"
+                onClick={() => scrollToSection('pricing')}
+              >
+                {t("hero.optimize", "Try Prompt Optimizer")}
+              </Button>
               
               <div className="mt-6 space-y-4">
                 <h3 className="font-bold">{t("hero.optimizedPrompt", "Optimized Prompt:")}</h3>
