@@ -25,18 +25,20 @@ export interface DeleteDialogData {
   userId?: string;
 }
 
-// Add missing action props interfaces
+// Update action props interfaces to match component implementations
 export interface DataActionsProps {
   selectedCount: number;
   onDeleteSelected: () => void;
   onRefresh: () => void;
+  onFilter: () => void; // Add missing onFilter prop
 }
 
 export interface ExportActionsProps {
-  selectedUsers: string[];
-  allUsers: AdminUser[];
+  selectedUsers?: string[]; // Make optional to accommodate usage in components
+  allUsers?: AdminUser[];  // Make optional to accommodate usage in components
+  users?: AdminUser[];     // Add users property for backward compatibility
 }
 
 export interface ImportActionsProps {
-  onImportComplete: () => void;
+  onImportComplete?: () => void; // Make optional
 }
