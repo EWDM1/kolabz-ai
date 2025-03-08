@@ -34,6 +34,7 @@ export function DashboardUserTable({ roleData }: DashboardUserTableProps) {
       <CardContent>
         <UserTable 
           users={sampleUsers}
+          loading={false} // Add the missing loading prop
           selectedUsers={selectedUsers}
           setSelectedUsers={setSelectedUsers}
           onEdit={(user) => {
@@ -42,10 +43,10 @@ export function DashboardUserTable({ roleData }: DashboardUserTableProps) {
               description: `You selected to edit ${user.name}`,
             });
           }}
-          onDelete={(userId) => {
+          onDelete={(user) => {
             toast({
               title: "Delete User",
-              description: `You selected to delete user ID: ${userId}`,
+              description: `You selected to delete user ID: ${user.id}`,
             });
           }}
         />

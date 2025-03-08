@@ -24,3 +24,19 @@ export interface DeleteDialogData {
   isMultiple: boolean;
   userId?: string;
 }
+
+// Add missing action props interfaces
+export interface DataActionsProps {
+  selectedCount: number;
+  onDeleteSelected: () => void;
+  onRefresh: () => void;
+}
+
+export interface ExportActionsProps {
+  selectedUsers: string[];
+  allUsers: AdminUser[];
+}
+
+export interface ImportActionsProps {
+  onImportComplete: () => void;
+}

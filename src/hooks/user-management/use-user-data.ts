@@ -51,9 +51,10 @@ export const useUserData = () => {
           highestRole = "admin";
         }
         
-        // Format last active date
-        const lastActive = user.last_sign_in_at 
-          ? new Date(user.last_sign_in_at).toLocaleDateString()
+        // Format last active date - handle missing properties
+        // The database doesn't have last_sign_in_at, so we'll use updated_at as a fallback
+        const lastActive = user.updated_at 
+          ? new Date(user.updated_at).toLocaleDateString()
           : "Never";
         
         return {
@@ -61,7 +62,7 @@ export const useUserData = () => {
           name: user.name || user.email.split("@")[0],
           email: user.email,
           role: highestRole,
-          status: user.status || "active",
+          status: user.deleted ? "inactive" : "active", // Use deleted property to determine status
           lastActive,
           created_at: user.created_at,
           updated_at: user.updated_at
