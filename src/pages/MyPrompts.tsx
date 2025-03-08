@@ -1,25 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  LayoutDashboard,
-  ListChecks,
-  Settings,
-  LogOut,
-  User,
-  PlusCircle,
-  Search,
-  Edit,
-  Trash,
-  Eye,
-  ArrowLeft,
-  Filter,
-  SlidersHorizontal,
-  Download,
-  X,
-  Tag,
-  Clock,
-  Calendar
-} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/components/LanguageContext";
+import { useAuth } from "@/components/AuthContext";
+import { HelpCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,7 +14,6 @@ import {
   CardTitle,
   CardFooter,
 } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import { Separator } from "@/components/ui/separator";
@@ -44,7 +27,6 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
-import { useAuth } from "@/components/AuthContext";
 import { LanguageSelector } from "@/components/LanguageSelector";
 
 interface Prompt {
@@ -61,6 +43,7 @@ const MyPrompts = () => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const { user } = useAuth();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   
   const [searchQuery, setSearchQuery] = useState("");

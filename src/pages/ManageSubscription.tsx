@@ -12,17 +12,16 @@ import {
   cancelSubscription, 
   formatCardDetails
 } from "@/integrations/stripe/stripeService";
-import { HelpCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTheme } from "@/components/ThemeProvider";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { LanguageSelector } from "@/components/LanguageSelector";
 
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { CurrentPlanCard } from "@/components/subscription/CurrentPlanCard";
 import { PaymentMethodCard } from "@/components/subscription/PaymentMethodCard";
 import { BillingHistoryCard } from "@/components/subscription/BillingHistoryCard";
 import { FAQCard } from "@/components/subscription/FAQCard";
+import DashboardHeader from "@/components/settings/DashboardHeader";
+import HelpSupportFooter from "@/components/settings/HelpSupportFooter";
+import SubscriptionTestModeToggle from "@/components/subscription/SubscriptionTestModeToggle";
 
 const ManageSubscription = () => {
   const { toast } = useToast();
@@ -31,7 +30,6 @@ const ManageSubscription = () => {
   const { t } = useLanguage();
   const { isAdmin, isSuperAdmin, user } = useAuth();
   const [testMode, setTestMode] = useState(isTestMode());
-  const { theme } = useTheme();
   
   // Admin check for test mode visibility
   const canAccessTestMode = isAdmin || isSuperAdmin;
@@ -140,54 +138,10 @@ const ManageSubscription = () => {
 
   return (
     <div className="min-h-screen bg-background/95">
-      {/* Dashboard header */}
-      <header className="sticky top-0 z-40 bg-background border-b border-border">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            {theme === 'dark' ? (
-              <img 
-                src="/lovable-uploads/6f0894e0-a497-444b-9581-ab7a20b0164d.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            ) : (
-              <img 
-                src="/lovable-uploads/f7eb7133-b8af-45b0-b0c4-d6f905e5c1e1.png" 
-                alt="Kolabz Logo" 
-                className="h-8" 
-              />
-            )}
-          </Link>
-
-          <div className="flex items-center space-x-2">
-            <ThemeToggle />
-            <LanguageSelector />
-            {canAccessTestMode && (
-              <Button
-                variant={testMode ? "outline" : "ghost"}
-                size="sm"
-                onClick={handleToggleTestMode}
-                className={testMode ? "border-orange-300 text-orange-600" : ""}
-              >
-                {testMode ? "Test Mode" : "Live Mode"}
-              </Button>
-            )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              aria-label="Logout"
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center space-x-2 cursor-pointer ml-2">
-              <span className="text-sm font-medium hidden md:inline-block">
-                {user?.name || "John Doe"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader 
+        userName={user?.name || "John Doe"} 
+        onLogout={handleLogout}
+      />
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-12 gap-8">
@@ -204,6 +158,14 @@ const ManageSubscription = () => {
           <div className="col-span-12 md:col-span-9 lg:col-span-10 space-y-6">
             <h1 className="text-2xl font-bold mb-2">{t("subscription.title", "Manage Subscription")}</h1>
             <p className="text-muted-foreground mb-6">{t("subscription.description", "Manage your plan, billing information and view payment history")}</p>
+            
+            {/* Test Mode Toggle for Admin/SuperAdmin */}
+            {canAccessTestMode && (
+              <SubscriptionTestModeToggle 
+                testMode={testMode} 
+                onToggle={handleToggleTestMode} 
+              />
+            )}
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Current plan card */}
@@ -227,17 +189,7 @@ const ManageSubscription = () => {
             <FAQCard />
             
             {/* Help & Support Footer */}
-            <div className="mt-8 pt-6 border-t border-border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <HelpCircle className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Need help?</span>
-                </div>
-                <Button variant="link" size="sm" asChild>
-                  <Link to="/help-support">Visit Help & Support</Link>
-                </Button>
-              </div>
-            </div>
+            <HelpSupportFooter />
           </div>
         </div>
       </div>
