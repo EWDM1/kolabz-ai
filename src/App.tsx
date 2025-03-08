@@ -3,28 +3,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripe } from "@/integrations/stripe/stripeService";
-import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import MyDashboard from "./pages/MyDashboard";
-import NotFound from "./pages/NotFound";
-import UserManagement from "./pages/admin/UserManagement";
-import EditUser from "./pages/admin/EditUser";
-import ManageSubscription from "./pages/ManageSubscription";
-import ChangePlan from "./pages/ChangePlan";
-import MyPrompts from "./pages/MyPrompts";
-import MySettings from "./pages/MySettings";
-import StripeSettings from "./pages/admin/StripeSettings";
-import Checkout from "./pages/Checkout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import FeatureManagement from "./pages/admin/FeatureManagement";
-import HelpSupport from "./pages/HelpSupport";
 
 // Reset default app CSS
 import "./App.css";
@@ -36,37 +20,13 @@ const App = () => (
     <ThemeProvider defaultTheme="light" storageKey="kolabz-theme">
       <LanguageProvider>
         <TooltipProvider>
-          <Router>
-            <AuthProvider>
-              <Elements stripe={getStripe()}>
-                <Toaster />
-                <Sonner />
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/index" element={<Index />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/my-dashboard" element={<MyDashboard />} />
-                  <Route path="/my-prompts" element={<MyPrompts />} />
-                  <Route path="/manage-subscription" element={<ManageSubscription />} />
-                  <Route path="/change-plan" element={<ChangePlan />} />
-                  <Route path="/my-settings" element={<MySettings />} />
-                  <Route path="/help-support" element={<HelpSupport />} />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/AdminDashboard" element={<AdminDashboard />} />
-                  <Route path="/admin" element={<Navigate to="/AdminDashboard" replace />} />
-                  <Route path="/admin/users" element={<UserManagement />} />
-                  <Route path="/admin/users/edit/:id" element={<EditUser />} />
-                  <Route path="/admin/features" element={<FeatureManagement />} />
-                  <Route path="/admin/stripe" element={<StripeSettings />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Elements>
-            </AuthProvider>
-          </Router>
+          <AuthProvider>
+            <Elements stripe={getStripe()}>
+              <Toaster />
+              <Sonner />
+              <Outlet />
+            </Elements>
+          </AuthProvider>
         </TooltipProvider>
       </LanguageProvider>
     </ThemeProvider>
