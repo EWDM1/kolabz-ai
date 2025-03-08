@@ -8,7 +8,8 @@ let stripePromise: Promise<any> | null = null;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    const key = getPublishableKey();
+    // Get the publishable key synchronously to avoid type issues
+    const key = getPublishableKeySync();
     if (key) {
       stripePromise = loadStripe(key);
     }

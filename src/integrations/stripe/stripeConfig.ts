@@ -31,6 +31,18 @@ let cachedConfig: StripeConfig | null = null;
 let lastFetchTimestamp = 0;
 const CACHE_DURATION = 60 * 1000; // 1 minute cache
 
+// Get the current Stripe publishable key synchronously (for immediate use)
+export const getPublishableKeySync = (): string => {
+  // If we have a cached config, use it
+  if (cachedConfig && cachedConfig.publishableKey) {
+    return cachedConfig.publishableKey;
+  }
+  
+  // Fallback value for when config isn't cached yet
+  // Will allow Stripe to initialize but will display an error if needed
+  return '';
+};
+
 // Fetch Stripe configuration from Supabase
 export const fetchStripeConfig = async (): Promise<StripeConfig> => {
   const currentTime = Date.now();
@@ -153,16 +165,6 @@ export const toggleStripeTestMode = async (isTestMode: boolean): Promise<boolean
 export const getPublishableKey = async (): Promise<string | null> => {
   const config = await fetchStripeConfig();
   return config.publishableKey;
-};
-
-// Get the current Stripe publishable key synchronously (for immediate use)
-export const getPublishableKeySync = (): string => {
-  // If we have a cached config, use it
-  if (cachedConfig && cachedConfig.publishableKey) {
-    return cachedConfig.publishableKey;
-  }
-  // Otherwise return an empty string (will be updated async)
-  return '';
 };
 
 // Check if Stripe is properly configured

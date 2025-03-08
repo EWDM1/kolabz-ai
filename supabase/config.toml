@@ -28,4 +28,5 @@ enabled = false
 enabled = false
 
 [functions]
+[functions.main]
 enabled = true
