@@ -1,0 +1,109 @@
+
+import { useState } from "react";
+import { Copy, FileEdit, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useTheme } from "@/components/ThemeProvider";
+import { useToast } from "@/hooks/use-toast";
+
+interface OptimizedPromptResultProps {
+  optimizedPrompt: string;
+  onSavePrompt?: () => void;
+}
+
+const OptimizedPromptResult = ({ optimizedPrompt, onSavePrompt }: OptimizedPromptResultProps) => {
+  const { toast } = useToast();
+  const { theme } = useTheme();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editablePrompt, setEditablePrompt] = useState(optimizedPrompt);
+
+  const handleCopyPrompt = () => {
+    navigator.clipboard.writeText(isEditing ? editablePrompt : optimizedPrompt);
+    toast({
+      title: "Copied!",
+      description: "Prompt copied to clipboard"
+    });
+  };
+
+  const handleEditPrompt = () => {
+    if (isEditing) {
+      // Save edits
+      setIsEditing(false);
+    } else {
+      // Start editing
+      setEditablePrompt(optimizedPrompt);
+      setIsEditing(true);
+    }
+  };
+
+  const handleSavePrompt = () => {
+    if (onSavePrompt) {
+      onSavePrompt();
+    }
+    
+    toast({
+      title: "Saved!",
+      description: "Prompt saved to your library"
+    });
+  };
+
+  if (!optimizedPrompt) return null;
+
+  return (
+    <div className="mt-6 space-y-4">
+      <h3 className="font-bold flex items-center gap-2">
+        <Sparkles className="h-4 w-4 text-primary" />
+        Optimized Prompt:
+      </h3>
+      
+      {isEditing ? (
+        <Textarea
+          value={editablePrompt}
+          onChange={(e) => setEditablePrompt(e.target.value)}
+          className="min-h-[200px] font-mono text-sm"
+        />
+      ) : (
+        <div className={`p-4 rounded-lg border ${
+          theme === 'dark' 
+            ? 'border-gray-700 bg-gray-800/50' 
+            : 'border-gray-200 bg-gray-50/80'
+        }`}>
+          <pre className="whitespace-pre-wrap text-sm font-mono">{optimizedPrompt}</pre>
+        </div>
+      )}
+      
+      <div className="flex flex-wrap gap-3">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={handleCopyPrompt}
+          className="flex items-center gap-1.5"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          Copy to Clipboard
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={handleEditPrompt}
+          className="flex items-center gap-1.5"
+        >
+          <FileEdit className="h-3.5 w-3.5" />
+          {isEditing ? "Save Edits" : "Edit Prompt"}
+        </Button>
+        
+        <Button 
+          variant="secondary" 
+          size="sm"
+          onClick={handleSavePrompt}
+          className="flex items-center gap-1.5 ml-auto"
+        >
+          Save Prompt
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default OptimizedPromptResult;
