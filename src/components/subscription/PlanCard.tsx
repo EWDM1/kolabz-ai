@@ -40,7 +40,9 @@ const PlanCard = ({
 }: PlanCardProps) => {
   return (
     <Card 
-      className={`h-full flex flex-col ${isSelected ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-primary/50'}`}
+      className={`h-full flex flex-col transition-all duration-300 
+      ${isSelected ? 'border-primary ring-1 ring-primary' : 'border-border hover:border-primary/50'}
+      hover:bg-gradient-to-br hover:from-primary/5 hover:to-primary/10 hover:backdrop-blur-sm hover:shadow-lg`}
     >
       <CardHeader className="flex-shrink-0">
         <div className="flex justify-between items-center">
@@ -93,7 +95,7 @@ const PlanCard = ({
               Selected
             </>
           ) : (
-            "Select Plan"
+            "Select This Plan"
           )}
         </Button>
       </CardFooter>
