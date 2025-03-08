@@ -1,114 +1,32 @@
 
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/components/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useAuthForm } from "@/components/auth/useAuthForm";
+import { NameInput } from "@/components/auth/NameInput";
+import { EmailInput } from "@/components/auth/EmailInput";
+import { PasswordInput } from "@/components/auth/PasswordInput";
+import { FormError } from "@/components/auth/FormError";
+import { AuthFooter } from "@/components/auth/AuthFooter";
 
 interface AuthFormProps {
   mode: "login" | "signup";
 }
 
 const AuthForm = ({ mode }: AuthFormProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login, register, isAdmin } = useAuth();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [formError, setFormError] = useState("");
-
-  // Get return URL from location state, if provided
-  const returnUrl = location.state?.returnUrl || "/dashboard";
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setFormError(""); // Clear error when input changes
-  };
-
-  const validateForm = () => {
-    if (mode === "signup" && !formData.name.trim()) {
-      setFormError("Name is required");
-      return false;
-    }
-    
-    if (!formData.email.trim()) {
-      setFormError("Email is required");
-      return false;
-    }
-    
-    if (!formData.password.trim()) {
-      setFormError("Password is required");
-      return false;
-    }
-    
-    if (mode === "signup" && formData.password.length < 6) {
-      setFormError("Password must be at least 6 characters");
-      return false;
-    }
-    
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
-    setIsLoading(true);
-
-    try {
-      if (mode === "login") {
-        const success = await login(formData.email, formData.password);
-        if (success) {
-          // Navigate based on returnUrl or user role
-          navigate(isAdmin ? "/admin" : returnUrl);
-        } else {
-          setFormError("Invalid email or password");
-        }
-      } else {
-        const success = await register(formData.email, formData.password, formData.name);
-        if (success) {
-          if (returnUrl === "/checkout") {
-            // For checkout flow, go directly to checkout
-            navigate(returnUrl);
-          } else {
-            // Default redirect
-            navigate("/dashboard");
-          }
-          
-          toast({
-            title: "Account created",
-            description: "Your account has been successfully created.",
-          });
-        } else {
-          setFormError("Registration failed. Email may already be in use.");
-        }
-      }
-    } catch (error) {
-      console.error("Authentication error:", error);
-      setFormError("Authentication failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { 
+    formData, 
+    formError, 
+    isLoading, 
+    handleChange, 
+    handleSubmit 
+  } = useAuthForm(mode);
 
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{mode === "login" ? "Welcome back" : "Create an account"}</h1>
+        <h1 className="text-3xl font-bold">
+          {mode === "login" ? "Welcome back" : "Create an account"}
+        </h1>
         <p className="text-muted-foreground">
           {mode === "login"
             ? "Enter your credentials to access your account"
@@ -117,57 +35,19 @@ const AuthForm = ({ mode }: AuthFormProps) => {
       </div>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
-        {formError && (
-          <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md">
-            {formError}
-          </div>
-        )}
+        <FormError error={formError} />
         
         {mode === "signup" && (
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              name="name"
-              placeholder="John Doe"
-              required
-              value={formData.name}
-              onChange={handleChange}
-            />
-          </div>
+          <NameInput value={formData.name} onChange={handleChange} />
         )}
 
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="john@example.com"
-            required
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
+        <EmailInput value={formData.email} onChange={handleChange} />
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            {mode === "login" && (
-              <a href="#" className="text-sm text-primary hover:text-primary/90">
-                Forgot password?
-              </a>
-            )}
-          </div>
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
+        <PasswordInput 
+          value={formData.password} 
+          onChange={handleChange} 
+          showForgotPassword={mode === "login"} 
+        />
 
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading
@@ -180,23 +60,7 @@ const AuthForm = ({ mode }: AuthFormProps) => {
         </Button>
       </form>
 
-      <div className="text-center text-sm">
-        {mode === "login" ? (
-          <p>
-            Don't have an account?{" "}
-            <a href="/signup" className="text-primary hover:text-primary/90">
-              Sign up
-            </a>
-          </p>
-        ) : (
-          <p>
-            Already have an account?{" "}
-            <a href="/login" className="text-primary hover:text-primary/90">
-              Sign in
-            </a>
-          </p>
-        )}
-      </div>
+      <AuthFooter mode={mode} />
     </div>
   );
 };
