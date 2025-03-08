@@ -4,20 +4,21 @@ import { useUserData } from './user-management/use-user-data';
 import { useUserFilters, FilterValues } from './user-management/use-user-filters';
 import { AdminUser } from "@/components/admin/user-management/types";
 
-export const useUserTable = (filters?: FilterValues) => {
-  const [users, setUsers] = useState<AdminUser[]>([]);
-  const { allUsers, loading, error, fetchUsers } = useUserData();
-  const { filteredUsers } = useUserFilters({ allUsers, filters: filters || {} });
+export const useUserTable = (initialFilters?: FilterValues) => {
+  const [filteredUsers, setFilteredUsers] = useState<AdminUser[]>([]);
+  const { users, loading, fetchUsers } = useUserData();
+  const { filterUsers, filterValues } = useUserFilters();
 
-  // Update users when filters change
+  // Update filtered users when users or filters change
   useEffect(() => {
-    setUsers(filteredUsers);
-  }, [filteredUsers]);
+    const filtered = filterUsers(users);
+    setFilteredUsers(filtered);
+  }, [users, filterValues, filterUsers]);
 
   return {
-    users,
+    users: filteredUsers,
+    allUsers: users,
     loading,
-    error,
     fetchUsers
   };
 };

@@ -1,16 +1,13 @@
 
 import { useState } from "react";
-import { useAuth } from "@/components/AuthContext";
 import { useUserActions } from "./user-management/use-user-actions";
 import { useDeleteDialog } from "./user-management/use-delete-dialog";
 import { AdminUser } from "@/components/admin/user-management/types";
 
-export const useUserManagement = (currentUser: any) => {
+export const useUserManagement = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   
-  const { handleEditUser } = useUserActions({ 
-    currentUserId: currentUser?.id 
-  });
+  const { handleEditUser } = useUserActions();
   
   const { 
     deleteDialogOpen,
@@ -19,10 +16,9 @@ export const useUserManagement = (currentUser: any) => {
     handleDeleteSelected,
     closeDeleteDialog,
     confirmDeleteUser
-  } = useDeleteDialog({
-    currentUserId: currentUser?.id,
-    selectedUsers,
-    setSelectedUsers
+  } = useDeleteDialog(selectedUsers, async () => {
+    // Placeholder for fetchUsers, can be updated when needed
+    console.log("Users would be fetched here");
   });
 
   return {
