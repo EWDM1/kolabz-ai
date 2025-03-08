@@ -1,98 +1,75 @@
 
-import { useState } from "react";
+import { useState, useCallback } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { useUserActions } from "./use-user-actions";
+import { supabase } from "@/integrations/supabase/client";
 
-interface UseDeleteDialogProps {
-  currentUserId?: string;
-  selectedUsers: string[];
-  setSelectedUsers: (users: string[]) => void;
-  onSuccess?: () => void;
+export interface DeleteDialogData {
+  userId?: string;
+  isMultiple: boolean;
 }
 
-export const useDeleteDialog = ({ 
-  currentUserId,
-  selectedUsers,
-  setSelectedUsers,
-  onSuccess
-}: UseDeleteDialogProps) => {
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [deleteDialogData, setDeleteDialogData] = useState<{
-    userId?: string;
-    isMultiple: boolean;
-  }>({ isMultiple: false });
-  
+export const useDeleteDialog = (selectedUsers: string[], fetchUsers: () => Promise<void>) => {
   const { toast } = useToast();
-  const { performUserDeletion } = useUserActions({ currentUserId });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState<DeleteDialogData>({
+    userId: undefined,
+    isMultiple: false
+  });
 
-  const openDeleteDialog = (userId?: string) => {
+  const handleDeleteUser = useCallback((userId: string) => {
     setDeleteDialogData({
       userId,
-      isMultiple: userId === undefined && selectedUsers.length > 0,
+      isMultiple: false
     });
     setDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const closeDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-  };
-
-  const handleDeleteUser = async (userId: string) => {
-    openDeleteDialog(userId);
-  };
-
-  const confirmDeleteUser = async () => {
-    closeDeleteDialog();
-    
-    if (deleteDialogData.userId) {
-      const success = await performUserDeletion(deleteDialogData.userId);
-      if (success) {
-        toast({
-          title: "User deleted",
-          description: "The user has been successfully removed.",
-        });
-        
-        setSelectedUsers(selectedUsers.filter(id => id !== deleteDialogData.userId));
-        if (onSuccess) onSuccess();
-      }
-    } 
-    else if (deleteDialogData.isMultiple) {
-      confirmDeleteSelected();
-    }
-  };
-
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = useCallback(() => {
     if (selectedUsers.length === 0) return;
-    openDeleteDialog();
-  };
+    
+    setDeleteDialogData({
+      isMultiple: true
+    });
+    setDeleteDialogOpen(true);
+  }, [selectedUsers]);
 
-  const confirmDeleteSelected = async () => {
+  const closeDeleteDialog = useCallback(() => {
+    setDeleteDialogOpen(false);
+  }, []);
+
+  const confirmDeleteUser = useCallback(async () => {
     try {
-      let successCount = 0;
+      const userIds = deleteDialogData.isMultiple 
+        ? selectedUsers 
+        : (deleteDialogData.userId ? [deleteDialogData.userId] : []);
       
-      for (const userId of selectedUsers) {
-        const success = await performUserDeletion(userId);
-        if (success) successCount++;
+      // Perform deletion for each user ID
+      for (const userId of userIds) {
+        await supabase.from('user_roles').delete().eq('user_id', userId);
+        await supabase.from('users').delete().eq('id', userId);
       }
       
-      if (successCount > 0) {
-        toast({
-          title: `${successCount} users deleted`,
-          description: "The selected users have been successfully removed.",
-        });
-        
-        setSelectedUsers([]);
-        if (onSuccess) onSuccess();
-      }
-    } catch (error) {
-      console.error("Error deleting users:", error);
+      // Success message
+      toast({
+        title: "Success",
+        description: `${userIds.length} user(s) deleted successfully`,
+      });
+      
+      // Refresh users
+      fetchUsers();
+      
+    } catch (error: any) {
+      console.error('Error deleting user(s):', error);
       toast({
         variant: "destructive",
-        title: "Failed to delete users",
-        description: "An error occurred while trying to delete the selected users.",
+        title: "Failed to delete user(s)",
+        description: error.message || "There was an error deleting the user(s)."
       });
+    } finally {
+      // Close dialog
+      setDeleteDialogOpen(false);
     }
-  };
+  }, [deleteDialogData, selectedUsers, toast, fetchUsers]);
 
   return {
     deleteDialogOpen,
