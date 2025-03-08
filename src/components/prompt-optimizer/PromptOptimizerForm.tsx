@@ -1,12 +1,13 @@
 
 import { useState } from "react";
-import { Brain, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Brain, ChevronDown, ChevronUp, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useToast } from "@/hooks/use-toast";
 
 const LLM_OPTIONS = [
   { value: "gpt-4", label: "GPT-4" },
@@ -64,6 +65,7 @@ interface PromptOptimizerFormProps {
   isGenerating: boolean;
   onGeneratePrompt: () => void;
   error: string;
+  onClearForm?: () => void;
 }
 
 const PromptOptimizerForm = ({
@@ -85,9 +87,37 @@ const PromptOptimizerForm = ({
   setConstraints,
   isGenerating,
   onGeneratePrompt,
-  error
+  error,
+  onClearForm
 }: PromptOptimizerFormProps) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const { toast } = useToast();
+
+  const handleClearForm = () => {
+    if (onClearForm) {
+      onClearForm();
+    } else {
+      // Default clear behavior if no handler is provided
+      setLlm("gpt-4");
+      setSpecialty("");
+      setTone("");
+      setDetailLevel("");
+      setPromptObjective("");
+      setContext("");
+      setSpecificQuestions("");
+      setConstraints("");
+      
+      // Clear local storage
+      localStorage.removeItem("kolabz_last_optimized_prompt");
+      localStorage.removeItem("kolabz_prompt_form_state");
+    }
+    
+    toast({
+      title: "Form Cleared",
+      description: "All form fields have been reset and saved data cleared",
+      variant: "success"
+    });
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -209,24 +239,36 @@ const PromptOptimizerForm = ({
         </CollapsibleContent>
       </Collapsible>
       
-      <Button 
-        onClick={onGeneratePrompt}
-        className="w-full" 
-        size="lg"
-        disabled={!promptObjective.trim() || isGenerating}
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Generating...
-          </>
-        ) : (
-          <>
-            <Brain className="mr-2 h-4 w-4" />
-            Generate Optimized Prompt
-          </>
-        )}
-      </Button>
+      <div className="flex gap-2">
+        <Button 
+          onClick={onGeneratePrompt}
+          className="flex-1" 
+          size="lg"
+          disabled={!promptObjective.trim() || isGenerating}
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Brain className="mr-2 h-4 w-4" />
+              Generate Optimized Prompt
+            </>
+          )}
+        </Button>
+        
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={handleClearForm}
+          disabled={isGenerating}
+        >
+          <Trash2 className="mr-2 h-4 w-4" />
+          Clear Form
+        </Button>
+      </div>
       
       {error && (
         <div className="text-sm text-destructive mt-2 p-2 bg-destructive/10 rounded-md">

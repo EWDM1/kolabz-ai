@@ -97,6 +97,24 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
     setActiveTab("build");
   };
 
+  // Handle clearing the form
+  const handleClearForm = () => {
+    // Reset all form fields to default values
+    setLlm("gpt-4");
+    setSpecialty("");
+    setTone("");
+    setDetailLevel("");
+    setPromptObjective("");
+    setContext("");
+    setSpecificQuestions("");
+    setConstraints("");
+    setOptimizedPrompt("");
+    
+    // Clear local storage
+    localStorage.removeItem(SAVED_PROMPT_KEY);
+    localStorage.removeItem(SAVED_FORM_STATE_KEY);
+  };
+
   // Handle generating the prompt
   const handleGeneratePrompt = async () => {
     if (!promptObjective.trim()) return;
@@ -206,6 +224,7 @@ const PromptOptimizerTool = ({ onSavePrompt }: PromptOptimizerToolProps) => {
               setConstraints={setConstraints}
               isGenerating={isGenerating}
               onGeneratePrompt={handleGeneratePrompt}
+              onClearForm={handleClearForm}
               error={error}
             />
           </TabsContent>
