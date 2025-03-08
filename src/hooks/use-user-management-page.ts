@@ -1,18 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserTable } from "@/hooks/use-user-table";
 import { useUserManagement } from "@/hooks/use-user-management";
 import { useAuth } from "@/components/AuthContext";
 import { useSidebarState } from "@/hooks/use-sidebar-state";
-
-// Filter values interface
-export interface FilterValues {
-  name?: string;
-  email?: string;
-  role?: string;
-  status?: string;
-}
+import { FilterValues } from "@/hooks/user-management/use-user-filters";
 
 export const useUserManagementPage = () => {
   const [filterValues, setFilterValues] = useState<FilterValues>({});
