@@ -1,43 +1,50 @@
 
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, Trash2, UserRoundPlus } from "lucide-react";
-import { Link } from "react-router-dom";
-import { UserManagementHeaderProps } from "./types";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
-export function UserManagementHeader({ 
-  selectedCount, 
-  onDelete, 
-  onRefresh 
-}: UserManagementHeaderProps) {
+export interface UserManagementHeaderProps {
+  selectedCount: number;
+  onDelete: () => void;
+  onRefresh: () => Promise<void> | void;
+  toggleFilterVisible?: () => void; // Making this optional
+  onDeleteSelected?: () => void; // Making this optional
+}
+
+export const UserManagementHeader: React.FC<UserManagementHeaderProps> = ({
+  selectedCount,
+  onDelete,
+  onRefresh,
+  toggleFilterVisible,
+  onDeleteSelected
+}) => {
+  // Use the appropriate handler based on what was passed
+  const handleDeleteClick = onDeleteSelected || onDelete;
+  
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="flex items-center justify-between mb-4">
       <div>
-        <h1 className="text-3xl font-bold">User Management</h1>
-        <p className="text-muted-foreground">
-          Manage your platform users
+        <h2 className="text-xl font-bold">User Management</h2>
+        <p className="text-sm text-muted-foreground">
+          Manage users and permissions
         </p>
       </div>
-      
-      <div className="flex gap-2">
+      <div className="flex space-x-2">
         {selectedCount > 0 && (
-          <Button variant="destructive" onClick={onDelete}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete Selected ({selectedCount})
+          <Button variant="destructive" onClick={handleDeleteClick}>
+            Delete ({selectedCount})
           </Button>
         )}
-        
         <Button variant="outline" onClick={onRefresh}>
-          <RefreshCw className="mr-2 h-4 w-4" />
+          <ReloadIcon className="h-4 w-4 mr-2" />
           Refresh
         </Button>
-        
-        <Link to="/admin/users/new">
-          <Button>
-            <UserRoundPlus className="mr-2 h-4 w-4" />
-            Add New User
+        {toggleFilterVisible && (
+          <Button variant="outline" onClick={toggleFilterVisible}>
+            Filter
           </Button>
-        </Link>
+        )}
       </div>
     </div>
   );
-}
+};

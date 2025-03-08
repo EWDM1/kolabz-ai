@@ -1,67 +1,89 @@
 
+import React from "react";
+import { 
+  Card, 
+  CardContent, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle 
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { FilterValues } from "@/hooks/use-user-management-page";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-interface UserFiltersPanelProps {
+export interface FilterValues {
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+}
+
+export interface UserFiltersPanelProps {
   filterValues: FilterValues;
   onFilterChange: (field: keyof FilterValues, value: string) => void;
   onResetFilters: () => void;
+  handleResetFilters?: () => void; // Make this optional for backward compatibility
 }
 
-export function UserFiltersPanel({
+export const UserFiltersPanel: React.FC<UserFiltersPanelProps> = ({
   filterValues,
   onFilterChange,
-  onResetFilters
-}: UserFiltersPanelProps) {
+  onResetFilters,
+  handleResetFilters
+}) => {
+  // Use the appropriate handler
+  const resetHandler = handleResetFilters || onResetFilters;
+  
   return (
-    <div className="border rounded-md p-4 mb-6">
-      <h3 className="font-medium mb-3">Filters</h3>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div>
+    <Card className="mb-6">
+      <CardHeader className="pb-3">
+        <CardTitle>Filter Users</CardTitle>
+      </CardHeader>
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="name-filter">Name</Label>
           <Input
-            placeholder="Filter by name"
-            value={filterValues.name || ''}
+            id="name-filter"
+            value={filterValues.name}
             onChange={(e) => onFilterChange('name', e.target.value)}
+            placeholder="Filter by name"
           />
         </div>
-        <div>
+        <div className="space-y-2">
+          <Label htmlFor="email-filter">Email</Label>
           <Input
-            placeholder="Filter by email"
-            value={filterValues.email || ''}
+            id="email-filter"
+            value={filterValues.email}
             onChange={(e) => onFilterChange('email', e.target.value)}
+            placeholder="Filter by email"
           />
         </div>
-        <div>
+        <div className="space-y-2">
+          <Label htmlFor="role-filter">Role</Label>
           <Select
-            value={filterValues.role || ''}
+            value={filterValues.role}
             onValueChange={(value) => onFilterChange('role', value)}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by role" />
+            <SelectTrigger id="role-filter">
+              <SelectValue placeholder="All roles" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All roles</SelectItem>
-              <SelectItem value="user">User</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="superadmin">Superadmin</SelectItem>
+              <SelectItem value="user">User</SelectItem>
+              <SelectItem value="guest">Guest</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div>
+        <div className="space-y-2">
+          <Label htmlFor="status-filter">Status</Label>
           <Select
-            value={filterValues.status || ''}
+            value={filterValues.status}
             onValueChange={(value) => onFilterChange('status', value)}
           >
-            <SelectTrigger>
-              <SelectValue placeholder="Filter by status" />
+            <SelectTrigger id="status-filter">
+              <SelectValue placeholder="All statuses" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="">All statuses</SelectItem>
@@ -70,16 +92,12 @@ export function UserFiltersPanel({
             </SelectContent>
           </Select>
         </div>
-      </div>
-      <div className="flex justify-end mt-3">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={onResetFilters}
-        >
+      </CardContent>
+      <CardFooter>
+        <Button variant="outline" onClick={resetHandler} className="ml-auto">
           Reset Filters
         </Button>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
-}
+};

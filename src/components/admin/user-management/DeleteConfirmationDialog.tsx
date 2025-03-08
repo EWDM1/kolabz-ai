@@ -1,46 +1,63 @@
 
 import React from "react";
-import { AlertTriangle } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DeleteConfirmationDialogProps } from "./types";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-export function DeleteConfirmationDialog({
+export interface DeleteConfirmationDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  isMultiple?: boolean;
+  title?: string;
+  description?: string;
+  count?: number; // Add this property for backward compatibility
+}
+
+export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
   isMultiple = false,
-  title = isMultiple ? "Delete Multiple Users" : "Delete User",
-  description = isMultiple
-    ? "Are you sure you want to delete these users? This action cannot be undone."
-    : "Are you sure you want to delete this user? This action cannot be undone."
-}: DeleteConfirmationDialogProps) {
+  title,
+  description,
+  count = 0
+}) => {
+  // Default title and description based on whether multiple items are being deleted
+  const defaultTitle = isMultiple
+    ? `Delete ${count || 'multiple'} users?`
+    : "Delete user?";
+  
+  const defaultDescription = isMultiple
+    ? `Are you sure you want to delete ${count || 'these'} users? This action cannot be undone.`
+    : "Are you sure you want to delete this user? This action cannot be undone.";
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-destructive">
-            <AlertTriangle className="h-5 w-5" />
-            {title}
-          </DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="flex flex-row justify-end gap-2 sm:justify-end">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button variant="destructive" onClick={onConfirm}>
+    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title || defaultTitle}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {description || defaultDescription}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
-}
+};
