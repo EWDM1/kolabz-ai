@@ -61,7 +61,7 @@ serve(async (req) => {
     // Get subscription data from database
     const { data: subscriptionData, error: subscriptionError } = await supabaseClient
       .from('subscriptions')
-      .select('stripe_subscription_id, customer_id')
+      .select('stripe_subscription_id, stripe_customer_id')
       .eq('user_id', user.id)
       .eq('status', 'active')
       .maybeSingle()
@@ -70,14 +70,15 @@ serve(async (req) => {
       throw subscriptionError
     }
 
-    if (!subscriptionData?.stripe_subscription_id || !subscriptionData?.customer_id) {
-      throw new Error('No active subscription found')
-    }
-
-    // Get price ID for the new plan
+    // Get subscription plan details
     const { data: planData, error: planError } = await supabaseClient
       .from('subscription_plans')
-      .select('stripe_price_id_monthly, stripe_price_id_annual')
+      .select(`
+        id, 
+        name, 
+        ${isAnnual ? 'stripe_price_id_annual' : 'stripe_price_id_monthly'} as price_id,
+        ${isAnnual ? 'price_annual' : 'price_monthly'} as price
+      `)
       .eq('id', planId)
       .single()
 
@@ -85,38 +86,52 @@ serve(async (req) => {
       throw planError || new Error('Plan not found')
     }
 
-    const priceId = isAnnual ? planData.stripe_price_id_annual : planData.stripe_price_id_monthly
-
-    if (!priceId) {
-      throw new Error('Price ID not found for the selected plan')
+    // If no price ID in Stripe is set, throw error
+    if (!planData.price_id) {
+      throw new Error('This plan is not yet configured in Stripe')
     }
 
-    // Get the subscription items
+    // If user has no subscription, create one
+    if (!subscriptionData?.stripe_subscription_id) {
+      // Handle new subscription (redirect to checkout)
+      return new Response(
+        JSON.stringify({ 
+          redirect_to_checkout: true,
+          message: 'User has no active subscription. Please use the checkout flow to subscribe.',
+          plan_id: planId,
+          is_annual: isAnnual
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Update existing subscription
+    console.log(`Updating subscription ${subscriptionData.stripe_subscription_id} to plan ${planData.price_id}`)
+    
     const subscription = await stripe.subscriptions.retrieve(subscriptionData.stripe_subscription_id)
     
-    if (!subscription || !subscription.items.data.length) {
-      throw new Error('Unable to retrieve subscription items')
-    }
+    // Get the first subscription item (assuming one item per subscription)
+    const subscriptionItemId = subscription.items.data[0].id
     
-    const itemId = subscription.items.data[0].id
-
-    // Update the subscription
-    await stripe.subscriptions.update(subscriptionData.stripe_subscription_id, {
+    // Update the subscription with new price
+    const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
       items: [
         {
-          id: itemId,
-          price: priceId,
+          id: subscriptionItemId,
+          price: planData.price_id,
         },
       ],
+      // Prorate by default
       proration_behavior: 'create_prorations',
     })
 
-    // Update subscription in database
+    // Update subscription information in database
     const { error: updateError } = await supabaseClient
       .from('subscriptions')
-      .update({ 
+      .update({
         plan_id: planId,
         is_annual: isAnnual,
+        price: planData.price,
         updated_at: new Date().toISOString()
       })
       .eq('user_id', user.id)
@@ -127,7 +142,16 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Subscription plan changed successfully' }),
+      JSON.stringify({ 
+        success: true, 
+        message: `Successfully changed to ${planData.name} plan`, 
+        subscription: {
+          id: updatedSubscription.id,
+          current_period_end: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
+          plan_id: planId,
+          is_annual: isAnnual
+        }
+      }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

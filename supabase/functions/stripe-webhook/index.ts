@@ -148,35 +148,90 @@ async function handleCheckoutSessionCompleted(session) {
   
   if (session.customer && session.subscription) {
     console.log(`Customer ${session.customer} subscribed with subscription ${session.subscription}`)
-    // Here you would typically:
-    // 1. Associate the subscription with the user
-    // 2. Update user access/permissions
-    // 3. Send welcome email
+    
     try {
-      // Find user with this customer ID
-      const { data: userData, error: userError } = await supabase
+      // Check if this is a new customer or an existing one
+      const { data: existingSubscription, error: findError } = await supabase
         .from('subscriptions')
-        .select('user_id')
+        .select('id, user_id')
         .eq('stripe_customer_id', session.customer)
         .maybeSingle()
       
-      if (userError || !userData) {
-        console.error('Error finding user for customer:', userError || 'No user found')
-        return
+      // Get the plan information from metadata if available
+      let planId = session.metadata?.plan_id
+      let isAnnual = session.metadata?.is_annual === 'true'
+      
+      // If plan info is not in metadata, try to get it from the subscription directly
+      if (!planId) {
+        const { Stripe } = await import('https://esm.sh/stripe@12.0.0?target=deno')
+        const stripe = new Stripe(stripeSecretKey, {
+          apiVersion: '2022-11-15',
+        })
+        
+        const subscription = await stripe.subscriptions.retrieve(session.subscription)
+        const priceId = subscription.items.data[0]?.price.id
+        
+        if (priceId) {
+          // Look up the plan by price ID
+          const { data: planData } = await supabase
+            .from('subscription_plans')
+            .select('id')
+            .or(`stripe_price_id_monthly.eq.${priceId},stripe_price_id_annual.eq.${priceId}`)
+            .maybeSingle()
+          
+          if (planData) {
+            planId = planData.id
+            // Check if this is an annual price
+            isAnnual = subscription.items.data[0]?.price.recurring.interval === 'year'
+          }
+        }
       }
       
-      // Update the subscription data
-      const { error: updateError } = await supabase
-        .from('subscriptions')
-        .update({
-          status: 'active',
-          stripe_subscription_id: session.subscription,
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', userData.user_id)
-      
-      if (updateError) {
-        console.error('Error updating subscription:', updateError)
+      if (existingSubscription) {
+        // Update existing subscription
+        const { error: updateError } = await supabase
+          .from('subscriptions')
+          .update({
+            status: 'active',
+            stripe_subscription_id: session.subscription,
+            plan_id: planId || null,
+            is_annual: isAnnual,
+            current_period_start: new Date().toISOString(),
+            current_period_end: null, // Will be updated by the subscription event handler
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingSubscription.id)
+        
+        if (updateError) {
+          console.error('Error updating subscription:', updateError)
+        }
+      } else {
+        // Extract user ID from session metadata
+        const userId = session.metadata?.user_id || session.client_reference_id
+        
+        if (!userId) {
+          console.error('No user ID found in session metadata')
+          return
+        }
+        
+        // Create new subscription record
+        const { error: insertError } = await supabase
+          .from('subscriptions')
+          .insert({
+            user_id: userId,
+            stripe_customer_id: session.customer,
+            stripe_subscription_id: session.subscription,
+            status: 'active',
+            plan_id: planId || null,
+            is_annual: isAnnual,
+            current_period_start: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+        
+        if (insertError) {
+          console.error('Error creating subscription:', insertError)
+        }
       }
     } catch (error) {
       console.error('Error handling checkout session:', error)
@@ -189,15 +244,20 @@ async function handleSubscriptionEvent(subscription, eventType) {
   console.log(`Subscription event ${eventType}: ${subscription.id}`)
   
   try {
-    // Find the user with this subscription
-    const { data: userData, error: userError } = await supabase
+    // Find the subscription in our database
+    const { data: subscriptionData, error: findError } = await supabase
       .from('subscriptions')
-      .select('user_id')
+      .select('id, user_id')
       .eq('stripe_subscription_id', subscription.id)
       .maybeSingle()
     
-    if (userError || !userData) {
-      console.error('Error finding user for subscription:', userError || 'No user found')
+    if (findError) {
+      console.error('Error finding subscription:', findError)
+      return
+    }
+    
+    if (!subscriptionData) {
+      console.log(`No subscription found with ID ${subscription.id}, might be a new subscription`)
       return
     }
     
@@ -217,16 +277,39 @@ async function handleSubscriptionEvent(subscription, eventType) {
         status = subscription.status
     }
     
+    // Get the price ID from the first item
+    const priceId = subscription.items?.data[0]?.price?.id
+    
+    // Look up the plan by price ID if it's available
+    let planId = null
+    let isAnnual = false
+    
+    if (priceId) {
+      const { data: planData } = await supabase
+        .from('subscription_plans')
+        .select('id')
+        .or(`stripe_price_id_monthly.eq.${priceId},stripe_price_id_annual.eq.${priceId}`)
+        .maybeSingle()
+      
+      if (planData) {
+        planId = planData.id
+        // Check if this is an annual price
+        isAnnual = subscription.items.data[0]?.price.recurring.interval === 'year'
+      }
+    }
+    
     // Update the subscription status
     const { error: updateError } = await supabase
       .from('subscriptions')
       .update({
         status: status,
+        plan_id: planId || subscriptionData.plan_id,
+        is_annual: isAnnual,
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
         updated_at: new Date().toISOString()
       })
-      .eq('user_id', userData.user_id)
+      .eq('id', subscriptionData.id)
     
     if (updateError) {
       console.error('Error updating subscription status:', updateError)

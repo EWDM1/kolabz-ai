@@ -43,12 +43,12 @@ serve(async (req) => {
     }
 
     // Parse request body
-    const { priceId } = await req.json()
+    const { priceId, planId, isAnnual } = await req.json()
     
-    // Validate request data
-    if (!priceId) {
+    // Validate request data - check for either priceId directly or planId with isAnnual
+    if (!priceId && (!planId || isAnnual === undefined)) {
       return new Response(
-        JSON.stringify({ error: 'Price ID is required' }),
+        JSON.stringify({ error: 'Either Price ID or Plan ID with isAnnual flag is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -70,12 +70,37 @@ serve(async (req) => {
       throw userDataError
     }
 
+    // If planId is provided, look up the price_id
+    let finalPriceId = priceId
+    let finalPlanId = planId
+    
+    if (!finalPriceId && finalPlanId) {
+      const { data: planData, error: planError } = await supabaseClient
+        .from('subscription_plans')
+        .select(`
+          id, 
+          ${isAnnual ? 'stripe_price_id_annual' : 'stripe_price_id_monthly'} as price_id
+        `)
+        .eq('id', finalPlanId)
+        .single()
+
+      if (planError || !planData) {
+        throw planError || new Error('Plan not found')
+      }
+
+      if (!planData.price_id) {
+        throw new Error('This plan is not yet configured in Stripe')
+      }
+
+      finalPriceId = planData.price_id
+    }
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price: finalPriceId,
           quantity: 1,
         },
       ],
@@ -85,6 +110,8 @@ serve(async (req) => {
       customer_email: userData.email,
       metadata: {
         user_id: user.id,
+        plan_id: finalPlanId,
+        is_annual: isAnnual !== undefined ? isAnnual.toString() : undefined
       },
     })
 
