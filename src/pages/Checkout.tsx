@@ -44,17 +44,22 @@ const Checkout = () => {
     }
   }, [selectedPlan, user, isRedirecting, saveCheckoutState]);
 
-  // Handle login redirection
+  // Handle login/signup redirection
   const handleLoginRedirect = () => {
     setIsRedirecting(true);
     navigate("/login", { state: { returnUrl: "/checkout" } });
+  };
+
+  const handleSignupRedirect = () => {
+    setIsRedirecting(true);
+    navigate("/signup", { state: { returnUrl: "/checkout" } });
   };
 
   if (!selectedPlan) {
     return null;
   }
 
-  // If no user is logged in, show login prompt
+  // If no user is logged in, show login/signup prompt
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
@@ -68,6 +73,7 @@ const Checkout = () => {
           <LoginCheckoutPrompt 
             planName={selectedPlan.name} 
             onLoginClick={handleLoginRedirect} 
+            onSignupClick={handleSignupRedirect}
           />
         </div>
       </div>

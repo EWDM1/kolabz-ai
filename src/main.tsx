@@ -30,6 +30,7 @@ import SubscriptionPlanEditor from "@/pages/admin/SubscriptionPlanEditor";
 import IntegrationsSettings from "@/pages/admin/IntegrationsSettings";
 import HelpSupport from "@/pages/HelpSupport";
 import Help from "@/pages/admin/Help";
+import PromptDatasets from "@/pages/PromptDatasets";
 
 import "@/index.css";
 import "@/App.css";
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
   {
     path: "/settings",
     element: <MySettings />,
+  },
+  {
+    path: "/datasets",
+    element: <PromptDatasets />,
   },
   {
     path: "/manage-subscription",

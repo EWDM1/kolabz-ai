@@ -25,6 +25,8 @@ export const useAuthForm = (mode: "login" | "signup") => {
 
   // Get return URL from location state, if provided
   const returnUrl = location.state?.returnUrl || "/dashboard";
+  const planId = location.state?.planId;
+  const isAnnual = location.state?.isAnnual;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,8 +81,17 @@ export const useAuthForm = (mode: "login" | "signup") => {
             description: "Welcome back!",
           });
           
-          // Auth state will be automatically updated in AuthContext, which will redirect
-          // No need for navigation here - it's handled by AuthContext/Login page
+          // For checkout flow, go directly to checkout with plan info if available
+          if (returnUrl === "/checkout" && planId) {
+            navigate(returnUrl, { 
+              state: { 
+                planId,
+                isAnnual
+              }
+            });
+          } else {
+            navigate(returnUrl);
+          }
         } else {
           setFormError("Invalid email or password");
         }
@@ -88,11 +99,16 @@ export const useAuthForm = (mode: "login" | "signup") => {
         const success = await register(formData.email, formData.password, formData.name);
         if (success) {
           if (returnUrl === "/checkout") {
-            // For checkout flow, go directly to checkout
-            navigate(returnUrl);
+            // For checkout flow, go directly to checkout with plan info if available
+            navigate(returnUrl, { 
+              state: { 
+                planId,
+                isAnnual
+              }
+            });
           } else {
             // Default redirect
-            navigate("/dashboard");
+            navigate(returnUrl);
           }
           
           toast({
@@ -116,6 +132,9 @@ export const useAuthForm = (mode: "login" | "signup") => {
     formError,
     isLoading,
     handleChange,
-    handleSubmit
+    handleSubmit,
+    returnUrl,
+    planId,
+    isAnnual
   };
 };
