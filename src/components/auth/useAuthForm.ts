@@ -10,7 +10,7 @@ interface FormData {
   password: string;
 }
 
-export const useAuthForm = (mode: "login" | "signup") => {
+export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, register, isAdmin, isSuperAdmin } = useAuth();
@@ -92,6 +92,10 @@ export const useAuthForm = (mode: "login" | "signup") => {
           } else {
             navigate(returnUrl);
           }
+
+          if (onSuccess) {
+            onSuccess();
+          }
         } else {
           setFormError("Invalid email or password");
         }
@@ -115,6 +119,10 @@ export const useAuthForm = (mode: "login" | "signup") => {
             title: "Account created",
             description: "Your account has been successfully created.",
           });
+
+          if (onSuccess) {
+            onSuccess();
+          }
         } else {
           setFormError("Registration failed. Email may already be in use.");
         }

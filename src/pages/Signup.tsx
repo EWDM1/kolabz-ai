@@ -25,6 +25,10 @@ const Signup = () => {
     });
   };
 
+  const handleAuthSuccess = () => {
+    navigate(returnUrl);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-6">
@@ -47,7 +51,7 @@ const Signup = () => {
             
             <TabsContent value="signup">
               <div className="relative z-10 rounded-2xl border border-border bg-card p-8 shadow-sm max-w-md mx-auto">
-                <AuthForm mode="signup" onSuccess={() => navigate(returnUrl)} />
+                <AuthForm mode="signup" />
               </div>
             </TabsContent>
             
