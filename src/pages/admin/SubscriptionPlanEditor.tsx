@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { cn } from "@/lib/utils";
-import PlanForm from "@/components/admin/subscription/PlanForm";
+import { PlanForm } from "@/components/admin/subscription/PlanForm";
 import { useStripeProducts } from "@/hooks/subscription/use-stripe-products";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";

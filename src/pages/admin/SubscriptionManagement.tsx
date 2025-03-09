@@ -8,11 +8,23 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import { PlanTable } from "@/components/admin/subscription/PlanTable";
 import { SubscriptionSettingsCard } from "@/components/admin/subscription/SubscriptionSettingsCard";
 import { cn } from "@/lib/utils";
+import { useSubscriptionPlans } from "@/hooks/subscription/use-subscription-plans";
+import { isStripeConfigured } from "@/integrations/stripe/stripeConfig";
 
 const SubscriptionManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [stripeConnected, setStripeConnected] = useState(false);
   const navigate = useNavigate();
+  
+  const { 
+    plans, 
+    loading, 
+    fetchPlans, 
+    togglePlanStatus, 
+    deletePlan,
+    savePlan
+  } = useSubscriptionPlans();
   
   // Check the sidebar collapsed state from localStorage
   useEffect(() => {
@@ -20,7 +32,23 @@ const SubscriptionManagement = () => {
     if (savedState !== null) {
       setSidebarCollapsed(savedState === "true");
     }
+    
+    // Check Stripe connection status
+    checkStripeConnection();
   }, []);
+  
+  const checkStripeConnection = async () => {
+    const connected = await isStripeConfigured();
+    setStripeConnected(connected);
+    return connected;
+  };
+  
+  const handleSyncWithStripe = async (planId: string) => {
+    // This would be implemented to sync plan with Stripe
+    console.log("Syncing plan with Stripe:", planId);
+    // After syncing, refresh plans
+    fetchPlans();
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -59,9 +87,18 @@ const SubscriptionManagement = () => {
           
           <div className="space-y-6">
             <PlanTable
-              onEdit={(id) => navigate(`/admin/subscription-management/edit/${id}`)}
+              plans={plans}
+              loading={loading}
+              onEdit={(plan) => navigate(`/admin/subscription-management/edit/${plan.id}`)}
+              onDelete={deletePlan}
+              onToggleStatus={togglePlanStatus}
+              onSyncWithStripe={handleSyncWithStripe}
+              stripeEnabled={stripeConnected}
             />
-            <SubscriptionSettingsCard />
+            <SubscriptionSettingsCard
+              stripeConnected={stripeConnected}
+              onCheckConnection={checkStripeConnection}
+            />
           </div>
         </main>
       </div>
