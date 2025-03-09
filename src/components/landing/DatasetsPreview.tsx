@@ -27,6 +27,17 @@ const DatasetsPreview = () => {
     },
   ];
 
+  // Direct the user to signup with Pro plan selected
+  const handleGetStartedClick = () => {
+    navigate("/signup", { 
+      state: { 
+        returnUrl: "/checkout",
+        planId: "pro",
+        isAnnual: true
+      }
+    });
+  };
+
   return (
     <section className="py-20 bg-gradient-to-b from-background/10 to-background relative overflow-hidden">
       <div className="container px-4 mx-auto relative z-10">
@@ -72,7 +83,7 @@ const DatasetsPreview = () => {
                   variant="outline" 
                   size="sm" 
                   className="w-full justify-between"
-                  onClick={() => navigate("/signup")}
+                  onClick={handleGetStartedClick}
                 >
                   Sign Up to Access <Sparkles className="h-4 w-4" />
                 </Button>
@@ -84,7 +95,7 @@ const DatasetsPreview = () => {
         <div className="text-center">
           <Button 
             size="lg" 
-            onClick={() => navigate(user ? "/datasets" : "/signup")}
+            onClick={() => user ? navigate("/datasets") : handleGetStartedClick()}
             className="px-8"
           >
             {user ? "Browse All Datasets" : "Get Started With Pro"}

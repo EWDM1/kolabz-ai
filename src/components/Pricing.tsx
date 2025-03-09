@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,6 @@ const Pricing = ({
   inlineStyle = false
 }: PricingProps) => {
   const [isAnnual, setIsAnnual] = useState(true);
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -70,31 +68,32 @@ const Pricing = ({
   ];
 
   const handleSelectPlan = (planId: string) => {
-    setSelectedPlanId(planId);
-  };
-
-  const handleSubscribe = () => {
-    if (!selectedPlanId || selectedPlanId === "free") {
+    if (planId === "free") {
+      if (user) {
+        navigate("/dashboard");
+      } else {
+        navigate("/signup");
+      }
       return;
     }
 
     if (onSelectPlan) {
-      onSelectPlan(selectedPlanId, isAnnual);
+      onSelectPlan(planId, isAnnual);
     } else {
       // If user is logged in, go directly to checkout
       if (user) {
         navigate("/checkout", { 
           state: { 
-            planId: selectedPlanId,
+            planId: planId,
             isAnnual: isAnnual
           } 
         });
       } else {
-        // If user is not logged in, go to signup with plan info
+        // If user is not logged in, go directly to signup with plan info
         navigate("/signup", { 
           state: { 
             returnUrl: "/checkout",
-            planId: selectedPlanId,
+            planId: planId,
             isAnnual: isAnnual
           } 
         });
@@ -150,20 +149,12 @@ const Pricing = ({
               description={plan.description}
               features={plan.features}
               savings={plan.savings}
-              isSelected={selectedPlanId === plan.id}
+              isSelected={false}
               isAnnual={isAnnual}
-              onSelect={() => handleSelectPlan(plan.id)}
+              onSelect={handleSelectPlan}
             />
           ))}
         </div>
-
-        {selectedPlanId && selectedPlanId !== "free" && (
-          <div className="mt-8 text-center">
-            <Button size="lg" onClick={handleSubscribe} className="px-8">
-              {user ? t("pricing.continue", "Continue to Checkout") : t("pricing.get_started", "Get Started")}
-            </Button>
-          </div>
-        )}
 
         <div className="mt-16 text-center">
           <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
