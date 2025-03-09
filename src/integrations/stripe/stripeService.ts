@@ -82,6 +82,8 @@ export const changeSubscriptionPlan = async (
       throw new Error("Failed to get authentication token");
     }
 
+    console.log("Changing subscription plan:", { planId, isAnnual });
+
     const response = await supabase.functions.invoke('change-subscription-plan', {
       body: { 
         planId,
@@ -91,6 +93,8 @@ export const changeSubscriptionPlan = async (
         Authorization: `Bearer ${sessionToken.session.access_token}`
       }
     });
+
+    console.log("Response from change-subscription-plan:", response);
 
     if (response.error) {
       throw new Error(response.error.message || "Failed to change subscription plan");
@@ -124,4 +128,33 @@ export const formatCardDetails = (paymentMethod: any): { last4: string; expiry: 
     last4: paymentMethod.card.last4,
     expiry: `${paymentMethod.card.exp_month.toString().padStart(2, '0')}/${paymentMethod.card.exp_year.toString().slice(-2)}`
   };
+};
+
+/**
+ * Create a checkout session for subscription
+ */
+export const createCheckoutSession = async (priceId: string): Promise<string | null> => {
+  try {
+    const { data: sessionToken, error } = await supabase.auth.getSession();
+    
+    if (error || !sessionToken.session) {
+      throw new Error("Failed to get authentication token");
+    }
+
+    const response = await supabase.functions.invoke('create-checkout-session', {
+      body: { priceId },
+      headers: {
+        Authorization: `Bearer ${sessionToken.session.access_token}`
+      }
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message || "Failed to create checkout session");
+    }
+
+    return response.data.url;
+  } catch (error) {
+    console.error("Error creating checkout session:", error);
+    return null;
+  }
 };

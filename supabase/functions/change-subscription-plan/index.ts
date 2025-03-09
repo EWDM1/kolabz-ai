@@ -91,14 +91,24 @@ serve(async (req) => {
       throw new Error('Price ID not found for the selected plan')
     }
 
+    // Get the subscription items
+    const subscription = await stripe.subscriptions.retrieve(subscriptionData.stripe_subscription_id)
+    
+    if (!subscription || !subscription.items.data.length) {
+      throw new Error('Unable to retrieve subscription items')
+    }
+    
+    const itemId = subscription.items.data[0].id
+
     // Update the subscription
     await stripe.subscriptions.update(subscriptionData.stripe_subscription_id, {
       items: [
         {
-          id: subscriptionData.stripe_subscription_id,
+          id: itemId,
           price: priceId,
         },
       ],
+      proration_behavior: 'create_prorations',
     })
 
     // Update subscription in database

@@ -28,5 +28,19 @@ enabled = false
 enabled = false
 
 [functions]
-[functions.main]
-enabled = true
+[functions.cancel-subscription]
+verify_jwt = true
+[functions.change-subscription-plan]
+verify_jwt = true
+[functions.check-stripe-status]
+verify_jwt = false
+[functions.create-checkout-session]
+verify_jwt = true
+[functions.create-customer-portal-session]
+verify_jwt = true
+[functions.stripe-webhook]
+verify_jwt = false
+[functions.sync-plan-with-stripe]
+verify_jwt = true
+[functions.update-payment-method]
+verify_jwt = true

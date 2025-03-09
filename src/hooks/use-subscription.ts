@@ -8,7 +8,8 @@ import {
   toggleStripeTestMode 
 } from "@/integrations/stripe/stripeConfig";
 import { 
-  cancelSubscription, 
+  cancelSubscription,
+  changeSubscriptionPlan,
   formatCardDetails
 } from "@/integrations/stripe/stripeService";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,6 +82,8 @@ export const useSubscription = () => {
           title: "Subscription Cancelled",
           description: "Your subscription has been cancelled successfully. You will have access until the end of your billing period.",
         });
+      } else {
+        throw new Error(result.message);
       }
     } catch (error) {
       console.error("Error cancelling subscription:", error);
@@ -89,6 +92,34 @@ export const useSubscription = () => {
         title: "Error cancelling subscription",
         description: "There was a problem cancelling your subscription. Please try again or contact support.",
       });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChangePlan = async (planId: string, isAnnual: boolean) => {
+    setLoading(true);
+    
+    try {
+      const result = await changeSubscriptionPlan(planId, isAnnual);
+      
+      if (result.success) {
+        toast({
+          title: "Plan Updated",
+          description: "Your subscription plan has been updated successfully.",
+        });
+        return true;
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error("Error changing plan:", error);
+      toast({
+        variant: "destructive",
+        title: "Error changing plan",
+        description: "There was a problem changing your subscription plan. Please try again or contact support.",
+      });
+      return false;
     } finally {
       setLoading(false);
     }
@@ -161,6 +192,7 @@ export const useSubscription = () => {
     handleToggleTestMode,
     handleUpdateCard,
     handleCancelSubscription,
+    handleChangePlan,
     handlePaymentError,
     handleDownloadInvoice,
     openCustomerPortal
