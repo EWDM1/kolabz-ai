@@ -158,3 +158,31 @@ export const createCheckoutSession = async (priceId: string): Promise<string | n
     return null;
   }
 };
+
+/**
+ * Create a customer portal session through the Supabase Edge Function
+ */
+export const createCustomerPortalSession = async (): Promise<string | null> => {
+  try {
+    const { data: sessionToken, error } = await supabase.auth.getSession();
+    
+    if (error || !sessionToken.session) {
+      throw new Error("Failed to get authentication token");
+    }
+
+    const response = await supabase.functions.invoke('create-customer-portal-session', {
+      headers: {
+        Authorization: `Bearer ${sessionToken.session.access_token}`
+      }
+    });
+
+    if (response.error) {
+      throw new Error(response.error.message || "Failed to create customer portal session");
+    }
+
+    return response.data.url;
+  } catch (error) {
+    console.error("Error creating customer portal session:", error);
+    return null;
+  }
+};

@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle, Check, Save } from "lucide-react";
+import { AlertCircle, Check } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { isTestMode, toggleStripeTestMode } from "@/integrations/stripe/stripeConfig";
+import { isTestMode, toggleStripeTestMode, isStripeConfigured } from "@/integrations/stripe/stripeConfig";
+import { resetStripe } from "@/integrations/stripe/stripeService";
+import { useToast } from "@/hooks/use-toast";
 
 interface SubscriptionSettingsCardProps {
   stripeConnected: boolean;
@@ -18,18 +19,48 @@ export function SubscriptionSettingsCard({
   stripeConnected,
   onCheckConnection,
 }: SubscriptionSettingsCardProps) {
+  const { toast } = useToast();
   const [testMode, setTestMode] = useState(isTestMode());
   const [isChecking, setIsChecking] = useState(false);
   const [isConnected, setIsConnected] = useState(stripeConnected);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     setIsConnected(stripeConnected);
   }, [stripeConnected]);
 
-  const handleToggleTestMode = () => {
+  const handleToggleTestMode = async () => {
     const newMode = !testMode;
-    toggleStripeTestMode(newMode);
-    setTestMode(newMode);
+    setIsUpdating(true);
+    
+    try {
+      const success = await toggleStripeTestMode(newMode);
+      
+      if (success) {
+        setTestMode(newMode);
+        // Reset Stripe instance to use new keys
+        resetStripe();
+        
+        toast({
+          title: `Switched to ${newMode ? 'test' : 'live'} mode`,
+          description: `Your Stripe integration is now in ${newMode ? 'test' : 'live'} mode.`
+        });
+        
+        // Verify connection after mode change
+        await checkConnection();
+      } else {
+        throw new Error("Failed to update mode");
+      }
+    } catch (error) {
+      console.error("Error toggling mode:", error);
+      toast({
+        variant: "destructive",
+        title: "Error changing mode",
+        description: "There was a problem updating the Stripe mode."
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const checkConnection = async () => {
@@ -66,6 +97,7 @@ export function SubscriptionSettingsCard({
                 id="test-mode"
                 checked={testMode}
                 onCheckedChange={handleToggleTestMode}
+                disabled={isUpdating || !isConnected}
               />
             </div>
           </div>

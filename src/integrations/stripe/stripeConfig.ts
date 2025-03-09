@@ -139,6 +139,13 @@ export const saveStripeConfig = async (
     cachedConfig = null;
     lastFetchTimestamp = 0;
     
+    // If updating mode, also reset the Stripe instance
+    if (key === STRIPE_SETTINGS.MODE) {
+      // Reset the Stripe instance to force re-initialization with the new keys
+      const { resetStripe } = await import('./stripeService');
+      resetStripe();
+    }
+    
     return true;
   } catch (error) {
     console.error('Error in saveStripeConfig:', error);

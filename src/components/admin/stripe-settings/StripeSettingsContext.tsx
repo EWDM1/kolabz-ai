@@ -73,6 +73,11 @@ export const StripeSettingsProvider: React.FC<{ children: React.ReactNode }> = (
       
       if (success) {
         setTestMode(newMode);
+        
+        // Reset cached Stripe instance to use new keys
+        const { resetStripe } = await import('@/integrations/stripe/stripeService');
+        resetStripe();
+        
         toast({
           title: `Switched to ${newMode ? 'test' : 'live'} mode`,
           description: `Your Stripe integration is now in ${newMode ? 'test' : 'live'} mode.`

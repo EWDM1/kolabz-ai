@@ -12,59 +12,41 @@ serve(async (req) => {
   }
 
   try {
-    // Check if Stripe API key is available
-    if (!stripeSecretKey) {
-      return new Response(
-        JSON.stringify({ connected: false, message: 'Stripe API key is not configured' }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
     // Dynamically import Stripe
     const { Stripe } = await import('https://esm.sh/stripe@12.0.0?target=deno')
     
-    try {
-      // Test the connection by making a simple API call
-      const stripe = new Stripe(stripeSecretKey, {
-        apiVersion: '2022-11-15',
-      })
-      
-      await stripe.balance.retrieve()
-      
+    if (!stripeSecretKey) {
       return new Response(
-        JSON.stringify({ connected: true, message: 'Successfully connected to Stripe' }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      )
-    } catch (stripeError) {
-      console.error('Stripe connection error:', stripeError)
-      return new Response(
-        JSON.stringify({ 
-          connected: false, 
-          message: `Stripe connection error: ${stripeError.message || 'Unknown error'}` 
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
+        JSON.stringify({ success: false, message: 'Stripe secret key is not configured' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
-  } catch (error) {
-    console.error('Error checking Stripe status:', error)
+
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2022-11-15',
+    })
+
+    // Simple test to check if Stripe API is working by retrieving account info
+    const account = await stripe.account.retrieve()
+    
     return new Response(
       JSON.stringify({ 
-        connected: false, 
-        message: error.message || 'Unknown error occurred'
+        success: true, 
+        message: 'Stripe is properly configured',
+        mode: account.settings?.dashboard?.display_name?.includes('Test') ? 'test' : 'live'
       }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  } catch (error) {
+    console.error('Error checking Stripe status:', error)
+    
+    // Return helpful error message
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        message: error.message || 'Failed to connect to Stripe'
+      }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
