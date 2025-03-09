@@ -10,7 +10,7 @@ interface FormData {
   password: string;
 }
 
-export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) => {
+export const useAuthForm = (mode: "login" | "signup") => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, register, isAdmin, isSuperAdmin } = useAuth();
@@ -25,8 +25,6 @@ export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) =>
 
   // Get return URL from location state, if provided
   const returnUrl = location.state?.returnUrl || "/dashboard";
-  const planId = location.state?.planId;
-  const isAnnual = location.state?.isAnnual;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,21 +79,8 @@ export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) =>
             description: "Welcome back!",
           });
           
-          // For checkout flow, go directly to checkout with plan info if available
-          if (returnUrl === "/checkout" && planId) {
-            navigate(returnUrl, { 
-              state: { 
-                planId,
-                isAnnual
-              }
-            });
-          } else {
-            navigate(returnUrl);
-          }
-
-          if (onSuccess) {
-            onSuccess();
-          }
+          // Auth state will be automatically updated in AuthContext, which will redirect
+          // No need for navigation here - it's handled by AuthContext/Login page
         } else {
           setFormError("Invalid email or password");
         }
@@ -103,26 +88,17 @@ export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) =>
         const success = await register(formData.email, formData.password, formData.name);
         if (success) {
           if (returnUrl === "/checkout") {
-            // For checkout flow, go directly to checkout with plan info if available
-            navigate(returnUrl, { 
-              state: { 
-                planId,
-                isAnnual
-              }
-            });
+            // For checkout flow, go directly to checkout
+            navigate(returnUrl);
           } else {
             // Default redirect
-            navigate(returnUrl);
+            navigate("/dashboard");
           }
           
           toast({
             title: "Account created",
             description: "Your account has been successfully created.",
           });
-
-          if (onSuccess) {
-            onSuccess();
-          }
         } else {
           setFormError("Registration failed. Email may already be in use.");
         }
@@ -140,9 +116,6 @@ export const useAuthForm = (mode: "login" | "signup", onSuccess?: () => void) =>
     formError,
     isLoading,
     handleChange,
-    handleSubmit,
-    returnUrl,
-    planId,
-    isAnnual
+    handleSubmit
   };
 };

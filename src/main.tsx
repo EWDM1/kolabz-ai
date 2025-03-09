@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
-import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 
 // Pages
 import Index from "@/pages/Index";
@@ -30,7 +29,6 @@ import SubscriptionPlanEditor from "@/pages/admin/SubscriptionPlanEditor";
 import IntegrationsSettings from "@/pages/admin/IntegrationsSettings";
 import HelpSupport from "@/pages/HelpSupport";
 import Help from "@/pages/admin/Help";
-import PromptDatasets from "@/pages/PromptDatasets";
 
 import "@/index.css";
 import "@/App.css";
@@ -65,10 +63,6 @@ const router = createBrowserRouter([
     element: <MySettings />,
   },
   {
-    path: "/datasets",
-    element: <PromptDatasets />,
-  },
-  {
     path: "/manage-subscription",
     element: <ManageSubscription />,
   },
@@ -84,46 +78,45 @@ const router = createBrowserRouter([
     path: "/help-support",
     element: <HelpSupport />,
   },
-  // Protected admin routes
   {
     path: "/admin",
-    element: <ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>,
+    element: <AdminDashboard />,
   },
   {
     path: "/admin/analytics",
-    element: <ProtectedAdminRoute><Analytics /></ProtectedAdminRoute>,
+    element: <Analytics />,
   },
   {
     path: "/admin/feature-management",
-    element: <ProtectedAdminRoute><FeatureManagement /></ProtectedAdminRoute>,
+    element: <FeatureManagement />,
   },
   {
     path: "/admin/subscription-management",
-    element: <ProtectedAdminRoute><SubscriptionManagement /></ProtectedAdminRoute>,
+    element: <SubscriptionManagement />,
   },
   {
     path: "/admin/subscription-management/create",
-    element: <ProtectedAdminRoute><SubscriptionPlanEditor /></ProtectedAdminRoute>,
+    element: <SubscriptionPlanEditor />,
   },
   {
     path: "/admin/subscription-management/edit/:planId",
-    element: <ProtectedAdminRoute><SubscriptionPlanEditor /></ProtectedAdminRoute>,
+    element: <SubscriptionPlanEditor />,
   },
   {
     path: "/admin/stripe-settings",
-    element: <ProtectedAdminRoute><StripeSettings /></ProtectedAdminRoute>,
+    element: <StripeSettings />,
   },
   {
     path: "/admin/integrations-settings",
-    element: <ProtectedAdminRoute><IntegrationsSettings /></ProtectedAdminRoute>,
+    element: <IntegrationsSettings />,
   },
   {
     path: "/admin/email-manager",
-    element: <ProtectedAdminRoute><EmailManager /></ProtectedAdminRoute>,
+    element: <EmailManager />,
   },
   {
     path: "/admin/help",
-    element: <ProtectedAdminRoute><Help /></ProtectedAdminRoute>,
+    element: <Help />,
   },
 ]);
 

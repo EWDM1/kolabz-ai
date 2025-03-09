@@ -86,10 +86,17 @@ const PlanCard = ({
       <CardFooter className="mt-auto">
         <Button 
           className="w-full"
-          variant="default"
+          variant={isSelected ? "default" : "outline"}
           onClick={() => onSelect(id)}
         >
-          Select This Plan
+          {isSelected ? (
+            <>
+              <Check className="mr-2 h-4 w-4" />
+              Selected
+            </>
+          ) : (
+            "Select This Plan"
+          )}
         </Button>
       </CardFooter>
     </Card>

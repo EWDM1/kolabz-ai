@@ -10,17 +10,16 @@ import { AuthFooter } from "@/components/auth/AuthFooter";
 
 interface AuthFormProps {
   mode: "login" | "signup";
-  onSuccess?: () => void;
 }
 
-const AuthForm = ({ mode, onSuccess }: AuthFormProps) => {
+const AuthForm = ({ mode }: AuthFormProps) => {
   const { 
     formData, 
     formError, 
     isLoading, 
     handleChange, 
     handleSubmit 
-  } = useAuthForm(mode, onSuccess);
+  } = useAuthForm(mode);
 
   return (
     <div className="space-y-6">
