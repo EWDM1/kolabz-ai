@@ -23,16 +23,30 @@ const AdminLayout = ({
   bannerMessage,
   requireAdmin = true,
 }: AdminLayoutProps) => {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed } = useSidebarState();
 
   // Redirect if not admin
   useEffect(() => {
-    if (requireAdmin && !isAdmin) {
+    if (!loading && requireAdmin && !isAdmin) {
       navigate("/dashboard");
     }
-  }, [isAdmin, navigate, requireAdmin]);
+  }, [isAdmin, navigate, requireAdmin, loading]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  // Additional safety check - don't render if not admin
+  if (requireAdmin && !isAdmin) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-background">

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/AuthContext";
 import { LanguageProvider } from "@/components/LanguageContext";
+import { ProtectedAdminRoute } from "@/components/admin/ProtectedAdminRoute";
 
 // Pages
 import Index from "@/pages/Index";
@@ -78,45 +79,46 @@ const router = createBrowserRouter([
     path: "/help-support",
     element: <HelpSupport />,
   },
+  // Protected admin routes
   {
     path: "/admin",
-    element: <AdminDashboard />,
+    element: <ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/analytics",
-    element: <Analytics />,
+    element: <ProtectedAdminRoute><Analytics /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/feature-management",
-    element: <FeatureManagement />,
+    element: <ProtectedAdminRoute><FeatureManagement /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/subscription-management",
-    element: <SubscriptionManagement />,
+    element: <ProtectedAdminRoute><SubscriptionManagement /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/subscription-management/create",
-    element: <SubscriptionPlanEditor />,
+    element: <ProtectedAdminRoute><SubscriptionPlanEditor /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/subscription-management/edit/:planId",
-    element: <SubscriptionPlanEditor />,
+    element: <ProtectedAdminRoute><SubscriptionPlanEditor /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/stripe-settings",
-    element: <StripeSettings />,
+    element: <ProtectedAdminRoute><StripeSettings /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/integrations-settings",
-    element: <IntegrationsSettings />,
+    element: <ProtectedAdminRoute><IntegrationsSettings /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/email-manager",
-    element: <EmailManager />,
+    element: <ProtectedAdminRoute><EmailManager /></ProtectedAdminRoute>,
   },
   {
     path: "/admin/help",
-    element: <Help />,
+    element: <ProtectedAdminRoute><Help /></ProtectedAdminRoute>,
   },
 ]);
 
