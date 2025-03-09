@@ -5,8 +5,8 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-import PlanTable from "@/components/admin/subscription/PlanTable";
-import SubscriptionSettingsCard from "@/components/admin/subscription/SubscriptionSettingsCard";
+import { PlanTable } from "@/components/admin/subscription/PlanTable";
+import { SubscriptionSettingsCard } from "@/components/admin/subscription/SubscriptionSettingsCard";
 import { cn } from "@/lib/utils";
 
 const SubscriptionManagement = () => {

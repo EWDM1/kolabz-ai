@@ -1,35 +1,19 @@
 
 // Stripe configuration with persistent settings from Supabase
 import { supabase } from "@/integrations/supabase/client";
-
-// Settings keys
-export const STRIPE_SETTINGS = {
-  PUBLISHABLE_KEY: 'stripe_publishable_key',
-  SECRET_KEY: 'stripe_secret_key',
-  WEBHOOK_SECRET: 'stripe_webhook_secret',
-  MODE: 'stripe_mode'
-};
-
-// Interface for Stripe configuration
-export interface StripeConfig {
-  publishableKey: string | null;
-  secretKey: string | null;
-  webhookSecret: string | null;
-  isTestMode: boolean;
-}
-
-// Default to empty values and test mode
-const defaultConfig: StripeConfig = {
-  publishableKey: null,
-  secretKey: null,
-  webhookSecret: null,
-  isTestMode: true
-};
-
-// Cache the config to avoid frequent database calls
-let cachedConfig: StripeConfig | null = null;
-let lastFetchTimestamp = 0;
-const CACHE_DURATION = 60 * 1000; // 1 minute cache
+import { StripeConfig, STRIPE_SETTINGS } from "./types";
+import { 
+  defaultConfig, 
+  cachedConfig, 
+  isCacheValid, 
+  setCachedConfig, 
+  invalidateCache 
+} from "./cache";
+import { 
+  initStripeConfig, 
+  getTestModeFromStorage, 
+  setTestModeInStorage 
+} from "./localStorage";
 
 // Get the current Stripe publishable key synchronously (for immediate use)
 export const getPublishableKeySync = (): string => {
@@ -45,11 +29,9 @@ export const getPublishableKeySync = (): string => {
 
 // Fetch Stripe configuration from Supabase
 export const fetchStripeConfig = async (): Promise<StripeConfig> => {
-  const currentTime = Date.now();
-  
   // Return cached configuration if it's still valid
-  if (cachedConfig && (currentTime - lastFetchTimestamp < CACHE_DURATION)) {
-    return cachedConfig;
+  if (isCacheValid()) {
+    return cachedConfig!;
   }
   
   try {
@@ -82,8 +64,7 @@ export const fetchStripeConfig = async (): Promise<StripeConfig> => {
     };
     
     // Update the cache
-    cachedConfig = config;
-    lastFetchTimestamp = currentTime;
+    setCachedConfig(config);
     
     return config;
   } catch (error) {
@@ -91,6 +72,10 @@ export const fetchStripeConfig = async (): Promise<StripeConfig> => {
     return defaultConfig;
   }
 };
+
+// Re-export functions from other modules to maintain API compatibility
+export { STRIPE_SETTINGS } from "./types";
+export { defaultConfig } from "./cache";
 
 // Save Stripe configuration to Supabase
 export const saveStripeConfig = async (
@@ -136,8 +121,7 @@ export const saveStripeConfig = async (
     }
     
     // Invalidate cache
-    cachedConfig = null;
-    lastFetchTimestamp = 0;
+    invalidateCache();
     
     // If updating mode, also reset the Stripe instance
     if (key === STRIPE_SETTINGS.MODE) {
@@ -162,7 +146,7 @@ export const toggleStripeTestMode = async (isTestMode: boolean): Promise<boolean
   
   if (result) {
     // Also update localStorage for UI consistency before page refresh
-    localStorage.setItem('stripe_test_mode', isTestMode.toString());
+    setTestModeInStorage(isTestMode);
   }
   
   return result;
@@ -182,23 +166,7 @@ export const isStripeConfigured = async (): Promise<boolean> => {
 
 // Get test mode status
 export const isTestMode = (): boolean => {
-  // First check localStorage for UI consistency
-  const savedTestMode = localStorage.getItem('stripe_test_mode');
-  if (savedTestMode !== null) {
-    return savedTestMode === 'true';
-  }
-  
-  // Default to test mode for safety
-  return true;
-};
-
-// Initialize from localStorage if available
-export const initStripeConfig = (): void => {
-  const savedTestMode = localStorage.getItem('stripe_test_mode');
-  if (savedTestMode === null) {
-    // Set default to test mode if not set
-    localStorage.setItem('stripe_test_mode', 'true');
-  }
+  return getTestModeFromStorage();
 };
 
 // Call init on import
