@@ -20,21 +20,22 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       
       <div className={cn(
-        "flex-1 transition-all duration-300 ease-in-out w-full",
-        sidebarCollapsed ? "md:ml-16" : "md:ml-64",
-        "px-4 md:px-6 lg:px-8"
+        "flex-1 flex flex-col transition-all duration-300 ease-in-out w-full",
+        sidebarCollapsed ? "md:ml-16" : "md:ml-64"
       )}>
         <Banner
           id="welcome-banner"
-          message={`👋 Welcome back, ${user?.name}! Here's an overview of your platform.`}
+          message={`👋 Welcome back, ${user?.name || 'Admin'}! Here's an overview of your platform.`}
           variant="rainbow"
           height="2.5rem"
         />
         
         <AdminHeader onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
-        <main className="flex-1 overflow-y-auto py-6">
-          {children}
+        <main className="flex-1 overflow-y-auto py-6 px-4 md:px-6 lg:px-8">
+          <div className="grid gap-4 lg:gap-8 max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

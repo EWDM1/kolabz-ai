@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -13,7 +12,6 @@ import { cn } from "@/lib/utils";
 import { SidebarItem } from "./sidebar/SidebarItem";
 import { SidebarGroup } from "./sidebar/SidebarGroup";
 import { SidebarLogo } from "./sidebar/SidebarLogo";
-import { SidebarContent } from "./sidebar/SidebarContent";
 import { useSidebarCollapse } from "./sidebar/useSidebarCollapse";
 
 const AdminSidebar = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {

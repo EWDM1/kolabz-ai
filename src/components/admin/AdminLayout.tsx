@@ -1,5 +1,5 @@
 
-import { useState, useEffect, ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Banner } from "@/components/ui/banner";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -44,7 +44,7 @@ const AdminLayout = ({
       )}>
         <Banner
           id="welcome-banner"
-          message={bannerMessage || `👋 Welcome back, ${user?.name}!`}
+          message={bannerMessage || `👋 Welcome back, ${user?.name || 'Admin'}!`}
           variant="rainbow"
           height="2.5rem"
         />
