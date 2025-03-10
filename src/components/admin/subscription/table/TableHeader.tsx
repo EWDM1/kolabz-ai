@@ -1,13 +1,13 @@
 
 import { 
   TableHead, 
-  TableHeader, 
+  TableHeader as UITableHeader, 
   TableRow 
 } from "@/components/ui/table";
 
-export function TableHeader() {
+export function SubscriptionTableHeader() {
   return (
-    <TableHeader>
+    <UITableHeader>
       <TableRow>
         <TableHead>Name</TableHead>
         <TableHead>Trial Period</TableHead>
@@ -16,6 +16,6 @@ export function TableHeader() {
         <TableHead>Status</TableHead>
         <TableHead className="text-right">Actions</TableHead>
       </TableRow>
-    </TableHeader>
+    </UITableHeader>
   );
 }

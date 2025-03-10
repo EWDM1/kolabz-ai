@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Table } from "@/components/ui/table";
 import { DeleteConfirmDialog } from "./table/DeleteConfirmDialog";
-import { TableHeader } from "./table/TableHeader";
+import { SubscriptionTableHeader } from "./table/TableHeader";
 import { TableBodyContent } from "./table/TableBodyContent";
 import { SubscriptionPlan } from "@/hooks/subscription/use-subscription-plans";
 import { formatCurrency } from "./utils/formatCurrency";
@@ -46,7 +46,7 @@ export function PlanTable({
     <>
       <div className="rounded-md border">
         <Table>
-          <TableHeader />
+          <SubscriptionTableHeader />
           <TableBodyContent
             plans={plans}
             loading={loading}
